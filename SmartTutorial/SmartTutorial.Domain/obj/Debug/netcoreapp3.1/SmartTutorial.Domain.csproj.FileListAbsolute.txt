@@ -1,0 +1,9 @@
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.Domain\bin\Debug\netcoreapp3.1\SmartTutorial.Domain.deps.json
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.Domain\bin\Debug\netcoreapp3.1\SmartTutorial.Domain.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.Domain\bin\Debug\netcoreapp3.1\SmartTutorial.Domain.pdb
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.Domain\obj\Debug\netcoreapp3.1\SmartTutorial.Domain.AssemblyInfoInputs.cache
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.Domain\obj\Debug\netcoreapp3.1\SmartTutorial.Domain.AssemblyInfo.cs
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.Domain\obj\Debug\netcoreapp3.1\SmartTutorial.Domain.csproj.CoreCompileInputs.cache
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.Domain\obj\Debug\netcoreapp3.1\SmartTutorial.Domain.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.Domain\obj\Debug\netcoreapp3.1\SmartTutorial.Domain.pdb
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.Domain\obj\Debug\netcoreapp3.1\SmartTutorial.Domain.csprojAssemblyReference.cache

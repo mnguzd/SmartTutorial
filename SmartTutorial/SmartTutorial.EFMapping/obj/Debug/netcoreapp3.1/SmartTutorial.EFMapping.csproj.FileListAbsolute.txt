@@ -1,0 +1,12 @@
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.EFMapping\bin\Debug\netcoreapp3.1\SmartTutorial.EFMapping.deps.json
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.EFMapping\bin\Debug\netcoreapp3.1\SmartTutorial.EFMapping.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.EFMapping\bin\Debug\netcoreapp3.1\SmartTutorial.EFMapping.pdb
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.EFMapping\bin\Debug\netcoreapp3.1\SmartTutorial.Domain.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.EFMapping\bin\Debug\netcoreapp3.1\SmartTutorial.Domain.pdb
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.EFMapping\obj\Debug\netcoreapp3.1\SmartTutorial.EFMapping.csprojAssemblyReference.cache
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.EFMapping\obj\Debug\netcoreapp3.1\SmartTutorial.EFMapping.AssemblyInfoInputs.cache
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.EFMapping\obj\Debug\netcoreapp3.1\SmartTutorial.EFMapping.AssemblyInfo.cs
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.EFMapping\obj\Debug\netcoreapp3.1\SmartTutorial.EFMapping.csproj.CoreCompileInputs.cache
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.EFMapping\obj\Debug\netcoreapp3.1\SmartTutorial.EFMapping.csproj.CopyComplete
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.EFMapping\obj\Debug\netcoreapp3.1\SmartTutorial.EFMapping.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.EFMapping\obj\Debug\netcoreapp3.1\SmartTutorial.EFMapping.pdb
