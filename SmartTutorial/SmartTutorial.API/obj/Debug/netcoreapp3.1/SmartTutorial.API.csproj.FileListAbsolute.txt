@@ -67,3 +67,8 @@ C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\obj\Debug\n
 C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\obj\Debug\netcoreapp3.1\SmartTutorial.API.dll
 C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\obj\Debug\netcoreapp3.1\SmartTutorial.API.pdb
 C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\obj\Debug\netcoreapp3.1\SmartTutorial.API.genruntimeconfig.cache
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll

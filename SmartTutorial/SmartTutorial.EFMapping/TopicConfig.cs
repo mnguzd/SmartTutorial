@@ -16,6 +16,8 @@ namespace SmartTutorial.EFMapping
                 .IsRequired()
                 .HasMaxLength(10000);
 
+            builder.Property(e => e.Order).IsRequired();
+
             builder.HasOne(d => d.Subject)
                 .WithMany(p => p.Topics)
                 .HasForeignKey(d => d.SubjectId);

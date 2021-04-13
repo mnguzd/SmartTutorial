@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SmartTutorial.Domain;
+using SmartTutorial.Domain.Auth;
 using SmartTutorial.EFMapping;
 
 namespace SmartTutorial.API
 {
-    public class SmartTutorialDbContext : DbContext
+    public class SmartTutorialDbContext : IdentityDbContext<User,Role,int>
     {
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Topic> Topics { get; set; }

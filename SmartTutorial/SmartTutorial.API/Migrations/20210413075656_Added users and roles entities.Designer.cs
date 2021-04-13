@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartTutorial.API;
 
 namespace SmartTutorial.API.Migrations
 {
     [DbContext(typeof(SmartTutorialDbContext))]
-    partial class SmartTutorialDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210413075656_Added users and roles entities")]
+    partial class Addedusersandrolesentities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

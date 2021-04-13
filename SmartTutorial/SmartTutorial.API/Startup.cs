@@ -30,9 +30,7 @@ namespace SmartTutorial.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<SmartTutorialDbContext>(optionBuilder => optionBuilder.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("SmartTutorialConnection")));
-            services.AddControllers().AddJsonOptions(options =>
-    options.JsonSerializerOptions.MaxDepth = 500
-); ;
+            services.AddControllers();
             services.AddScoped(typeof(IGenericRepository<>),typeof(EFCoreRepository<>));
         }
 

@@ -9,6 +9,7 @@ namespace SmartTutorial.Domain
             Answers = new List<Answer>();
         }
         public string Text { get; set; }
+        public string Answer { get; set; }
 
         public int TopicId { get; set; }
         public virtual Topic Topic { get; set; }
