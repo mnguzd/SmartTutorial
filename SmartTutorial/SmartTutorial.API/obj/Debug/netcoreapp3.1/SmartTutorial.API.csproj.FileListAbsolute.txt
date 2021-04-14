@@ -72,3 +72,10 @@ C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\n
 C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
 C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\AutoMapper.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Microsoft.OpenApi.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\obj\Debug\netcoreapp3.1\SmartTutorial.API.MvcApplicationPartsAssemblyInfo.cs
