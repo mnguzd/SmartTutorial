@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Services.Interfaces;
+using SmartTutorial.Domain;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace SmartTutorial.API.Controllers
 {
@@ -13,49 +14,63 @@ namespace SmartTutorial.API.Controllers
     public class SubjectController : ControllerBase
     {
         private readonly ISubjectService _subjectService;
+        private readonly IMapper _mapper;
 
-        public SubjectController(ISubjectService subjectService)
+        public SubjectController(ISubjectService subjectService,IMapper mapper)
         {
             _subjectService = subjectService;
+            _mapper = mapper;
         }
 
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var subjectsDtoList = await _subjectService.GetAll();
-            return Ok(subjectsDtoList);
+            var subjectList = await _subjectService.GetAll();
+            var subjectDtoList = _mapper.Map<List<SubjectDto>>(subjectList);
+            return Ok(subjectDtoList);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            SubjectDto dto = await _subjectService.GetById(id);
-            if (dto == null)
+            Subject subject = await _subjectService.GetById(id);
+            if (subject == null)
             {
                 return NotFound();
             }
-            return Ok(dto);
+            SubjectDto subjectDto = _mapper.Map<SubjectDto>(subject);
+            return Ok(subjectDto);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AddSubjectDto dto)
         {
-            AddSubjectDto subjectDto = await _subjectService.Add(dto);
+            Subject subject = await _subjectService.Add(dto);
+            SubjectDto subjectDto = _mapper.Map<SubjectDto>(subject);
             return CreatedAtAction(nameof(Post), subjectDto);
         }
 
         [HttpPut("{id}")]
         [ApiExceptionFilter]
-        public async Task<IActionResult> Put(int id,[FromBody] AddSubjectDto dto)
+        public async Task<IActionResult> Put(int id,[FromBody] UpdateSubjectDto dto)
         {
-            await _subjectService.Update(id,dto);
+            Subject subject = await _subjectService.Update(id,dto);
+            if (subject == null)
+            {
+                return NotFound();
+            }
             return NoContent();
         }
+
         [HttpPatch("{id}")]
         [ApiExceptionFilter]
         public async Task<IActionResult> Patch(int id, [FromBody] UpdateSubjectDto dto)
         {
-            await _subjectService.UpdateWithDetails(id, dto);
+            Subject subject = await _subjectService.UpdateWithDetails(id, dto);
+            if (subject == null)
+            {
+                return NotFound();
+            }
             return NoContent();
         }
 

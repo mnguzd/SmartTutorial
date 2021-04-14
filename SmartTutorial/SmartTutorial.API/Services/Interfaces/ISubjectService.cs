@@ -1,4 +1,5 @@
 ﻿using SmartTutorial.API.Dtos.SubjectDtos;
+using SmartTutorial.Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -6,11 +7,11 @@ namespace SmartTutorial.API.Services.Interfaces
 {
     public interface ISubjectService
     {
-        public Task<SubjectDto> GetById(int id);
-        public Task<IList<SubjectDto>> GetAll();
-        public Task<AddSubjectDto> Add(AddSubjectDto dto);
-        public Task Update(int id, AddSubjectDto dto);
-        public Task UpdateWithDetails(int id, UpdateSubjectDto dto);
+        public Task<Subject> GetById(int id);
+        public Task<IList<Subject>> GetAll();
+        public Task<Subject> Add(AddSubjectDto dto);
+        public Task<Subject> Update(int id, UpdateSubjectDto dto);
+        public Task<Subject> UpdateWithDetails(int id, UpdateSubjectDto dto);
         public Task Delete(int id);
     }
 }

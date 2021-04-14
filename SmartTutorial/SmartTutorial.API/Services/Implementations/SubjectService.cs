@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using SmartTutorial.API.Dtos.SubjectDtos;
-using SmartTutorial.API.Exceptions;
+﻿using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
@@ -12,20 +10,18 @@ namespace SmartTutorial.API.Services.Implementations
     public class SubjectService : ISubjectService
     {
         private readonly IGenericRepository<Subject> _repository;
-        private readonly IMapper _mapper;
 
-        public SubjectService(IGenericRepository<Subject> repository, IMapper mapper)
+        public SubjectService(IGenericRepository<Subject> repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
-        public async Task<AddSubjectDto> Add(AddSubjectDto dto)
+        public async Task<Subject> Add(AddSubjectDto dto)
         {
-            Subject subject = _mapper.Map<Subject>(dto);
+            Subject subject = new Subject() { Complexity = dto.Complexity, Name = dto.Name };
             await _repository.Add(subject);
             await _repository.SaveAll();
-            return dto;
+            return subject;
         }
 
         public async Task Delete(int id)
@@ -34,33 +30,43 @@ namespace SmartTutorial.API.Services.Implementations
             await _repository.SaveAll();
         }
 
-        public async Task<IList<SubjectDto>> GetAll()
+        public async Task<IList<Subject>> GetAll()
         {
-            var subjectList = await _repository.GetAll();
-            var subjectDtoList = _mapper.Map<List<SubjectDto>>(subjectList);
-            return subjectDtoList;
+            return await _repository.GetAll();
         }
 
-        public async Task<SubjectDto> GetById(int id)
+        public async Task<Subject> GetById(int id)
         {
             Subject subject = await _repository.GetById(id);
-            SubjectDto dto = _mapper.Map<SubjectDto>(subject);
-            return dto;
+            return subject;
         }
 
-        public async Task Update(int id, AddSubjectDto dto)
+        public async Task<Subject> Update(int id, UpdateSubjectDto dto)
         {
             Subject subject = await _repository.GetById(id);
             if (subject == null)
             {
-                throw new NotFoundException("Subject not found!");
+                return null;
             }
-            _mapper.Map(dto, subject);
+            subject.Name = dto.Name;
+            subject.Complexity = dto.Complexity;
             await _repository.SaveAll();
+            return subject;
         }
-        public async Task UpdateWithDetails(int id, UpdateSubjectDto dto)
+        public async Task<Subject> UpdateWithDetails(int id, UpdateSubjectDto dto)
         {
-
+            Subject subject = await _repository.GetById(id);
+            if (subject == null)
+            {
+                return null;
+            }
+            if (!string.IsNullOrWhiteSpace(dto.Name))
+            {
+                subject.Name = dto.Name;
+            }
+            subject.Complexity = dto.Complexity;
+            await _repository.SaveAll();
+            return subject;
         }
 
     }

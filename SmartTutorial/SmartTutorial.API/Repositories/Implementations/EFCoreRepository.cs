@@ -31,7 +31,7 @@ namespace SmartTutorial.API.Repositories.Implementations
             var entity = await _dbSet.FindAsync(id);
             if(entity == null)
             {
-                throw new Exception($"Object of type {typeof(TEntity)} with id { id } not found");
+                return null;
             }
             _dbSet.Remove(entity);
             return entity;

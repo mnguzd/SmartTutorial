@@ -11,6 +11,7 @@ namespace SmartTutorial.API.Mapping
             CreateMap<Subject, SubjectDto>();
             CreateMap<SubjectDto, Subject>();
             CreateMap<UpdateSubjectDto, Subject>();
+            CreateMap<AddSubjectDto, Subject>();
         }
     }
 }
