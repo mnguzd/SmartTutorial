@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SmartTutorial.API.Infrastucture.Middlewares;
 using SmartTutorial.API.Mapping;
 using SmartTutorial.API.Repositories.Implementations;
 using SmartTutorial.API.Repositories.Interfaces;
@@ -48,6 +49,7 @@ namespace SmartTutorial.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseMiddleware<LongIdMiddleware>();
 
             app.UseHttpsRedirection();
 
