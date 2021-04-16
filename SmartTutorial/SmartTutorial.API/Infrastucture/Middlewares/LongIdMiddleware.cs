@@ -22,7 +22,7 @@ namespace SmartTutorial.API.Infrastucture.Middlewares
             {
                 _logger.LogWarning("Getting information form subjects");
             }
-                await _next.Invoke(context);
+            await _next.Invoke(context);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace SmartTutorial.API
 {
     public class SmartTutorialDbContext : IdentityDbContext<User,Role,int>
     {
+        public DbSet<Theme> Themes { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Question> Questions { get; set; }
@@ -15,7 +16,7 @@ namespace SmartTutorial.API
 
         public SmartTutorialDbContext(DbContextOptions<SmartTutorialDbContext> options):base(options)
         {
-         //   Database.EnsureDeleted();
+          
         }
         
         

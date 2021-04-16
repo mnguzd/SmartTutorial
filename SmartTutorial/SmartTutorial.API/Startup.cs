@@ -31,8 +31,21 @@ namespace SmartTutorial.API
             services.AddControllers();
             services.AddScoped(typeof(IGenericRepository<>), typeof(EFCoreRepository<>));
             services.AddScoped<ISubjectService, SubjectService>();
+            services.AddScoped<IThemeService, ThemeService>();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddSwaggerGen();
+            services.AddCors(options =>
+            {
+                // this defines a CORS policy called "default"
+                options.AddPolicy("default", policy =>
+                {
+
+                    policy.AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowAnyOrigin()
+                          .WithExposedHeaders("Location");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,11 +62,12 @@ namespace SmartTutorial.API
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseMiddleware<LongIdMiddleware>();
+       //     app.UseMiddleware<LongIdMiddleware>();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors("default");
 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -291,9 +291,40 @@ namespace SmartTutorial.API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("ThemeId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("ThemeId");
+
                     b.ToTable("Subjects");
+                });
+
+            modelBuilder.Entity("SmartTutorial.Domain.Theme", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Themes");
                 });
 
             modelBuilder.Entity("SmartTutorial.Domain.Topic", b =>
@@ -399,6 +430,17 @@ namespace SmartTutorial.API.Migrations
                     b.Navigation("Topic");
                 });
 
+            modelBuilder.Entity("SmartTutorial.Domain.Subject", b =>
+                {
+                    b.HasOne("SmartTutorial.Domain.Theme", "Theme")
+                        .WithMany("Subjects")
+                        .HasForeignKey("ThemeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Theme");
+                });
+
             modelBuilder.Entity("SmartTutorial.Domain.Topic", b =>
                 {
                     b.HasOne("SmartTutorial.Domain.Subject", "Subject")
@@ -418,6 +460,11 @@ namespace SmartTutorial.API.Migrations
             modelBuilder.Entity("SmartTutorial.Domain.Subject", b =>
                 {
                     b.Navigation("Topics");
+                });
+
+            modelBuilder.Entity("SmartTutorial.Domain.Theme", b =>
+                {
+                    b.Navigation("Subjects");
                 });
 
             modelBuilder.Entity("SmartTutorial.Domain.Topic", b =>

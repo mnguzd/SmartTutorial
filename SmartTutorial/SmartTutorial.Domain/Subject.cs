@@ -13,5 +13,8 @@ namespace SmartTutorial.Domain
         public int Complexity { get; set; }
         public DateTime Date { get; set; }
         public virtual List<Topic> Topics { get; set; }
+
+        public virtual int ThemeId { get; set; }
+        public virtual Theme Theme { get; set; }
     }
 }

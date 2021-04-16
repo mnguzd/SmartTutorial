@@ -11,12 +11,12 @@ namespace SmartTutorial.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SubjectController : ControllerBase
+    public class SubjectsController : ControllerBase
     {
         private readonly ISubjectService _subjectService;
         private readonly IMapper _mapper;
 
-        public SubjectController(ISubjectService subjectService,IMapper mapper)
+        public SubjectsController(ISubjectService subjectService,IMapper mapper)
         {
             _subjectService = subjectService;
             _mapper = mapper;

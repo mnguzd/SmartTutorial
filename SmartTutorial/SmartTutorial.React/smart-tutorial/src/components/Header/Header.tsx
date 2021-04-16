@@ -13,10 +13,12 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { Link } from "react-router-dom";
+import ThemesMenu from "./ThemesMenu";
+import EqualizerIcon from '@material-ui/icons/Equalizer';
 
 interface Props {
-    children?: React.ReactElement;
-  }
+  children?: React.ReactElement;
+}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,12 +26,13 @@ const useStyles = makeStyles((theme) => ({
     bottom: theme.spacing(2),
     right: theme.spacing(2),
   },
-  noDecoration:{
-      textDecoration:'none'
-  }
+  noDecoration: {
+    textDecoration: "none",
+    marginRight:theme.spacing(2),
+  },
 }));
 
-function HideOnScroll(props:Props) {
+function HideOnScroll(props: Props) {
   const { children } = props;
   const trigger = useScrollTrigger();
   return (
@@ -38,15 +41,15 @@ function HideOnScroll(props:Props) {
     </Slide>
   );
 }
-function ScrollTop(props:Props) {
+function ScrollTop(props: Props) {
   const { children } = props;
   const classes = useStyles();
   const trigger = useScrollTrigger();
 
-  const handleClick = (event:React.MouseEvent<HTMLDivElement>) => {
-    const anchor = ((event.target as HTMLDivElement).ownerDocument || document).querySelector(
-      "#back-to-top-anchor"
-    );
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    const anchor = (
+      (event.target as HTMLDivElement).ownerDocument || document
+    ).querySelector("#back-to-top-anchor");
 
     if (anchor) {
       anchor.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -61,19 +64,28 @@ function ScrollTop(props:Props) {
     </Zoom>
   );
 }
-const Header=(props:Props)=> {
-    const classes = useStyles();
+const Header = (props: Props) => {
+  const classes = useStyles();
   return (
     <React.Fragment>
       <CssBaseline />
       <HideOnScroll {...props}>
         <AppBar>
           <Toolbar>
-            <Box display="flex" flexGrow={1}>
-              <Typography className={classes.noDecoration} component={Link} to="/" color="inherit">
-                Smart Tutorial
+            <Box display="flex" flexGrow={1}  justifyItems="center" alignItems="center">
+              <Typography
+                className={classes.noDecoration}
+                component={Link}
+                to="/"
+                color="inherit"
+                variant="h6"
+              >
+                WebTutor
               </Typography>
+              <EqualizerIcon fontSize="large"/>
             </Box>
+            <ThemesMenu/>
+            <Box ml={4}>
             <Button
               component={Link}
               to="/signin"
@@ -82,6 +94,7 @@ const Header=(props:Props)=> {
             >
               Sign in
             </Button>
+            </Box>
           </Toolbar>
         </AppBar>
       </HideOnScroll>
@@ -93,5 +106,5 @@ const Header=(props:Props)=> {
       </ScrollTop>
     </React.Fragment>
   );
-}
+};
 export default Header;

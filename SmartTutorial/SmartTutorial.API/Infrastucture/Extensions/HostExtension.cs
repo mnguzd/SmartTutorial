@@ -17,7 +17,7 @@ namespace SmartTutorial.API.Infrastucture.Extensions
                 try
                 {
                     var context = services.GetRequiredService<SmartTutorialDbContext>();
-                    context.Database.Migrate();
+                 //   context.Database.Migrate();
                     await Seed.SeedSubjects(context);
                     await Seed.SeedTopics(context);
                 }
