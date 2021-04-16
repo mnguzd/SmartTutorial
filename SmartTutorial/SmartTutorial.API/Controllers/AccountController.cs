@@ -21,11 +21,13 @@ namespace SmartTutorial.API.Controllers
     {
         private readonly AuthOptions _authenticationOptions;
         private readonly SignInManager<User> _signInManager;
+        private readonly UserManager<User> _userManager;
 
-        public AccountController(IOptions<AuthOptions> authenticationOptions, SignInManager<User> signInManager)
+        public AccountController(IOptions<AuthOptions> authenticationOptions, SignInManager<User> signInManager,UserManager<User> userManager)
         {
             _authenticationOptions = authenticationOptions.Value;
             _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         [AllowAnonymous]
@@ -50,9 +52,29 @@ namespace SmartTutorial.API.Controllers
                 var encodedToken = tokenHandler.WriteToken(jwtSecurityToken);
 
                 return Ok(new { AccessToken = encodedToken });
-            }
-
+            }  
             return Unauthorized();
+        }
+        [AllowAnonymous]
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
+        {
+            var userFound = await _userManager.FindByEmailAsync(userForRegisterDto.Email);
+            if (userFound != null)
+            {
+                ModelState.AddModelError("null", "User already exists!");
+            }
+            User user = new User()
+            {
+                Email = userForRegisterDto.Email,
+                UserName = userForRegisterDto.FirstName + userForRegisterDto.LastName
+            };
+            var result = await _userManager.CreateAsync(user, userForRegisterDto.Password);
+            if (!result.Succeeded)
+            {
+                ModelState.AddModelError("error", "Something went wrong!");
+            }
+            return CreatedAtAction("Register",result);
         }
     }
 }

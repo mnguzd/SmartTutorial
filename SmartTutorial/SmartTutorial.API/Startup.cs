@@ -29,7 +29,9 @@ namespace SmartTutorial.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<SmartTutorialDbContext>(optionBuilder => optionBuilder.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("SmartTutorialConnection")));
-            services.AddIdentity<User, Role>(options => options.Password.RequiredLength = 8).AddEntityFrameworkStores<SmartTutorialDbContext>();
+            services.AddIdentity<User, Role>(options => { options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = false;
+            }).AddEntityFrameworkStores<SmartTutorialDbContext>();
             var authOptions = services.ConfigureAuthOptions(Configuration);
             services.AddJwtAuthentication(authOptions);
             services.AddControllers(

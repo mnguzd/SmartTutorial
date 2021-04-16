@@ -10,6 +10,7 @@ namespace SmartTutorial.API.Dtos.UserDtos
         public string Username { get; set; }
 
         [Required]
+        [StringLength(80)]
         [MinLength(8)]
         public string Password { get; set; }
     }
