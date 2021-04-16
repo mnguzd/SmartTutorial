@@ -2,13 +2,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { webAPIUrl } from "../AppSettings";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
-import classes from "*.module.css";
 import ThemeCard from "../components/Theme/ThemeCard";
 import { IThemeData } from "../data/ThemeData";
+import Footer from "../components/Footer/Footer";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -43,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function HomePage() {
   const [data, setData] = useState<IThemeData[]>([]);
-  const [error, setError] = useState<string>("");
   const classes = useStyles();
   useEffect(() => {
     axios
@@ -54,9 +52,6 @@ export default function HomePage() {
       })
       .then((response) => {
         setData(response.data);
-      })
-      .catch((ex) => {
-        setError(ex);
       });
   }, []);
 
@@ -87,6 +82,7 @@ export default function HomePage() {
           ))}
         </Grid>
       </Container>
+      <Footer/>
     </div>
   );
 }

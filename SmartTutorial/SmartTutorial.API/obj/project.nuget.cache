@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "iFUL2Md4ElC/wa8reoBVVfghZR344OEcnoBlVx60krJ9dMD87+PeazymBp/JGkthXWp+LXdao5bACIpy4bMrSA==",
+  "dgSpecHash": "2H5aWb/f5FS4TI0CoY/Up6BBiUKOGQ18eR7CE8ZQcxsypqxGAkCzoI4ZIPjJMQDrxcTPnq6uFDPR4ySalspqOQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\roman\\Desktop\\SmartTutorial\\SmartTutorial\\SmartTutorial.API\\SmartTutorial.API.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,7 @@
     "C:\\Users\\roman\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",
     "C:\\Users\\roman\\.nuget\\packages\\castle.core\\4.4.1\\castle.core.4.4.1.nupkg.sha512",
     "C:\\Users\\roman\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
+    "C:\\Users\\roman\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\3.1.0\\microsoft.aspnetcore.authentication.jwtbearer.3.1.0.nupkg.sha512",
     "C:\\Users\\roman\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\5.0.5\\microsoft.aspnetcore.cryptography.internal.5.0.5.nupkg.sha512",
     "C:\\Users\\roman\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\5.0.5\\microsoft.aspnetcore.cryptography.keyderivation.5.0.5.nupkg.sha512",
     "C:\\Users\\roman\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\5.0.5\\microsoft.aspnetcore.identity.entityframeworkcore.5.0.5.nupkg.sha512",

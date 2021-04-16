@@ -21,5 +21,11 @@ namespace SmartTutorial.API.Services.Implementations
         {
             return await _repository.GetAll();
         }
+
+        public Task<Theme> GetWithInclude(int id)
+        {
+            var result = _repository.GetByIdWithInclude(id, x => x.Subjects);
+            return result;
+        }
     }
 }

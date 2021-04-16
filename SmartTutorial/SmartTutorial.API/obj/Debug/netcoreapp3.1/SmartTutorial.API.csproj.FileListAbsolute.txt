@@ -79,3 +79,4 @@ C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\n
 C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
 C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\obj\Debug\netcoreapp3.1\SmartTutorial.API.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll

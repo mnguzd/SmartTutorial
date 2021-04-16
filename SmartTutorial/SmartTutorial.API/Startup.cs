@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SmartTutorial.API.Infrastucture.Extensions;
 using SmartTutorial.API.Infrastucture.Middlewares;
 using SmartTutorial.API.Mapping;
 using SmartTutorial.API.Repositories.Implementations;
@@ -27,25 +29,20 @@ namespace SmartTutorial.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<SmartTutorialDbContext>(optionBuilder => optionBuilder.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("SmartTutorialConnection")));
-            services.AddIdentity<User, Role>().AddEntityFrameworkStores<SmartTutorialDbContext>();
-            services.AddControllers();
+            services.AddIdentity<User, Role>(options => options.Password.RequiredLength = 8).AddEntityFrameworkStores<SmartTutorialDbContext>();
+            var authOptions = services.ConfigureAuthOptions(Configuration);
+            services.AddJwtAuthentication(authOptions);
+            services.AddControllers(
+                options =>
+                {
+                    options.Filters.Add(new AuthorizeFilter());
+                }
+                );
             services.AddScoped(typeof(IGenericRepository<>), typeof(EFCoreRepository<>));
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<IThemeService, ThemeService>();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddSwaggerGen();
-            services.AddCors(options =>
-            {
-                // this defines a CORS policy called "default"
-                options.AddPolicy("default", policy =>
-                {
-
-                    policy.AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .AllowAnyOrigin()
-                          .WithExposedHeaders("Location");
-                });
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,12 +59,12 @@ namespace SmartTutorial.API
             {
                 app.UseDeveloperExceptionPage();
             }
-       //     app.UseMiddleware<LongIdMiddleware>();
+            //     app.UseMiddleware<LongIdMiddleware>();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseCors("default");
+            app.UseCors(configurePolicy=>configurePolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseAuthentication();
             app.UseAuthorization();
