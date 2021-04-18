@@ -30,6 +30,7 @@ export default function ThemesMenu() {
           component={Link}
           to={"/themes/" + theme.id}
           color="inherit"
+          key={theme.id}
           endIcon={<ArrowDropDownIcon/>}
         >
           {theme.name}

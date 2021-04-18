@@ -1,11 +1,10 @@
-import { FC, useState, Fragment, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { IThemeDataWithSubjects } from "../data/ThemeData";
 import axios from "axios";
 import { webAPIUrl } from "../AppSettings";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import FolderIcon from "@material-ui/icons/Folder";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
