@@ -8,8 +8,11 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { Controller, useForm } from "react-hook-form/";
 import Container from "@material-ui/core/Container";
+import { useHistory } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useAuth } from "../auth/Auth";
+import { useEffect } from "react";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -31,17 +34,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const schema = yup.object().shape({
-  firstName: yup
+  username: yup
     .string()
-    .max(20, "Your firstname is longer than 20 characters")
-    .min(4, "Your firstname is shorter than 4 characters")
-    .required("Enter your firstname"),
-  lastName: yup
-    .string()
-    .max(20, "Your firstname is longer than 20 characters")
-    .min(4, "Your firstname is shorter than 4 characters")
-    .required("Enter your firstname"),
-  emailAdress: yup
+    .max(20, "Your username is longer than 20 characters")
+    .min(4, "Your username is shorter than 4 characters")
+    .required("Enter your username"),
+  email: yup
     .string()
     .required("Enter your email")
     .email("Email is not correct"),
@@ -55,20 +53,36 @@ const schema = yup.object().shape({
     .oneOf([yup.ref("password")], "Passwords must match"),
 });
 interface IFormInputs {
-  firstName: string;
-  lastName: string;
-  emailAdress: string;
+  username: string;
+  email: string;
   password: string;
   passwordConfirm: string;
 }
 export default function SignUp() {
   const classes = useStyles();
+
+  const { isAuthenticated, signUp } = useAuth();
+
+  const history = useHistory();
+
   const {
     register,
     control,
     formState: { errors },
+    setValue,
+    handleSubmit,
   } = useForm<IFormInputs>({ mode: "onBlur", resolver: yupResolver(schema) });
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      history.push('/');
+    }
+  }, [isAuthenticated, history]);
+  function onSubmit(data: IFormInputs) {
+    signUp(data);
+    console.log(data);
+    history.push('/signin');
+  }
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -77,44 +91,26 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form
+          className={classes.form}
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12}>
               <Controller
                 control={control}
-                name="firstName"
-                rules={{
-                  required: true,
-                }}
+                name="username"
                 render={() => (
                   <TextField
                     variant="outlined"
                     fullWidth
-                    id="firstName"
-                    label="First Name"
-                    {...register("firstName", { required: true })}
-                    error={errors.firstName !== undefined}
-                    helperText={errors?.firstName?.message}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <Controller
-                control={control}
-                name="lastName"
-                rules={{
-                  required: true,
-                }}
-                render={() => (
-                  <TextField
-                    variant="outlined"
-                    fullWidth
-                    id="lastName"
-                    label="Last Name"
-                    {...register("lastName", { required: true })}
-                    error={errors.lastName !== undefined}
-                    helperText={errors?.lastName?.message}
+                    id="username"
+                    label="Username"
+                    {...register("username", { required: true })}
+                    error={errors.username !== undefined}
+                    helperText={errors?.username?.message}
+                    onChange={(e) => setValue("username", e.target.value)}
                   />
                 )}
               />
@@ -122,19 +118,17 @@ export default function SignUp() {
             <Grid item xs={12}>
               <Controller
                 control={control}
-                name="emailAdress"
-                rules={{
-                  required: true,
-                }}
+                name="email"
                 render={() => (
                   <TextField
                     variant="outlined"
                     fullWidth
                     id="email"
                     label="Email Address"
-                    {...register("emailAdress", { required: true })}
-                    error={errors.emailAdress !== undefined}
-                    helperText={errors?.emailAdress?.message}
+                    {...register("email", { required: true })}
+                    error={errors.email !== undefined}
+                    helperText={errors?.email?.message}
+                    onChange={(e) => setValue("email", e.target.value)}
                   />
                 )}
               />
@@ -143,9 +137,6 @@ export default function SignUp() {
               <Controller
                 control={control}
                 name="password"
-                rules={{
-                  required: true,
-                }}
                 render={() => (
                   <TextField
                     variant="outlined"
@@ -156,6 +147,7 @@ export default function SignUp() {
                     {...register("password", { required: true })}
                     error={errors.password !== undefined}
                     helperText={errors?.password?.message}
+                    onChange={(e) => setValue("password", e.target.value)}
                   />
                 )}
               />
@@ -164,9 +156,6 @@ export default function SignUp() {
               <Controller
                 control={control}
                 name="passwordConfirm"
-                rules={{
-                  required: true,
-                }}
                 render={() => (
                   <TextField
                     variant="outlined"
@@ -177,6 +166,7 @@ export default function SignUp() {
                     {...register("passwordConfirm", { required: true })}
                     error={!!errors.passwordConfirm}
                     helperText={errors?.passwordConfirm?.message}
+                    onChange={(e) => setValue("password", e.target.value)}
                   />
                 )}
               />

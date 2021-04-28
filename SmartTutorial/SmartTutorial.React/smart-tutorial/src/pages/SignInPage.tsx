@@ -8,7 +8,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { Controller, useForm } from "react-hook-form/";
 import StyledLink from "../Styled";
-import UserForLogin from "../data/UserForLogin";
 import { useHistory } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "../auth/Auth";
@@ -39,13 +38,18 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
   },
   form: {
-    width: "100%", // Fix IE 11 issue.
+    width: "100%",
     marginTop: theme.spacing(1),
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
 }));
+
+interface IFormInputs{
+  username:string;
+  password:string;
+}
 
 export default function SignIn() {
   const { logIn, isAuthenticated } = useAuth();
@@ -59,15 +63,14 @@ export default function SignIn() {
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm<UserForLogin>({
+  } = useForm<IFormInputs>({
     mode: "onBlur",
     resolver: yupResolver(schema),
-    defaultValues: { username: "", password: "" },
   });
 
-  const onSubmit = (data: UserForLogin) => {
+  function onSubmit(data: IFormInputs) {
     logIn(data);
-  };
+  }
 
   useEffect(() => {
     if (isAuthenticated) {

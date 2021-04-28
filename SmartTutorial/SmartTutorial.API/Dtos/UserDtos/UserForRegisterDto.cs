@@ -5,14 +5,9 @@ namespace SmartTutorial.API.Dtos.UserDtos
     public class UserForRegisterDto
     {
         [Required]
-        [MaxLength(20)]
+        [StringLength(20)]
         [MinLength(4)]
-        public string FirstName { get; set; }
-
-        [Required]
-        [MaxLength(20)]
-        [MinLength(4)]
-        public string LastName { get; set; }
+        public string Username { get; set; }
 
         [Required]
         [EmailAddress]

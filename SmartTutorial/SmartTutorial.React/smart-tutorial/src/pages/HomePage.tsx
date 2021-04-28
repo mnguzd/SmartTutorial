@@ -8,6 +8,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import ThemeCard from "../components/Theme/ThemeCard";
 import { IThemeData } from "../data/ThemeData";
 import Footer from "../components/Footer/Footer";
+import ProgressCircle from "../components/ProgressCircle";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -42,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function HomePage() {
   const [data, setData] = useState<IThemeData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const classes = useStyles();
   useEffect(() => {
     axios
@@ -52,6 +54,7 @@ export default function HomePage() {
       })
       .then((response) => {
         setData(response.data);
+        setLoading(false);
       });
   }, []);
 
@@ -74,15 +77,19 @@ export default function HomePage() {
         </Typography>
       </Container>
       <Container className={classes.cardGrid} maxWidth="md">
-        <Grid container spacing={4}>
-          {data.map((theme) => (
+        {loading ? (
+          <ProgressCircle/>
+        ) : (
+          <Grid container spacing={4}>
+            {data.map((theme) => (
               <Grid item key={theme.id} xs={12} sm={6} md={4}>
-            <ThemeCard {...theme} />
-            </Grid>
-          ))}
-        </Grid>
+                <ThemeCard {...theme} />
+              </Grid>
+            ))}
+          </Grid>
+        )}
       </Container>
-      <Footer/>
+      <Footer />
     </div>
   );
 }

@@ -39,8 +39,6 @@ namespace SmartTutorial.API.Controllers
             if (checkingPasswordResult.Succeeded)
             {
                 var signinCredentials = new SigningCredentials(_authenticationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256);
-                var ClaimUserName = new Claim(ClaimsIdentity.DefaultNameClaimType, userForLoginDto.Username);
-                var Claims = new List<Claim>() { ClaimUserName };
                 var jwtSecurityToken = new JwtSecurityToken(
                      issuer: _authenticationOptions.Issuer,
                      audience: _authenticationOptions.Audience,
@@ -69,7 +67,7 @@ namespace SmartTutorial.API.Controllers
             User user = new User()
             {
                 Email = userForRegisterDto.Email,
-                UserName = userForRegisterDto.FirstName + userForRegisterDto.LastName
+                UserName = userForRegisterDto.Username,
             };
             var result = await _userManager.CreateAsync(user, userForRegisterDto.Password);
             if (!result.Succeeded)
