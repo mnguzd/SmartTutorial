@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Exceptions;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Controllers
 {
+    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class SubjectsController : ControllerBase
@@ -16,7 +18,7 @@ namespace SmartTutorial.API.Controllers
         private readonly ISubjectService _subjectService;
         private readonly IMapper _mapper;
 
-        public SubjectsController(ISubjectService subjectService,IMapper mapper)
+        public SubjectsController(ISubjectService subjectService, IMapper mapper)
         {
             _subjectService = subjectService;
             _mapper = mapper;
@@ -64,7 +66,7 @@ namespace SmartTutorial.API.Controllers
 
         [HttpPatch("{id}")]
         [ApiExceptionFilter]
-        public async Task<IActionResult> Patch(int id, [FromBody] UpdateSubjectDto dto)
+        public async Task<IActionResult> Patch(int id, [FromBody] PatchSubjectDto dto)
         {
             Subject subject = await _subjectService.UpdateWithDetails(id, dto);
             if (subject == null)

@@ -18,7 +18,7 @@ namespace SmartTutorial.API.Services.Implementations
 
         public async Task<Subject> Add(AddSubjectDto dto)
         {
-            Subject subject = new Subject() { Complexity = dto.Complexity, Name = dto.Name };
+            Subject subject = new Subject() { Complexity = dto.Complexity, Name = dto.Name,ThemeId=dto.ThemeId };
             await _repository.Add(subject);
             await _repository.SaveAll();
             return subject;
@@ -53,7 +53,7 @@ namespace SmartTutorial.API.Services.Implementations
             await _repository.SaveAll();
             return subject;
         }
-        public async Task<Subject> UpdateWithDetails(int id, UpdateSubjectDto dto)
+        public async Task<Subject> UpdateWithDetails(int id, PatchSubjectDto dto)
         {
             Subject subject = await _repository.GetById(id);
             if (subject == null)
@@ -64,7 +64,10 @@ namespace SmartTutorial.API.Services.Implementations
             {
                 subject.Name = dto.Name;
             }
-            subject.Complexity = dto.Complexity;
+            if (dto.Complexity != null)
+            {
+                subject.Complexity = (int)dto.Complexity;
+            }
             await _repository.SaveAll();
             return subject;
         }
