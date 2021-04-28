@@ -15,6 +15,8 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { Link } from "react-router-dom";
 import ThemesMenu from "./ThemesMenu";
 import EqualizerIcon from '@material-ui/icons/Equalizer';
+import {useAuth} from "../../auth/Auth";
+
 
 interface Props {
   children?: React.ReactElement;
@@ -66,6 +68,7 @@ function ScrollTop(props: Props) {
 }
 const Header = (props: Props) => {
   const classes = useStyles();
+  const {user , isAuthenticated} = useAuth();
   return (
     <React.Fragment>
       <CssBaseline />
@@ -86,14 +89,24 @@ const Header = (props: Props) => {
             </Box>
             <ThemesMenu/>
             <Box ml={4}>
+              {isAuthenticated?(
             <Button
               component={Link}
               to="/signin"
               color="inherit"
               startIcon={<AccountCircleIcon />}
             >
-              Sign in
+              {user?.username}
+            </Button>):(
+              <Button
+              component={Link}
+              to="/signin"
+              color="inherit"
+              startIcon={<AccountCircleIcon />}
+            >
+              Sign In
             </Button>
+            )}
             </Box>
           </Toolbar>
         </AppBar>

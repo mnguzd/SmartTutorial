@@ -39,13 +39,15 @@ namespace SmartTutorial.API.Controllers
             if (checkingPasswordResult.Succeeded)
             {
                 var signinCredentials = new SigningCredentials(_authenticationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256);
+                var ClaimUserName = new Claim(ClaimsIdentity.DefaultNameClaimType, userForLoginDto.Username);
+                var Claims = new List<Claim>() { ClaimUserName };
                 var jwtSecurityToken = new JwtSecurityToken(
                      issuer: _authenticationOptions.Issuer,
                      audience: _authenticationOptions.Audience,
-                     claims: new List<Claim>(),
                      expires: DateTime.Now.AddDays(30),
                      signingCredentials: signinCredentials
                 );
+                jwtSecurityToken.Payload["username"] = userForLoginDto.Username;
 
                 var tokenHandler = new JwtSecurityTokenHandler();
 

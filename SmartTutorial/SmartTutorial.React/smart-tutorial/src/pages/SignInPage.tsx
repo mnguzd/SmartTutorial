@@ -8,11 +8,15 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { Controller, useForm } from "react-hook-form/";
 import StyledLink from "../Styled";
+import UserForLogin from "../data/UserForLogin";
+import { useHistory } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useAuth } from "../auth/Auth";
 import * as yup from "yup";
+import { useEffect } from "react";
 
 const schema = yup.object().shape({
-  userName: yup
+  username: yup
     .string()
     .max(20, "Your username is longer than 20 characters")
     .min(4, "Your username is shorter than 4 characters")
@@ -43,18 +47,34 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface IFormInputs {
-  userName: string;
-  password: string;
-}
-
 export default function SignIn() {
+  const { logIn, isAuthenticated } = useAuth();
+
+  const history = useHistory();
+
   const classes = useStyles();
   const {
     register,
     control,
+    handleSubmit,
     formState: { errors },
-  } = useForm<IFormInputs>({ mode: "onBlur", resolver: yupResolver(schema) });
+    setValue,
+  } = useForm<UserForLogin>({
+    mode: "onBlur",
+    resolver: yupResolver(schema),
+    defaultValues: { username: "", password: "" },
+  });
+
+  const onSubmit = (data: UserForLogin) => {
+    logIn(data);
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      history.push("/");
+    }
+  }, [isAuthenticated, history]);
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -63,32 +83,31 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form
+          className={classes.form}
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <Controller
             control={control}
-            name="userName"
-            rules={{
-              required: true,
-            }}
+            name="username"
             render={() => (
               <TextField
                 variant="outlined"
                 margin="normal"
                 fullWidth
-                id="userName"
+                id="username"
                 label="Username"
-                {...register("userName", { required: true })}
-                error={errors.userName !== undefined}
-                helperText={errors?.userName?.message}
+                {...register("username", { required: true })}
+                error={errors.username !== undefined}
+                helperText={errors?.username?.message}
+                onChange={(e) => setValue("username", e.target.value)}
               />
             )}
           />
           <Controller
             control={control}
             name="password"
-            rules={{
-              required: true,
-            }}
             render={() => (
               <TextField
                 variant="outlined"
@@ -100,6 +119,7 @@ export default function SignIn() {
                 {...register("password", { required: true })}
                 error={errors.password !== undefined}
                 helperText={errors?.password?.message}
+                onChange={(e) => setValue("password", e.target.value)}
               />
             )}
           />
