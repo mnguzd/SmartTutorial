@@ -9,21 +9,25 @@ import ThemePage from "./pages/ThemePage";
 import { AuthProvider } from "./auth/Auth";
 import LogOut from "./pages/LogOutPage";
 import NotFound from "./pages/NotFoundPage";
+import { ThemeProvider } from "@material-ui/core";
+import MainTheme from "./themes/MainTheme";
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Header />
-        <Switch>
-          <Redirect from="/home" to="/" />
-          <Route exact path="/" component={HomePage} />
-          <Route path="/SignIn" component={SignIn} />
-          <Route path="/SignUp" component={SignUp} />
-          <Route path="/Themes/:themeId" component={ThemePage} />
-          <Route path="/LogOut" component={LogOut} />
-          <Route component={NotFound} />
-        </Switch>
+        <ThemeProvider theme={MainTheme}>
+          <Header />
+          <Switch>
+            <Redirect from="/home" to="/" />
+            <Route exact path="/" component={HomePage} />
+            <Route path="/SignIn" component={SignIn} />
+            <Route path="/SignUp" component={SignUp} />
+            <Route path="/Themes/:themeId" component={ThemePage} />
+            <Route path="/LogOut" component={LogOut} />
+            <Route component={NotFound} />
+          </Switch>
+        </ThemeProvider>
       </BrowserRouter>
     </AuthProvider>
   );

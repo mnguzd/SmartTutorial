@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { webAPIUrl } from "../AppSettings";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
@@ -10,13 +8,13 @@ import { IThemeData } from "../data/ThemeData";
 import Footer from "../components/Footer/Footer";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";
+import { getThemes } from "../api/ThemesApi";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
     marginRight: theme.spacing(2),
   },
   heroContent: {
-    backgroundColor: theme.palette.background.paper,
     padding: theme.spacing(8, 0, 0),
   },
   heroButtons: {
@@ -32,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
   },
   cardMedia: {
-    paddingTop: "56.25%", // 16:9
+    paddingTop: "56.25%",
   },
   cardContent: {
     flexGrow: 1,
@@ -43,20 +41,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function HomePage() {
+  const classes = useStyles();
+
   const [data, setData] = useState<IThemeData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const classes = useStyles();
+
   useEffect(() => {
-    axios
-      .get<IThemeData[]>(webAPIUrl + "/themes", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        setData(response.data);
-        setLoading(false);
-      });
+    const getThemesAsync = async () => {
+      setLoading(true);
+      const themes = await getThemes();
+      setData(themes);
+      setLoading(false);
+    };
+    getThemesAsync();
   }, []);
 
   return (

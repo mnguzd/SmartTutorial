@@ -12,7 +12,6 @@ import Divider from '@material-ui/core/Divider';
 const useStyles = makeStyles((theme) => ({
   footer: {
     padding:theme.spacing(5,0,5,0),
-    backgroundColor: theme.palette.background.paper,
   },
   text: {
     padding: theme.spacing(4, 0, 0, 0),

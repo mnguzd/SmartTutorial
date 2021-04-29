@@ -1,8 +1,6 @@
 import { FC, useState, useEffect } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { IThemeDataWithSubjects } from "../data/ThemeData";
-import axios from "axios";
-import { webAPIUrl } from "../AppSettings";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import FolderIcon from "@material-ui/icons/Folder";
@@ -14,6 +12,7 @@ import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";
+import { getThemeWithSubjects } from "../api/ThemesApi";
 
 interface IRouteParams {
   themeId: string;
@@ -30,22 +29,19 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const classes = useStyles();
   useEffect(() => {
-    if (match.params.themeId) {
-      const ID: number = Number(match.params.themeId);
-      axios
-        .get<IThemeDataWithSubjects>(webAPIUrl + "/themes/" + ID.toString(), {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-        .then((response) => {
-          setTheme(response.data);
-          setLoading(false);
-        });
-    }
+    const getThemeAsync = async () => {
+      setLoading(true);
+      if (match.params.themeId) {
+        const ID: number = Number(match.params.themeId);
+        const theme = await getThemeWithSubjects(ID);
+        setTheme(theme);
+      }
+      setLoading(false);
+    };
+    getThemeAsync();
   }, [match.params.themeId]);
   return (
-    <Page title={'Theme | '+theme?.name}>
+    <Page title={"Theme | " + theme?.name}>
       <Container maxWidth="sm">
         <Grid
           container

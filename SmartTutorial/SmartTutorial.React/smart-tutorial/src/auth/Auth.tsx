@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useContext,
-  createContext,
-  FC,
-  useEffect,
-} from "react";
+import { useState, useContext, createContext, FC, useEffect } from "react";
 import { webAPIUrl } from "../AppSettings";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
@@ -25,6 +19,10 @@ interface IAuthContext {
   logIn: (user: IUserForLogin) => void;
   logOut: () => void;
   signUp: (user: IUserForRegister) => void;
+  getRememberedInfo: () => IRememberedInfo;
+}
+interface IRememberedInfo {
+  username: string;
 }
 export const AuthContext = createContext<IAuthContext>({
   isAuthenticated: false,
@@ -32,6 +30,9 @@ export const AuthContext = createContext<IAuthContext>({
   logIn: () => {},
   logOut: () => {},
   signUp: () => {},
+  getRememberedInfo: () => {
+    return { username: "" };
+  },
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -41,12 +42,21 @@ export const AuthProvider: FC = ({ children }) => {
   const [user, setUser] = useState<IUser | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useLocalStorage<string>("token", "");
+  const [storedUsername, setStoredUsername] = useLocalStorage<string>(
+    "username",
+    ""
+  );
 
-  async function logIn(user: IUserForLogin) {
+  function getRememberedInfo(): IRememberedInfo {
+    return { username: storedUsername };
+  }
+
+  async function logIn(data: IUserForLogin) {
     await axios
       .post<IAuthToken>(webAPIUrl + "/account/login", {
-        username: user.username,
-        password: user.password,
+        username: data.username,
+        password: data.password,
+        remember: data.remember,
       })
       .then((res) => {
         const token = res.data.accessToken;
@@ -55,6 +65,11 @@ export const AuthProvider: FC = ({ children }) => {
           const userData: IUser = jwt_decode(token);
           setUser(userData);
           setIsAuthenticated(true);
+          if (data.remember && userData) {
+            setStoredUsername(userData.username);
+          } else {
+            setStoredUsername("");
+          }
           setLoading(false);
         }
       })
@@ -110,6 +125,7 @@ export const AuthProvider: FC = ({ children }) => {
         logIn: logIn,
         logOut: logOut,
         signUp: signUp,
+        getRememberedInfo: getRememberedInfo,
       }}
     >
       {children}

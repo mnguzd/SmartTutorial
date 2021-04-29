@@ -1,5 +1,5 @@
 import Button from "@material-ui/core/Button";
-import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
@@ -7,6 +7,8 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { Controller, useForm } from "react-hook-form/";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Checkbox from "@material-ui/core/Checkbox";
 import StyledLink from "../components/StyledLink";
 import { useHistory } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -21,6 +23,7 @@ const schema = yup.object().shape({
     .max(20, "Your username is longer than 20 characters")
     .min(4, "Your username is shorter than 4 characters")
     .required("Enter your username"),
+  remember: yup.boolean(),
   password: yup
     .string()
     .max(80, "Your password is longer than 80 characters")
@@ -47,13 +50,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface IFormInputs{
-  username:string;
-  password:string;
+interface IFormInputs {
+  username: string;
+  password: string;
+  remember: boolean;
 }
 
 export default function SignIn() {
-  const { logIn, isAuthenticated } = useAuth();
+  const { logIn, isAuthenticated, getRememberedInfo } = useAuth();
 
   const history = useHistory();
 
@@ -81,75 +85,98 @@ export default function SignIn() {
 
   return (
     <Page title="WebTutor | Sign in">
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <AssignmentIndIcon className={classes.avatar} fontSize="large" />
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
-        <form
-          className={classes.form}
-          noValidate
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <Controller
-            control={control}
-            name="username"
-            render={() => (
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                id="username"
-                label="Username"
-                {...register("username", { required: true })}
-                error={errors.username !== undefined}
-                helperText={errors?.username?.message}
-                onChange={(e) => setValue("username", e.target.value)}
-              />
-            )}
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <LockOpenIcon
+            className={classes.avatar}
+            fontSize="large"
           />
-          <Controller
-            control={control}
-            name="password"
-            render={() => (
-              <TextField
-                variant="outlined"
-                margin="normal"
-                fullWidth
-                label="Password"
-                type="password"
-                id="password"
-                {...register("password", { required: true })}
-                error={errors.password !== undefined}
-                helperText={errors?.password?.message}
-                onChange={(e) => setValue("password", e.target.value)}
-              />
-            )}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+          <form
+            className={classes.form}
+            noValidate
+            onSubmit={handleSubmit(onSubmit)}
           >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <StyledLink to={"/"}>Forgot password?</StyledLink>
+            <Controller
+              control={control}
+              name="username"
+              defaultValue={getRememberedInfo().username}
+              render={() => (
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="username"
+                  label="Username"
+                  defaultValue={getRememberedInfo().username}
+                  {...register("username", { required: true })}
+                  error={errors.username !== undefined}
+                  helperText={errors?.username?.message}
+                  onChange={(e) => setValue("username", e.target.value)}
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="password"
+              render={() => (
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  label="Password"
+                  type="password"
+                  id="password"
+                  {...register("password", { required: true })}
+                  error={errors.password !== undefined}
+                  helperText={errors?.password?.message}
+                  onChange={(e) => setValue("password", e.target.value)}
+                />
+              )}
+            />
+            <FormControlLabel
+              label="Remember me"
+              control={
+                <Controller
+                  name="remember"
+                  control={control}
+                  defaultValue={true}
+                  render={() => (
+                    <Checkbox
+                      id="remember"
+                      defaultChecked={true}
+                      {...register("remember")}
+                      onChange={(e) => setValue("remember", e.target.checked)}
+                    />
+                  )}
+                />
+              }
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Sign In
+            </Button>
+            <Grid container>
+              <Grid item xs>
+                <StyledLink to={"/"}>Forgot password?</StyledLink>
+              </Grid>
+              <Grid item>
+                <StyledLink to={"/signup"}>
+                  Don't have an account? Sign Up
+                </StyledLink>
+              </Grid>
             </Grid>
-            <Grid item>
-              <StyledLink to={"/signup"}>
-                Don't have an account? Sign Up
-              </StyledLink>
-            </Grid>
-          </Grid>
-        </form>
-      </div>
-    </Container>
+          </form>
+        </div>
+      </Container>
     </Page>
   );
 }
