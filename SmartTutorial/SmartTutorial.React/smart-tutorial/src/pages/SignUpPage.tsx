@@ -1,7 +1,7 @@
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import StyledLink from "../Styled";
+import StyledLink from "../components/StyledLink";
 import Grid from "@material-ui/core/Grid";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
@@ -13,6 +13,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useAuth } from "../auth/Auth";
 import { useEffect } from "react";
+import Page from "./Page";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -75,121 +76,123 @@ export default function SignUp() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      history.push('/');
+      history.push("/");
     }
   }, [isAuthenticated, history]);
   function onSubmit(data: IFormInputs) {
     signUp(data);
     console.log(data);
-    history.push('/signin');
+    history.push("/signin");
   }
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <LockOutlinedIcon className={classes.avatar} fontSize="large" />
-        <Typography component="h1" variant="h5">
-          Sign up
-        </Typography>
-        <form
-          className={classes.form}
-          noValidate
-          onSubmit={handleSubmit(onSubmit)}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Controller
-                control={control}
-                name="username"
-                render={() => (
-                  <TextField
-                    variant="outlined"
-                    fullWidth
-                    id="username"
-                    label="Username"
-                    {...register("username", { required: true })}
-                    error={errors.username !== undefined}
-                    helperText={errors?.username?.message}
-                    onChange={(e) => setValue("username", e.target.value)}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
-                control={control}
-                name="email"
-                render={() => (
-                  <TextField
-                    variant="outlined"
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    {...register("email", { required: true })}
-                    error={errors.email !== undefined}
-                    helperText={errors?.email?.message}
-                    onChange={(e) => setValue("email", e.target.value)}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
-                control={control}
-                name="password"
-                render={() => (
-                  <TextField
-                    variant="outlined"
-                    fullWidth
-                    label="Password"
-                    type="password"
-                    id="password"
-                    {...register("password", { required: true })}
-                    error={errors.password !== undefined}
-                    helperText={errors?.password?.message}
-                    onChange={(e) => setValue("password", e.target.value)}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <Controller
-                control={control}
-                name="passwordConfirm"
-                render={() => (
-                  <TextField
-                    variant="outlined"
-                    fullWidth
-                    label="Password confirmation"
-                    type="password"
-                    id="passwordConfirm"
-                    {...register("passwordConfirm", { required: true })}
-                    error={!!errors.passwordConfirm}
-                    helperText={errors?.passwordConfirm?.message}
-                    onChange={(e) => setValue("password", e.target.value)}
-                  />
-                )}
-              />
-            </Grid>
-          </Grid>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
+    <Page title="WebTutor | Sign-Up">
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <LockOutlinedIcon className={classes.avatar} fontSize="large" />
+          <Typography component="h1" variant="h5">
+            Sign up
+          </Typography>
+          <form
+            className={classes.form}
+            noValidate
+            onSubmit={handleSubmit(onSubmit)}
           >
-            Sign Up
-          </Button>
-          <Grid container justify="flex-end">
-            <Grid item>
-              <StyledLink to="/signin">
-                Already have an account? Sign in
-              </StyledLink>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Controller
+                  control={control}
+                  name="username"
+                  render={() => (
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      id="username"
+                      label="Username"
+                      {...register("username", { required: true })}
+                      error={errors.username !== undefined}
+                      helperText={errors?.username?.message}
+                      onChange={(e) => setValue("username", e.target.value)}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Controller
+                  control={control}
+                  name="email"
+                  render={() => (
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      id="email"
+                      label="Email Address"
+                      {...register("email", { required: true })}
+                      error={errors.email !== undefined}
+                      helperText={errors?.email?.message}
+                      onChange={(e) => setValue("email", e.target.value)}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Controller
+                  control={control}
+                  name="password"
+                  render={() => (
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      label="Password"
+                      type="password"
+                      id="password"
+                      {...register("password", { required: true })}
+                      error={errors.password !== undefined}
+                      helperText={errors?.password?.message}
+                      onChange={(e) => setValue("password", e.target.value)}
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Controller
+                  control={control}
+                  name="passwordConfirm"
+                  render={() => (
+                    <TextField
+                      variant="outlined"
+                      fullWidth
+                      label="Password confirmation"
+                      type="password"
+                      id="passwordConfirm"
+                      {...register("passwordConfirm", { required: true })}
+                      error={!!errors.passwordConfirm}
+                      helperText={errors?.passwordConfirm?.message}
+                      onChange={(e) => setValue("password", e.target.value)}
+                    />
+                  )}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        </form>
-      </div>
-    </Container>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Sign Up
+            </Button>
+            <Grid container justify="flex-end">
+              <Grid item>
+                <StyledLink to="/signin">
+                  Already have an account? Sign in
+                </StyledLink>
+              </Grid>
+            </Grid>
+          </form>
+        </div>
+      </Container>
+    </Page>
   );
 }

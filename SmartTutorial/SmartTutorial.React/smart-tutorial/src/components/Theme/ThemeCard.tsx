@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import { IThemeData } from "../../data/ThemeData";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardActionArea from "@material-ui/core/CardActionArea";
-import StyledLink from '../../Styled';
+import StyledLink from '../StyledLink';
 const useStyles = makeStyles({
   card: {
     height: "100%",

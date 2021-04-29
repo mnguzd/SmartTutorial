@@ -8,7 +8,7 @@ import React, {
 import { webAPIUrl } from "../AppSettings";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-import { UserForLogin, UserForRegister } from "../data/UserData";
+import { IUserForLogin, IUserForRegister } from "../data/UserData";
 import useLocalStorage from "../hooks/useLocalStorage";
 
 interface IUser {
@@ -22,16 +22,16 @@ interface IAuthContext {
   isAuthenticated: boolean;
   user?: IUser;
   loading: boolean;
-  logIn: (user: UserForLogin) => void;
+  logIn: (user: IUserForLogin) => void;
   logOut: () => void;
-  signUp: (user: UserForRegister) => void;
+  signUp: (user: IUserForRegister) => void;
 }
 export const AuthContext = createContext<IAuthContext>({
   isAuthenticated: false,
   loading: true,
-  logIn: (user: UserForLogin) => {},
+  logIn: () => {},
   logOut: () => {},
-  signUp: (user: UserForRegister) => {},
+  signUp: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -42,7 +42,7 @@ export const AuthProvider: FC = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useLocalStorage<string>("token", "");
 
-  async function logIn(user: UserForLogin) {
+  async function logIn(user: IUserForLogin) {
     await axios
       .post<IAuthToken>(webAPIUrl + "/account/login", {
         username: user.username,
@@ -53,7 +53,6 @@ export const AuthProvider: FC = ({ children }) => {
         if (token) {
           setToken(token);
           const userData: IUser = jwt_decode(token);
-          console.log(userData);
           setUser(userData);
           setIsAuthenticated(true);
           setLoading(false);
@@ -61,22 +60,8 @@ export const AuthProvider: FC = ({ children }) => {
       })
       .catch((err) => console.log(err));
   }
-  useEffect(() => {
-    setLoading(true);
-    const authenticated = isAuthenticated;
-    if (!authenticated) {
-      if (token) {
-        console.log(token);
-        const localUser: IUser = jwt_decode(token);
-        console.log(localUser);
-        setUser(localUser);
-      }
-    }
-    setIsAuthenticated(!authenticated);
-    setLoading(false);
-  }, []);
 
-  async function signUp(user: UserForRegister) {
+  async function signUp(user: IUserForRegister) {
     await axios
       .post(webAPIUrl + "/account/register", {
         username: user.username,
@@ -85,11 +70,36 @@ export const AuthProvider: FC = ({ children }) => {
         confirmPassword: user.passwordConfirm,
       })
       .then((res) => {
-        console.log(res.data);
         setLoading(false);
       })
       .catch((err) => console.log(err));
   }
+
+  async function logOut() {
+    await axios
+      .post(webAPIUrl + "/account/logout")
+      .then(() => {
+        if (token) {
+          setToken("");
+        }
+        setUser(undefined);
+        setIsAuthenticated(false);
+        setLoading(false);
+      })
+      .catch((err) => console.log(err));
+  }
+
+  useEffect(() => {
+    setLoading(true);
+    if (isAuthenticated === false) {
+      if (token) {
+        const localUser: IUser = jwt_decode(token);
+        setUser(localUser);
+        setIsAuthenticated(true);
+        setLoading(false);
+      }
+    }
+  }, [isAuthenticated, token]);
 
   return (
     <AuthContext.Provider
@@ -98,7 +108,7 @@ export const AuthProvider: FC = ({ children }) => {
         user,
         loading,
         logIn: logIn,
-        logOut: () => {},
+        logOut: logOut,
         signUp: signUp,
       }}
     >

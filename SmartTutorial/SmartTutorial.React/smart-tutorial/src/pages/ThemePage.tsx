@@ -13,6 +13,7 @@ import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 import ProgressCircle from "../components/ProgressCircle";
+import Page from "./Page";
 
 interface IRouteParams {
   themeId: string;
@@ -24,9 +25,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({
-  match,
-}) => {
+const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
   const [theme, setTheme] = useState<IThemeDataWithSubjects | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const classes = useStyles();
@@ -46,39 +45,41 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({
     }
   }, [match.params.themeId]);
   return (
-    <Container maxWidth="sm">
-      <Grid
-        container
-        direction="column"
-        justify="center"
-        alignItems="center"
-        className={classes.container}
-      >
-        <Typography variant="h4" align="center">
-          {theme?.name}
-        </Typography>
-        <Typography variant="body2" align="center">
-          {theme?.description}
-        </Typography>
-        {loading ? (
-          <ProgressCircle />
-        ) : (
-          <List dense={false}>
-            {theme?.subjects.map((subject) => (
-              <ListItem key={subject.id.toString()}>
-                <ListItemIcon>
-                  <FolderIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={subject.name}
-                  secondary={"Complexity: " + subject.complexity}
-                />
-              </ListItem>
-            ))}
-          </List>
-        )}
-      </Grid>
-    </Container>
+    <Page title={'Theme | '+theme?.name}>
+      <Container maxWidth="sm">
+        <Grid
+          container
+          direction="column"
+          justify="center"
+          alignItems="center"
+          className={classes.container}
+        >
+          <Typography variant="h4" align="center">
+            {theme?.name}
+          </Typography>
+          <Typography variant="body2" align="center">
+            {theme?.description}
+          </Typography>
+          {loading ? (
+            <ProgressCircle />
+          ) : (
+            <List dense={false}>
+              {theme?.subjects.map((subject) => (
+                <ListItem key={subject.id.toString()}>
+                  <ListItemIcon>
+                    <FolderIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={subject.name}
+                    secondary={"Complexity: " + subject.complexity}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          )}
+        </Grid>
+      </Container>
+    </Page>
   );
 };
 export default ThemePage;

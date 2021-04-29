@@ -76,5 +76,14 @@ namespace SmartTutorial.API.Controllers
             }
             return CreatedAtAction("Register",result);
         }
+
+        [AllowAnonymous]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+
+            return Ok();
+        }
     }
 }

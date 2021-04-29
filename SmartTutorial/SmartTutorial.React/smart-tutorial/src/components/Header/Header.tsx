@@ -13,10 +13,9 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { Link } from "react-router-dom";
-import ThemesMenu from "./ThemesMenu";
-import EqualizerIcon from '@material-ui/icons/Equalizer';
-import {useAuth} from "../../auth/Auth";
-
+import EqualizerIcon from "@material-ui/icons/Equalizer";
+import { useAuth } from "../../auth/Auth";
+import ButtonMenu from "./ButtonMenu";
 
 interface Props {
   children?: React.ReactElement;
@@ -30,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
   noDecoration: {
     textDecoration: "none",
-    marginRight:theme.spacing(2),
+    marginRight: theme.spacing(2),
   },
 }));
 
@@ -68,14 +67,19 @@ function ScrollTop(props: Props) {
 }
 const Header = (props: Props) => {
   const classes = useStyles();
-  const {user , isAuthenticated} = useAuth();
+  const { user, isAuthenticated } = useAuth();
   return (
     <React.Fragment>
       <CssBaseline />
       <HideOnScroll {...props}>
         <AppBar>
           <Toolbar>
-            <Box display="flex" flexGrow={1}  justifyItems="center" alignItems="center">
+            <Box
+              display="flex"
+              flexGrow={1}
+              justifyItems="center"
+              alignItems="center"
+            >
               <Typography
                 className={classes.noDecoration}
                 component={Link}
@@ -85,28 +89,21 @@ const Header = (props: Props) => {
               >
                 WebTutor
               </Typography>
-              <EqualizerIcon fontSize="large"/>
+              <EqualizerIcon fontSize="large" />
             </Box>
-            <ThemesMenu/>
             <Box ml={4}>
-              {isAuthenticated?(
-            <Button
-              component={Link}
-              to="/signin"
-              color="inherit"
-              startIcon={<AccountCircleIcon />}
-            >
-              {user?.username}
-            </Button>):(
-              <Button
-              component={Link}
-              to="/signin"
-              color="inherit"
-              startIcon={<AccountCircleIcon />}
-            >
-              Sign In
-            </Button>
-            )}
+              {isAuthenticated && user !== undefined ? (
+                <ButtonMenu {...user} />
+              ) : (
+                <Button
+                  component={Link}
+                  to="/signin"
+                  color="inherit"
+                  startIcon={<AccountCircleIcon />}
+                >
+                  Sign In
+                </Button>
+              )}
             </Box>
           </Toolbar>
         </AppBar>

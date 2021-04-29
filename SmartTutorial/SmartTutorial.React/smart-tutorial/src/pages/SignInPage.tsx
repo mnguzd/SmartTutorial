@@ -7,12 +7,13 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { Controller, useForm } from "react-hook-form/";
-import StyledLink from "../Styled";
+import StyledLink from "../components/StyledLink";
 import { useHistory } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "../auth/Auth";
 import * as yup from "yup";
 import { useEffect } from "react";
+import Page from "./Page";
 
 const schema = yup.object().shape({
   username: yup
@@ -79,6 +80,7 @@ export default function SignIn() {
   }, [isAuthenticated, history]);
 
   return (
+    <Page title="WebTutor | Sign in">
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
@@ -148,5 +150,6 @@ export default function SignIn() {
         </form>
       </div>
     </Container>
+    </Page>
   );
 }

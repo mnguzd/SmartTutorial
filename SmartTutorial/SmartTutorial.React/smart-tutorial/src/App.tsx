@@ -7,6 +7,8 @@ import SignUp from "./pages/SignUpPage";
 import Header from "./components/Header/Header";
 import ThemePage from "./pages/ThemePage";
 import { AuthProvider } from "./auth/Auth";
+import LogOut from "./pages/LogOutPage";
+import NotFound from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path="/SignIn" component={SignIn} />
           <Route path="/SignUp" component={SignUp} />
           <Route path="/Themes/:themeId" component={ThemePage} />
+          <Route path="/LogOut" component={LogOut} />
+          <Route component={NotFound} />
         </Switch>
       </BrowserRouter>
     </AuthProvider>
