@@ -12,7 +12,7 @@ import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";
-import { getThemeWithSubjects } from "../api/ThemesApi";
+import { getThemeWithSubjects } from "../services/api/ThemesApi";
 
 interface IRouteParams {
   themeId: string;

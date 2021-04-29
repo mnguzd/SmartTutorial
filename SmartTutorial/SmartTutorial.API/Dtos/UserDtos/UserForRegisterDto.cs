@@ -23,7 +23,7 @@ namespace SmartTutorial.API.Dtos.UserDtos
         [MaxLength(80)]
         [MinLength(8)]
         [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage = "Passwords does`n match!")]
+        [Compare("Password", ErrorMessage = "Passwords do not match!")]
         public string ConfirmPassword { get; set; }
     }
 }

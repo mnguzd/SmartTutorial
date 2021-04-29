@@ -1,6 +1,6 @@
-import { IThemeData } from "../data/ThemeData";
-import { IThemeDataWithSubjects } from "../data/ThemeData";
-import { webAPIUrl } from "../AppSettings";
+import { IThemeData } from "../../data/ThemeData";
+import { IThemeDataWithSubjects } from "../../data/ThemeData";
+import { webAPIUrl } from "../../AppSettings";
 import axios from "axios";
 
 export async function getThemes(): Promise<IThemeData[]> {

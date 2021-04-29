@@ -11,7 +11,7 @@ import Container from "@material-ui/core/Container";
 import { useHistory } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useAuth } from "../auth/Auth";
+import { useAuth, IServerError } from "../auth/Auth";
 import { useEffect } from "react";
 import Page from "./Page";
 
@@ -72,6 +72,7 @@ export default function SignUp() {
     formState: { errors },
     setValue,
     handleSubmit,
+    setError,
   } = useForm<IFormInputs>({ mode: "onBlur", resolver: yupResolver(schema) });
 
   useEffect(() => {
@@ -79,10 +80,25 @@ export default function SignUp() {
       history.push("/");
     }
   }, [isAuthenticated, history]);
-  function onSubmit(data: IFormInputs) {
-    signUp(data);
-    console.log(data);
-    history.push("/signin");
+  async function onSubmit(data: IFormInputs) {
+    const result: IServerError | null = await signUp(data);
+    console.log(result);
+    if (result != null) {
+      if (result.name === "username") {
+        setError("username", { type: result.type, message: result.message });
+      } else if (result.name === "email") {
+        setError("email", { type: result.type, message: result.message });
+      } else if (result.name === "password") {
+        setError("password", { type: result.type, message: result.message });
+      } else if (result.name === "passwordConfirm") {
+        setError("passwordConfirm", {
+          type: result.type,
+          message: result.message,
+        });
+      }
+    } else {
+      history.push("/signin");
+    }
   }
   return (
     <Page title="WebTutor | Sign-Up">

@@ -9,7 +9,7 @@ import Footer from "../components/Footer/Footer";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";
 import { useAuth } from "../auth/Auth";
-import { getThemes } from "../api/ThemesApi";
+import { getThemes } from "../services/api/ThemesApi";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 

@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using SmartTutorial.API.Dtos;
 using SmartTutorial.API.Dtos.UserDtos;
+using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Infrastucture.Configurations;
 using SmartTutorial.Domain.Auth;
 using System;
@@ -62,17 +65,18 @@ namespace SmartTutorial.API.Controllers
             var userFound = await _userManager.FindByEmailAsync(userForRegisterDto.Email);
             if (userFound != null)
             {
-                ModelState.AddModelError("null", "User already exists!");
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
             }
             User user = new User()
             {
                 Email = userForRegisterDto.Email,
+                SecurityStamp=Guid.NewGuid().ToString(),
                 UserName = userForRegisterDto.Username,
             };
             var result = await _userManager.CreateAsync(user, userForRegisterDto.Password);
             if (!result.Succeeded)
             {
-                ModelState.AddModelError("error", "Something went wrong!");
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
             }
             return CreatedAtAction("Register",result);
         }
