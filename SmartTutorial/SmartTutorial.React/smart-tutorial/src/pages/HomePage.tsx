@@ -8,7 +8,10 @@ import { IThemeData } from "../data/ThemeData";
 import Footer from "../components/Footer/Footer";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";
+import { useAuth } from "../auth/Auth";
 import { getThemes } from "../api/ThemesApi";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -40,11 +43,29 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(6),
   },
 }));
+
+function Alert(props: AlertProps) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 export default function HomePage() {
   const classes = useStyles();
 
+  const { loginSuccess, user, calmSuccess } = useAuth();
+  const [open, setOpen] = useState(false);
+
   const [data, setData] = useState<IThemeData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
 
   useEffect(() => {
     const getThemesAsync = async () => {
@@ -54,10 +75,27 @@ export default function HomePage() {
       setLoading(false);
     };
     getThemesAsync();
-  }, []);
+    if (loginSuccess) {
+      handleClick();
+      calmSuccess();
+    }
+  }, [calmSuccess, loginSuccess]);
 
   return (
     <Page title="WebTutor | Home">
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        open={open}
+        autoHideDuration={2000}
+        onClose={handleClose}
+      >
+        <Alert onClose={handleClose} severity="success">
+          {"Hello, " + user?.username}
+        </Alert>
+      </Snackbar>
       <div className={classes.heroContent}>
         <Container maxWidth="sm">
           <Typography

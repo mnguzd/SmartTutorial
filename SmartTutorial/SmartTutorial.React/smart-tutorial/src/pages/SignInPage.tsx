@@ -88,10 +88,7 @@ export default function SignIn() {
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <LockOpenIcon
-            className={classes.avatar}
-            fontSize="large"
-          />
+          <LockOpenIcon className={classes.avatar} fontSize="large" />
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>

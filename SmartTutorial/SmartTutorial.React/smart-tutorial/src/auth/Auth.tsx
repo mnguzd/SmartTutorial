@@ -16,10 +16,12 @@ interface IAuthContext {
   isAuthenticated: boolean;
   user?: IUser;
   loading: boolean;
+  loginSuccess:boolean,
   logIn: (user: IUserForLogin) => void;
   logOut: () => void;
   signUp: (user: IUserForRegister) => void;
   getRememberedInfo: () => IRememberedInfo;
+  calmSuccess:()=>void;
 }
 interface IRememberedInfo {
   username: string;
@@ -27,12 +29,14 @@ interface IRememberedInfo {
 export const AuthContext = createContext<IAuthContext>({
   isAuthenticated: false,
   loading: true,
-  logIn: () => {},
-  logOut: () => {},
-  signUp: () => {},
+  loginSuccess :false,
+  logIn:  async () => {},
+  logOut: async () => {},
+  signUp: async () => {},
   getRememberedInfo: () => {
     return { username: "" };
   },
+  calmSuccess:()=>{},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -40,12 +44,17 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider: FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<IUser | undefined>(undefined);
+  const [loginSuccess,setSuccess] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useLocalStorage<string>("token", "");
   const [storedUsername, setStoredUsername] = useLocalStorage<string>(
     "username",
     ""
   );
+
+  function calmSuccess(){
+    setSuccess(false);
+  }
 
   function getRememberedInfo(): IRememberedInfo {
     return { username: storedUsername };
@@ -65,6 +74,7 @@ export const AuthProvider: FC = ({ children }) => {
           const userData: IUser = jwt_decode(token);
           setUser(userData);
           setIsAuthenticated(true);
+          setSuccess(true);
           if (data.remember && userData) {
             setStoredUsername(userData.username);
           } else {
@@ -73,7 +83,9 @@ export const AuthProvider: FC = ({ children }) => {
           setLoading(false);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   async function signUp(user: IUserForRegister) {
@@ -122,10 +134,12 @@ export const AuthProvider: FC = ({ children }) => {
         isAuthenticated,
         user,
         loading,
+        loginSuccess,
         logIn: logIn,
         logOut: logOut,
         signUp: signUp,
         getRememberedInfo: getRememberedInfo,
+        calmSuccess:calmSuccess,
       }}
     >
       {children}
