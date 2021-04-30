@@ -7,12 +7,16 @@ import FolderIcon from "@material-ui/icons/Folder";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import Grid from "@material-ui/core/Grid";
+import { Link } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 import ProgressCircle from "../components/ProgressCircle";
+import HomeIcon from "@material-ui/icons/Home";
 import Page from "./Page";
 import { getThemeWithSubjects } from "../services/api/ThemesApi";
+import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 
 interface IRouteParams {
   themeId: string;
@@ -22,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
   container: {
     margin: theme.spacing(6, 0, 5, 0),
   },
+  bread:{
+    margin:theme.spacing(3,0,0,3),
+  }
 }));
 
 const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
@@ -42,6 +49,17 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
   }, [match.params.themeId]);
   return (
     <Page title={"Theme | " + theme?.name}>
+      <Breadcrumbs aria-label="breadcrumb" separator="/" className={classes.bread}>
+            <StyledBreadcrumb
+              component={Link}
+              to="/"
+              label="Home"
+              clickable
+              icon={<HomeIcon />}
+            />
+            <StyledBreadcrumb component={Link} to="/" label="Themes" clickable />
+            <StyledBreadcrumb label={theme?.name} />
+          </Breadcrumbs>
       <Container maxWidth="sm">
         <Grid
           container

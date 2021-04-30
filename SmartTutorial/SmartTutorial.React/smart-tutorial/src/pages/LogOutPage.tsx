@@ -9,8 +9,8 @@ export default function LogOut() {
   useEffect(() => {
     if (isAuthenticated) {
       logOut();
-      history.push("/");
     }
+    history.push("/");
   });
   return <Page title="Logging out"></Page>;
 }

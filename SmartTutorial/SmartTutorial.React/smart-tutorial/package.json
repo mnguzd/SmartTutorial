@@ -5,8 +5,6 @@
   "dependencies": {
     "@hookform/error-message": "^2.0.0",
     "@material-ui/lab": "^4.0.0-alpha.58",
-    "@mui-treasury/components": "^1.10.1",
-    "@mui-treasury/styles": "^1.13.1",
     "@testing-library/jest-dom": "^5.11.10",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^12.8.3",
@@ -14,7 +12,6 @@
     "@types/node": "^12.20.8",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
-    "jwt-decode": "^3.1.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-helmet": "^6.1.0",

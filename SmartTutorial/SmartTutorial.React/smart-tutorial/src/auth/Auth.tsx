@@ -1,7 +1,6 @@
 import { useState, useContext, createContext, FC, useEffect } from "react";
 import { webAPIUrl } from "../AppSettings";
 import axios from "axios";
-import jwt_decode from "jwt-decode";
 import { IUserForLogin, IUserForRegister } from "../data/UserData";
 import useLocalStorage from "../hooks/useLocalStorage";
 
@@ -52,6 +51,15 @@ export const AuthContext = createContext<IAuthContext>({
 
 export const useAuth = () => useContext(AuthContext);
 
+function parseJwt (token:string):any {
+  var base64Url = token.split('.')[1];
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+  return JSON.parse(jsonPayload);
+};
+
 export const AuthProvider: FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<IUser | undefined>(undefined);
@@ -70,7 +78,6 @@ export const AuthProvider: FC = ({ children }) => {
   function getRememberedInfo(): IRememberedInfo {
     return { username: storedUsername };
   }
-
   async function logIn(data: IUserForLogin): Promise<IServerSignInError | null> {
     let error: IServerSignInError = { name: "password", type: "server", message: "" };
     await axios
@@ -83,7 +90,7 @@ export const AuthProvider: FC = ({ children }) => {
         const token = res.data.accessToken;
         if (token) {
           setToken(token);
-          const userData: IUser = jwt_decode(token);
+          const userData: IUser = parseJwt(token);
           setUser(userData);
           setIsAuthenticated(true);
           setSuccess(true);
@@ -185,7 +192,7 @@ export const AuthProvider: FC = ({ children }) => {
   async function logOut() {
     setLoading(false);
     await axios
-      .post(webAPIUrl + "/account/logout")
+      .post(webAPIUrl + "/account/logout",null,{ headers: {"Authorization" : `Bearer ${token}`} })
       .then(() => {
         if (token) {
           setToken("");
@@ -201,7 +208,7 @@ export const AuthProvider: FC = ({ children }) => {
     setLoading(true);
     if (isAuthenticated === false) {
       if (token) {
-        const localUser: IUser = jwt_decode(token);
+        const localUser: IUser = parseJwt(token);
         setUser(localUser);
         setIsAuthenticated(true);
       }

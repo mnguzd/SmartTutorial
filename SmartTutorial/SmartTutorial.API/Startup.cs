@@ -41,6 +41,7 @@ namespace SmartTutorial.API
                 );
             services.AddScoped(typeof(IGenericRepository<>), typeof(EFCoreRepository<>));
             services.AddScoped<ISubjectService, SubjectService>();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IThemeService, ThemeService>();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddSwaggerGen();

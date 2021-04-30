@@ -1,19 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using SmartTutorial.API.Dtos;
 using SmartTutorial.API.Dtos.UserDtos;
-using SmartTutorial.API.Exceptions;
-using SmartTutorial.API.Infrastucture.Configurations;
-using SmartTutorial.Domain.Auth;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
+using SmartTutorial.API.Services.Interfaces;
 using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Controllers
@@ -22,75 +12,52 @@ namespace SmartTutorial.API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly AuthOptions _authenticationOptions;
-        private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
+        private readonly IAccountService _accountService;
 
-        public AccountController(IOptions<AuthOptions> authenticationOptions, SignInManager<User> signInManager,UserManager<User> userManager)
+        public AccountController(IAccountService accountService)
         {
-            _authenticationOptions = authenticationOptions.Value;
-            _signInManager = signInManager;
-            _userManager = userManager;
+            _accountService = accountService;
         }
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
+        public async Task<IActionResult> Login(UserForLoginDto dto)
         {
-            var checkingPasswordResult = await _signInManager.PasswordSignInAsync(userForLoginDto.Username, userForLoginDto.Password, false, false);
+            var signInResult = await _accountService.SignInAsync(dto.Username, dto.Password);
 
-            if (checkingPasswordResult.Succeeded)
+            if (signInResult.Succeeded)
             {
-                var signinCredentials = new SigningCredentials(_authenticationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256);
-                var jwtSecurityToken = new JwtSecurityToken(
-                     issuer: _authenticationOptions.Issuer,
-                     audience: _authenticationOptions.Audience,
-                     expires: DateTime.Now.AddDays(30),
-                     signingCredentials: signinCredentials
-                );
-                jwtSecurityToken.Payload["username"] = userForLoginDto.Username;
-
-                var tokenHandler = new JwtSecurityTokenHandler();
-
-                var encodedToken = tokenHandler.WriteToken(jwtSecurityToken);
-
-                return Ok(new { AccessToken = encodedToken });
+                var token = _accountService.GenerateJwtToken(dto.Username);
+                return Ok(new { AccessToken = token });
             }
             return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = 401, Errors = new Error() { Message = "Invalid credentials! Failed to login" } });
         }
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
+        public async Task<IActionResult> Register(UserForRegisterDto dto)
         {
-            var userFound = await _userManager.FindByEmailAsync(userForRegisterDto.Email);
+            var userFound = await _accountService.FindByEmail(dto.Email);
             if (userFound != null)
             {
-                return StatusCode(StatusCodes.Status404NotFound, new Response { Status = 404, Errors = new Error() {Message = "User with this email already exists!"  }});
+                return StatusCode(StatusCodes.Status404NotFound, new Response { Status = 404, Errors = new Error() { Message = "User with this email already exists!" } });
             }
-            User user = new User()
-            {
-                Email = userForRegisterDto.Email,
-                SecurityStamp=Guid.NewGuid().ToString(),
-                UserName = userForRegisterDto.Username,
-            };
-            var result = await _userManager.CreateAsync(user, userForRegisterDto.Password);
-            if (!result.Succeeded)
+            var createdResult = await _accountService.CreateUser(dto.Email, dto.Username, dto.Password);
+            if (!createdResult.Succeeded)
             {
                 var response = new Response { Status = 404, Errors = new Error() };
-                foreach(var i in result.Errors){
-                    response.Errors.Message+=i.Description+" ";
+                foreach (var i in createdResult.Errors)
+                {
+                    response.Errors.Message += i.Description + " ";
                 }
                 return StatusCode(StatusCodes.Status404NotFound, response);
             }
-            return CreatedAtAction("Register",result);
+            return CreatedAtAction("Register", createdResult);
         }
 
-        [AllowAnonymous]
         [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        public async Task<object> Logout()
         {
-            await _signInManager.SignOutAsync();
-
+            await _accountService.LogOut();
             return Ok();
         }
     }
