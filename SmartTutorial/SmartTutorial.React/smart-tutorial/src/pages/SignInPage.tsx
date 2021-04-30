@@ -12,7 +12,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import StyledLink from "../components/StyledLink";
 import { useHistory } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useAuth,IServerError } from "../auth/Auth";
+import { useAuth, IServerSignInError } from "../auth/Auth";
 import * as yup from "yup";
 import { useEffect } from "react";
 import Page from "./Page";
@@ -75,14 +75,9 @@ export default function SignIn() {
   });
 
   async function onSubmit(data: IFormInputs) {
-    const result: IServerError | null = await logIn(data);
+    const result: IServerSignInError | null = await logIn(data);
     if (result != null) {
-      if (result.name === "username") {
-        setError("username", { type: result.type, message: result.message });
-      }
-      else if (result.name === "password") {
-        setError("password", { type: result.type, message: result.message });
-      }
+      setError(result.name, { type: result.type, message: result.message });
     }
   }
 

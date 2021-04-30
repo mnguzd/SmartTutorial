@@ -55,8 +55,8 @@ namespace SmartTutorial.API.Controllers
                 var encodedToken = tokenHandler.WriteToken(jwtSecurityToken);
 
                 return Ok(new { AccessToken = encodedToken });
-            }  
-            return Unauthorized();
+            }
+            return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = 401, Errors = new Error() { Message = "Invalid credentials! Failed to login" } });
         }
         [AllowAnonymous]
         [HttpPost("register")]
@@ -65,7 +65,7 @@ namespace SmartTutorial.API.Controllers
             var userFound = await _userManager.FindByEmailAsync(userForRegisterDto.Email);
             if (userFound != null)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User already exists!" });
+                return StatusCode(StatusCodes.Status404NotFound, new Response { Status = 404, Errors = new Error() {Message = "User with this email already exists!"  }});
             }
             User user = new User()
             {
@@ -76,7 +76,11 @@ namespace SmartTutorial.API.Controllers
             var result = await _userManager.CreateAsync(user, userForRegisterDto.Password);
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
+                var response = new Response { Status = 404, Errors = new Error() };
+                foreach(var i in result.Errors){
+                    response.Errors.Message+=i.Description+" ";
+                }
+                return StatusCode(StatusCodes.Status404NotFound, response);
             }
             return CreatedAtAction("Register",result);
         }

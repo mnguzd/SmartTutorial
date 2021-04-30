@@ -14,8 +14,13 @@ interface IAuthToken {
 interface IRememberedInfo {
   username: string;
 }
-export interface IServerError {
-  name: string;
+export interface IServerSignUpError {
+  name: "password" | "username" | "email" | "passwordConfirm";
+  type: string;
+  message: string;
+}
+export interface IServerSignInError{
+  name: "username" | "remember" | "password";
   type: string;
   message: string;
 }
@@ -25,9 +30,9 @@ interface IAuthContext {
   user?: IUser;
   loading: boolean;
   loginSuccess: boolean;
-  logIn: (user: IUserForLogin) => Promise<IServerError | null>;
+  logIn: (user: IUserForLogin) => Promise<IServerSignInError | null>;
   logOut: () => void;
-  signUp: (user: IUserForRegister) => Promise<IServerError | null>;
+  signUp: (user: IUserForRegister) => Promise<IServerSignUpError | null>;
   getRememberedInfo: () => IRememberedInfo;
   calmSuccess: () => void;
 }
@@ -66,8 +71,8 @@ export const AuthProvider: FC = ({ children }) => {
     return { username: storedUsername };
   }
 
-  async function logIn(data: IUserForLogin): Promise<IServerError | null> {
-    let error: IServerError = { name: "", type: "server", message: "" };
+  async function logIn(data: IUserForLogin): Promise<IServerSignInError | null> {
+    let error: IServerSignInError = { name: "password", type: "server", message: "" };
     await axios
       .post<IAuthToken>(webAPIUrl + "/account/login", {
         username: data.username,
@@ -92,19 +97,27 @@ export const AuthProvider: FC = ({ children }) => {
       })
       .catch((err) => {
         const dataError = err.response.data;
-        if (dataError.status) {
-          if (dataError.status.toString() === "401") {
-            error.name = "password";
-            error.message = "Can't find user with such credentials";
-          }
-        }
         if (dataError.errors) {
-          if (dataError.errors.Username) {
-            error.name = "username";
-            error.message = dataError.errors.Username;
-          } else if (dataError.errors.Password) {
-            error.name = "password";
-            error.message = dataError.errors.Password;
+          const serverErrors: string[] = Object.getOwnPropertyNames(
+            dataError.errors
+          );
+          switch (serverErrors[0]) {
+            case "Username":
+              error.name = "username";
+              error.message = dataError.errors.Username;
+              break;
+            case "Password":
+              error.name = "password";
+              error.message = dataError.errors.Password;
+              break;
+            case "message":
+              error.name = "password";
+              error.message = dataError.errors.message;
+              break;
+            default:
+              error.name = "password";
+              error.message = "Internal server error. Try again later";
+              break;
           }
         }
       });
@@ -115,8 +128,9 @@ export const AuthProvider: FC = ({ children }) => {
     }
   }
 
-  async function signUp(user: IUserForRegister): Promise<IServerError | null> {
-    let error: IServerError = { name: "", type: "server", message: "" };
+  async function signUp(user: IUserForRegister): Promise<IServerSignUpError | null> {
+    let error: IServerSignUpError = { name: "passwordConfirm", type: "server", message: "" };
+    setLoading(true);
     await axios
       .post(webAPIUrl + "/account/register", {
         username: user.username,
@@ -126,32 +140,38 @@ export const AuthProvider: FC = ({ children }) => {
       })
       .then((res) => {
         setLoading(false);
-        console.log(res.status);
       })
       .catch((err) => {
         const dataError = err.response.data;
-        if(dataError.status){
-          if(dataError.status.toString()==="Error"){
-            error.name = "passwordConfirm";
-            error.message = dataError.message;
-          }
-        }
         if (dataError.errors) {
-          if (dataError.errors.Username) {
-            error.name = "username";
-            error.message = dataError.errors.Username;
-          } else if (dataError.errors.Email) {
-            error.name = "email";
-            error.message = dataError.errors.Email;
-          } else if (dataError.errors.Password) {
-            error.name = "password";
-            error.message = dataError.errors.Password;
-          } else if (dataError.errors.ConfirmPassword) {
-            error.name = "passwordConfirm";
-            error.message = dataError.errors.ConfirmPassword;
-          } else if (dataError.errors.description) {
-            error.name = "passwordConfirm";
-            error.message = dataError.errors.description;
+          const serverErrors: string[] = Object.getOwnPropertyNames(
+            dataError.errors
+          );
+          switch (serverErrors[0]) {
+            case "Username":
+              error.name = "username";
+              error.message = dataError.errors.Username;
+              break;
+            case "Email":
+              error.name = "email";
+              error.message = dataError.errors.Email;
+              break;
+            case "Password":
+              error.name = "password";
+              error.message = dataError.errors.Password;
+              break;
+            case "ConfirmPassword":
+              error.name = "passwordConfirm";
+              error.message = dataError.errors.ConfirmPassword;
+              break;
+            case "message":
+              error.name = "passwordConfirm";
+              error.message = dataError.errors.message;
+              break;
+            default:
+              error.name = "passwordConfirm";
+              error.message = "Internal server Error. Try again later.";
+              break;
           }
         }
       });
@@ -163,6 +183,7 @@ export const AuthProvider: FC = ({ children }) => {
   }
 
   async function logOut() {
+    setLoading(false);
     await axios
       .post(webAPIUrl + "/account/logout")
       .then(() => {
@@ -171,9 +192,9 @@ export const AuthProvider: FC = ({ children }) => {
         }
         setUser(undefined);
         setIsAuthenticated(false);
-        setLoading(false);
       })
       .catch((err) => console.log(err));
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -183,9 +204,9 @@ export const AuthProvider: FC = ({ children }) => {
         const localUser: IUser = jwt_decode(token);
         setUser(localUser);
         setIsAuthenticated(true);
-        setLoading(false);
       }
     }
+    setLoading(false);
   }, [isAuthenticated, token]);
 
   return (

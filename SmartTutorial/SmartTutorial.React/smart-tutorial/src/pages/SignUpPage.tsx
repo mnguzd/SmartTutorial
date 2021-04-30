@@ -11,7 +11,7 @@ import Container from "@material-ui/core/Container";
 import { useHistory } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useAuth, IServerError } from "../auth/Auth";
+import { useAuth, IServerSignUpError } from "../auth/Auth";
 import { useEffect } from "react";
 import Page from "./Page";
 
@@ -59,6 +59,7 @@ interface IFormInputs {
   password: string;
   passwordConfirm: string;
 }
+
 export default function SignUp() {
   const classes = useStyles();
 
@@ -81,21 +82,9 @@ export default function SignUp() {
     }
   }, [isAuthenticated, history]);
   async function onSubmit(data: IFormInputs) {
-    const result: IServerError | null = await signUp(data);
-    console.log(result);
+    const result: IServerSignUpError | null = await signUp(data);
     if (result != null) {
-      if (result.name === "username") {
-        setError("username", { type: result.type, message: result.message });
-      } else if (result.name === "email") {
-        setError("email", { type: result.type, message: result.message });
-      } else if (result.name === "password") {
-        setError("password", { type: result.type, message: result.message });
-      } else if (result.name === "passwordConfirm") {
-        setError("passwordConfirm", {
-          type: result.type,
-          message: result.message,
-        });
-      }
+        setError(result.name, { type: result.type, message: result.message });
     } else {
       history.push("/signin");
     }
