@@ -3,20 +3,21 @@ import { RouteComponentProps } from "react-router-dom";
 import { IThemeDataWithSubjects } from "../data/ThemeData";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import FolderIcon from "@material-ui/icons/Folder";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Typography from "@material-ui/core/Typography";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import Grid from "@material-ui/core/Grid";
 import { Link } from "react-router-dom";
-import Container from "@material-ui/core/Container";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, fade } from "@material-ui/core/styles";
 import ProgressCircle from "../components/ProgressCircle";
 import HomeIcon from "@material-ui/icons/Home";
 import Page from "./Page";
 import { getThemeWithSubjects } from "../services/api/ThemesApi";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
+import Chip from "@material-ui/core/Chip";
+import SearchIcon from "@material-ui/icons/Search";
+import InputBase from "@material-ui/core/InputBase";
 
 interface IRouteParams {
   themeId: string;
@@ -26,13 +27,68 @@ const useStyles = makeStyles((theme) => ({
   container: {
     margin: theme.spacing(6, 0, 5, 0),
   },
-  bread:{
-    margin:theme.spacing(3,0,0,3),
-  }
+  bread: {
+    margin: theme.spacing(3, 0, 0, 3),
+  },
+  light: {
+    color: "white",
+    backgroundColor: "#4caf50",
+  },
+  medium: {
+    color: "white",
+    backgroundColor: "#ff9800",
+  },
+  hard: {
+    color: "white",
+    backgroundColor: "#f44336",
+  },
+  root: {
+    width: "100%",
+    maxWidth: 360,
+  },
+  search: {
+    position: "relative",
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: fade(theme.palette.common.white, 0.15),
+    "&:hover": {
+      backgroundColor: fade(theme.palette.common.white, 0.25),
+    },
+    marginLeft: 0,
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: theme.spacing(1),
+      width: "auto",
+    },
+  },
+  searchIcon: {
+    padding: theme.spacing(0, 2),
+    height: "100%",
+    position: "absolute",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  inputRoot: {
+    color: "inherit",
+  },
+  inputInput: {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      width: "12ch",
+      "&:focus": {
+        width: "20ch",
+      },
+    },
+  },
 }));
 
 const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
   const [theme, setTheme] = useState<IThemeDataWithSubjects | null>(null);
+  const [searchTerm, setSeatchTerm] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const classes = useStyles();
   useEffect(() => {
@@ -49,50 +105,87 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
   }, [match.params.themeId]);
   return (
     <Page title={"Theme | " + theme?.name}>
-      <Breadcrumbs aria-label="breadcrumb" separator="/" className={classes.bread}>
-            <StyledBreadcrumb
-              component={Link}
-              to="/"
-              label="Home"
-              clickable
-              icon={<HomeIcon />}
-            />
-            <StyledBreadcrumb component={Link} to="/" label="Themes" clickable />
-            <StyledBreadcrumb label={theme?.name} />
-          </Breadcrumbs>
-      <Container maxWidth="sm">
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-          className={classes.container}
-        >
-          <Typography variant="h4" align="center">
+      <Breadcrumbs aria-label="breadcrumb" className={classes.bread}>
+        <StyledBreadcrumb
+          component={Link}
+          to="/"
+          label="Home"
+          clickable
+          icon={<HomeIcon />}
+        />
+        <StyledBreadcrumb component={Link} to="/" label="Themes" clickable />
+        <StyledBreadcrumb label={theme?.name} />
+      </Breadcrumbs>
+      <Grid
+        className={classes.container}
+        container
+        direction="column"
+        alignItems="center"
+        spacing={6}
+      >
+        <Grid item>
+          <Typography variant="h5" align="center" paragraph>
             {theme?.name}
           </Typography>
-          <Typography variant="body2" align="center">
+          <Typography variant="body1" align="center">
             {theme?.description}
           </Typography>
+        </Grid>
+        <Grid item>
+          <div className={classes.search}>
+            <div className={classes.searchIcon}>
+              <SearchIcon />
+            </div>
+            <InputBase
+              placeholder="Search…"
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+              inputProps={{ "aria-label": "search" }}
+              onChange={(e) => {
+                setSeatchTerm(e.target.value);
+              }}
+            />
+          </div>
+        </Grid>
+        <Grid item className={classes.root}>
           {loading ? (
             <ProgressCircle />
           ) : (
             <List dense={false}>
-              {theme?.subjects.map((subject) => (
-                <ListItem key={subject.id.toString()}>
-                  <ListItemIcon>
-                    <FolderIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={subject.name}
-                    secondary={"Complexity: " + subject.complexity}
-                  />
-                </ListItem>
-              ))}
+              {theme?.subjects
+                .filter((val) =>
+                  val.name.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((subject, index) => (
+                  <div>
+                    <ListItem
+                      button
+                      key={subject.id.toString()}
+                      divider={index < theme.subjects.length - 1}
+                    >
+                      <ListItemIcon>
+                        <Chip
+                          size="small"
+                          label={subject.complexity}
+                          className={`${classes.light} ${
+                            subject.complexity < 3
+                              ? classes.light
+                              : subject.complexity < 5
+                              ? classes.medium
+                              : classes.hard
+                          }`}
+                        />
+                      </ListItemIcon>
+                      <ListItemText primary={subject.name} />
+                    </ListItem>
+                  </div>
+                ))}
             </List>
           )}
         </Grid>
-      </Container>
+      </Grid>
     </Page>
   );
 };

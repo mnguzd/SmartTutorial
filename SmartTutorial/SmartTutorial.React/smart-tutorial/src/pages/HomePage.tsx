@@ -11,60 +11,66 @@ import Page from "./Page";
 import { useAuth } from "../auth/Auth";
 import { getThemes } from "../services/api/ThemesApi";
 import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert, { AlertProps } from "@material-ui/lab/Alert";
+import IconButton from "@material-ui/core/IconButton";
+import SnackbarContent from "@material-ui/core/SnackbarContent";
+import Slide from "@material-ui/core/Slide";
+import { TransitionProps } from "@material-ui/core/transitions";
+import CloseIcon from "@material-ui/icons/Close";
+import Fade from "@material-ui/core/Fade";
+
+function SlideTransition(props: TransitionProps) {
+  return <Slide {...props} direction="up" />;
+}
 
 const useStyles = makeStyles((theme) => ({
-  icon: {
-    marginRight: theme.spacing(2),
-  },
   heroContent: {
     padding: theme.spacing(8, 0, 0),
-  },
-  heroButtons: {
-    marginTop: theme.spacing(4),
   },
   cardGrid: {
     paddingTop: theme.spacing(8),
     paddingBottom: theme.spacing(0),
   },
-  card: {
-    height: "100%",
-    display: "flex",
-    flexDirection: "column",
+  snackBarContent: {
+    backgroundColor: "#D55C81",
   },
-  cardMedia: {
-    paddingTop: "56.25%",
-  },
-  cardContent: {
-    flexGrow: 1,
-  },
-  footer: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(6),
+  snackBarIcon: {
+    fill: "#FAFAFA",
   },
 }));
 
-function Alert(props: AlertProps) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 export default function HomePage() {
   const classes = useStyles();
+  const [state, setState] = React.useState<{
+    open: boolean;
+    Transition: React.ComponentType<
+      TransitionProps & { children?: React.ReactElement<any, any> }
+    >;
+  }>({
+    open: false,
+    Transition: Fade,
+  });
 
   const { loginSuccess, user, calmSuccess } = useAuth();
-  const [open, setOpen] = useState(false);
 
   const [data, setData] = useState<IThemeData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const handleClick = () => {
-    setOpen(true);
+  const handleClick = (
+    Transition: React.ComponentType<
+      TransitionProps & { children?: React.ReactElement<any, any> }
+    >
+  ) => {
+    setState({
+      open: true,
+      Transition,
+    });
   };
 
-  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
+  const handleClose = () => {
+    setState({
+      ...state,
+      open: false,
+    });
   };
 
   useEffect(() => {
@@ -76,7 +82,7 @@ export default function HomePage() {
     };
     getThemesAsync();
     if (loginSuccess) {
-      handleClick();
+      handleClick(SlideTransition);
       calmSuccess();
     }
   }, [calmSuccess, loginSuccess]);
@@ -88,13 +94,24 @@ export default function HomePage() {
           vertical: "bottom",
           horizontal: "left",
         }}
-        open={open}
+        open={state.open}
         autoHideDuration={2000}
         onClose={handleClose}
+        TransitionComponent={state.Transition}
       >
-        <Alert onClose={handleClose} severity="success">
-          {"Hello, " + user?.username}
-        </Alert>
+        <SnackbarContent
+          className={classes.snackBarContent}
+          message={
+            <Typography variant="body2">
+              {"Hello, " + user?.username}
+            </Typography>
+          }
+          action={
+            <IconButton aria-label="close" onClick={handleClose}>
+              <CloseIcon fontSize="small" className={classes.snackBarIcon} />
+            </IconButton>
+          }
+        />
       </Snackbar>
       <div className={classes.heroContent}>
         <Container maxWidth="sm">

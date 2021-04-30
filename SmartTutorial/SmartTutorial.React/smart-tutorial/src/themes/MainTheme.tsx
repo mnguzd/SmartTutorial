@@ -1,10 +1,12 @@
-import { createMuiTheme } from '@material-ui/core/styles';
-import teal from '@material-ui/core/colors/teal';
-import purple from '@material-ui/core/colors/purple';
+import { createMuiTheme } from "@material-ui/core/styles";
 const MainTheme = createMuiTheme({
-    palette: {
-        primary: teal,
-        secondary: purple,
-      },
+  palette: {
+    primary: {
+      main: "#5987C5",
+    },
+    secondary: {
+      main: "#D55C81",
+    },
+  },
 });
 export default MainTheme;

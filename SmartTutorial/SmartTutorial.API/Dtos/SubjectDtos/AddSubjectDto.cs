@@ -5,7 +5,7 @@ namespace SmartTutorial.API.Dtos.SubjectDtos
     public class AddSubjectDto
     {
         [Required]
-        [StringLength(20)]
+        [StringLength(100)]
         public string Name { get; set; }
         [Required]
         [Range(1,5)]

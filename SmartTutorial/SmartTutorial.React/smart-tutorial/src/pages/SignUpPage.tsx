@@ -7,9 +7,13 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import { Controller, useForm } from "react-hook-form/";
+import { Link } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import { useHistory } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import HomeIcon from "@material-ui/icons/Home";
+import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 import * as yup from "yup";
 import { useAuth, IServerSignUpError } from "../auth/Auth";
 import { useEffect } from "react";
@@ -32,6 +36,9 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  bread: {
+    margin: theme.spacing(3, 0, 0, 3),
+  },
 }));
 
 const schema = yup.object().shape({
@@ -51,7 +58,8 @@ const schema = yup.object().shape({
     .required("Enter your password"),
   passwordConfirm: yup
     .string()
-    .oneOf([yup.ref("password")], "Passwords must match"),
+    .oneOf([yup.ref("password")], "Passwords must match")
+    .required("Enter password confirmation"),
 });
 interface IFormInputs {
   username: string;
@@ -84,17 +92,34 @@ export default function SignUp() {
   async function onSubmit(data: IFormInputs) {
     const result: IServerSignUpError | null = await signUp(data);
     if (result != null) {
-        setError(result.name, { type: result.type, message: result.message });
+      setError(result.name, { type: result.type, message: result.message });
     } else {
       history.push("/signin");
     }
   }
   return (
     <Page title="WebTutor | Sign-Up">
+      <Breadcrumbs
+        aria-label="breadcrumb"
+        className={classes.bread}
+      >
+        <StyledBreadcrumb
+          component={Link}
+          to="/"
+          label="Home"
+          clickable
+          icon={<HomeIcon />}
+        />
+        <StyledBreadcrumb label="Sign Up" />
+      </Breadcrumbs>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <LockOutlinedIcon className={classes.avatar} fontSize="large" />
+          <LockOutlinedIcon
+            className={classes.avatar}
+            fontSize="large"
+            color="secondary"
+          />
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>

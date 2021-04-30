@@ -11,8 +11,12 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import StyledLink from "../components/StyledLink";
 import { useHistory } from "react-router-dom";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import HomeIcon from "@material-ui/icons/Home";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Link } from "react-router-dom";
 import { useAuth, IServerSignInError } from "../auth/Auth";
+import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 import * as yup from "yup";
 import { useEffect } from "react";
 import Page from "./Page";
@@ -47,6 +51,9 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+  },
+  bread: {
+    margin: theme.spacing(3, 0, 0, 3),
   },
 }));
 
@@ -88,11 +95,28 @@ export default function SignIn() {
   }, [isAuthenticated, history]);
 
   return (
-    <Page title="WebTutor | Sign in">
+    <Page title="WebTutor | Sign In">
+      <Breadcrumbs
+        aria-label="breadcrumb"
+        className={classes.bread}
+      >
+        <StyledBreadcrumb
+          component={Link}
+          to="/"
+          label="Home"
+          clickable
+          icon={<HomeIcon />}
+        />
+        <StyledBreadcrumb label="Sign In" />
+      </Breadcrumbs>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <LockOpenIcon className={classes.avatar} fontSize="large" />
+          <LockOpenIcon
+            className={classes.avatar}
+            fontSize="large"
+            color="secondary"
+          />
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>

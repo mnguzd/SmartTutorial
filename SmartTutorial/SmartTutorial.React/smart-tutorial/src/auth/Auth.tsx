@@ -18,7 +18,7 @@ export interface IServerSignUpError {
   type: string;
   message: string;
 }
-export interface IServerSignInError{
+export interface IServerSignInError {
   name: "username" | "remember" | "password";
   type: string;
   message: string;
@@ -51,14 +51,19 @@ export const AuthContext = createContext<IAuthContext>({
 
 export const useAuth = () => useContext(AuthContext);
 
-function parseJwt (token:string):any {
-  var base64Url = token.split('.')[1];
-  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-  }).join(''));
+function parseJwt(token: string): any {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
   return JSON.parse(jsonPayload);
-};
+}
 
 export const AuthProvider: FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -78,8 +83,14 @@ export const AuthProvider: FC = ({ children }) => {
   function getRememberedInfo(): IRememberedInfo {
     return { username: storedUsername };
   }
-  async function logIn(data: IUserForLogin): Promise<IServerSignInError | null> {
-    let error: IServerSignInError = { name: "password", type: "server", message: "" };
+  async function logIn(
+    data: IUserForLogin
+  ): Promise<IServerSignInError | null> {
+    let error: IServerSignInError = {
+      name: "password",
+      type: "server",
+      message: "",
+    };
     await axios
       .post<IAuthToken>(webAPIUrl + "/account/login", {
         username: data.username,
@@ -135,8 +146,14 @@ export const AuthProvider: FC = ({ children }) => {
     }
   }
 
-  async function signUp(user: IUserForRegister): Promise<IServerSignUpError | null> {
-    let error: IServerSignUpError = { name: "passwordConfirm", type: "server", message: "" };
+  async function signUp(
+    user: IUserForRegister
+  ): Promise<IServerSignUpError | null> {
+    let error: IServerSignUpError = {
+      name: "passwordConfirm",
+      type: "server",
+      message: "",
+    };
     setLoading(true);
     await axios
       .post(webAPIUrl + "/account/register", {
@@ -192,7 +209,9 @@ export const AuthProvider: FC = ({ children }) => {
   async function logOut() {
     setLoading(false);
     await axios
-      .post(webAPIUrl + "/account/logout",null,{ headers: {"Authorization" : `Bearer ${token}`} })
+      .post(webAPIUrl + "/account/logout", null, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       .then(() => {
         if (token) {
           setToken("");

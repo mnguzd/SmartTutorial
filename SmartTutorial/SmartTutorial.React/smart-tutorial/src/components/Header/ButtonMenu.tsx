@@ -15,6 +15,9 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       display: "flex",
     },
+    userButton: {
+      textTransform: "none",
+    },
   })
 );
 
@@ -65,6 +68,7 @@ export default function ButtonMenu(user: IUser) {
           ref={anchorRef}
           aria-controls={open ? "menu-list-grow" : undefined}
           aria-haspopup="true"
+          className={classes.userButton}
           color="inherit"
           onClick={handleToggle}
           endIcon={<KeyboardArrowDownIcon />}
