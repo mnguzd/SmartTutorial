@@ -49,23 +49,23 @@ namespace SmartTutorial.API
             if (!context.Topics.Any())
             {
                 List<Topic> aspTopics = new List<Topic>() {
-                new Topic() { Name = "StartUp class", Text = "Sample" },
-                new Topic(){Name = "Map and MapWhen",Text="Sample"},
-                new Topic(){Name = "Middleware",Text="Sample"}
+                new Topic() { Name = "StartUp class", Text = "Sample",Content="Content" },
+                new Topic(){Name = "Map and MapWhen",Text="Sample",Content="Content"},
+                new Topic(){Name = "Middleware",Text="Sample",Content="Content"}
             };
                 context.Subjects.Find(8).Topics = aspTopics;
 
                 List<Topic> vueTopics = new List<Topic>() {
-                new Topic() { Name = "Basics vue", Text = "Sample" },
-                new Topic(){Name = "Refs and html",Text="Sample"},
-                new Topic(){Name = "Lifesycle",Text="Sample"}
+                new Topic() { Name = "Basics vue", Text = "Sample",Content = "Content" },
+                new Topic(){Name = "Refs and html",Text="Sample", Content = "Content"},
+                new Topic(){Name = "Lifesycle",Text="Sample", Content = "Content"}
             };
                 context.Subjects.Find(7).Topics = vueTopics;
 
                 List<Topic> sqlTopics = new List<Topic>() {
-                new Topic() { Name = "Basics sql", Text = "Sample" },
-                new Topic(){Name = "Select and Where",Text="Sample"},
-                new Topic(){Name = "Joins",Text="Sample"}
+                new Topic() { Name = "Basics sql", Text = "Sample",Content="Content" },
+                new Topic(){Name = "Select and Where",Text="Sample",Content="Content"},
+                new Topic(){Name = "Joins",Text="Sample",Content="Content"}
             };
                 context.Subjects.Find(10).Topics = sqlTopics;
 

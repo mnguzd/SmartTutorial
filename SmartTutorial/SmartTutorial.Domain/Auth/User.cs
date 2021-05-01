@@ -5,5 +5,8 @@ namespace SmartTutorial.Domain.Auth
     public class User : IdentityUser<int>
     {
         public int Rating { get; set; }
+        public string Country { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }

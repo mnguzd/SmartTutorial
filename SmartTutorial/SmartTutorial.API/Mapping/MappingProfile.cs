@@ -10,10 +10,13 @@ namespace SmartTutorial.API.Mapping
         public MappingProfile()
         {
             CreateMap<Subject, SubjectDto>();
+            CreateMap<SubjectDto, Subject>();
             CreateMap<UpdateSubjectDto, Subject>();
             CreateMap<AddSubjectDto, Subject>();
             CreateMap<ThemeDto, Theme>();
+            CreateMap<Theme, ThemeDto>();
             CreateMap<ThemeWithSubjectsDto, Theme>();
+            CreateMap<Theme, ThemeWithSubjectsDto>();
             CreateMap<Subject, SubjectWithTopicsDto>();
         }
     }

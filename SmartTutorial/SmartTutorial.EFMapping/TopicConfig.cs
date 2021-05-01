@@ -14,9 +14,13 @@ namespace SmartTutorial.EFMapping
 
             builder.Property(e => e.Text)
                 .IsRequired()
-                .HasMaxLength(10000);
+                .HasMaxLength(1000);
 
             builder.Property(e => e.Order).IsRequired();
+
+            builder.Property(e => e.Content)
+                .IsRequired()
+                .HasMaxLength(100000);
 
             builder.HasOne(d => d.Subject)
                 .WithMany(p => p.Topics)
