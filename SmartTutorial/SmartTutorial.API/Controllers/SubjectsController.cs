@@ -33,15 +33,35 @@ namespace SmartTutorial.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> Get(int id,bool includeTopics=false)
         {
-            Subject subject = await _subjectService.GetById(id);
-            if (subject == null)
+            Subject subject;
+            if (!includeTopics)
             {
-                return NotFound();
+                subject = await _subjectService.GetById(id);
+                if (subject == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    SubjectDto subjectDto = _mapper.Map<SubjectDto>(subject);
+                    return Ok(subjectDto);
+                }
             }
-            SubjectDto subjectDto = _mapper.Map<SubjectDto>(subject);
-            return Ok(subjectDto);
+            else
+            {
+                subject = await _subjectService.GetWithTopics(id);
+                if (subject == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    SubjectWithTopicsDto dto = _mapper.Map<SubjectWithTopicsDto>(subject);
+                    return Ok(dto);
+                }
+            }
         }
 
         [HttpPost]

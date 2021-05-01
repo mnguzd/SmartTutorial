@@ -12,6 +12,7 @@ namespace SmartTutorial.API.Services.Interfaces
         public Task<Subject> Add(AddSubjectDto dto);
         public Task<Subject> Update(int id, UpdateSubjectDto dto);
         public Task<Subject> UpdateWithDetails(int id, PatchSubjectDto dto);
+        public Task<Subject> GetWithTopics(int id);
         public Task Delete(int id);
     }
 }

@@ -103,7 +103,7 @@ export default function HomePage() {
           className={classes.snackBarContent}
           message={
             <Typography variant="body2">
-              {"Hello, " + user?.username}
+              {`Hello, ${user?.username}`}
             </Typography>
           }
           action={

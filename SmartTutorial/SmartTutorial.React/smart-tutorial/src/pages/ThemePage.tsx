@@ -111,7 +111,7 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
           to="/"
           label="Home"
           clickable
-          icon={<HomeIcon />}
+          icon={<HomeIcon/>}
         />
         <StyledBreadcrumb component={Link} to="/" label="Themes" clickable />
         <StyledBreadcrumb label={theme?.name} />
@@ -134,7 +134,7 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
         <Grid item>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
-              <SearchIcon />
+              <SearchIcon color="primary" />
             </div>
             <InputBase
               placeholder="Search…"
@@ -159,9 +159,10 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
                   val.name.toLowerCase().includes(searchTerm.toLowerCase())
                 )
                 .map((subject, index) => (
-                  <div>
                     <ListItem
                       button
+                      component={Link}
+                      to={`/themes/${theme.id}/subjects/${subject.id}`}
                       key={subject.id.toString()}
                       divider={index < theme.subjects.length - 1}
                     >
@@ -180,7 +181,6 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
                       </ListItemIcon>
                       <ListItemText primary={subject.name} />
                     </ListItem>
-                  </div>
                 ))}
             </List>
           )}

@@ -41,6 +41,12 @@ namespace SmartTutorial.API.Services.Implementations
             return subject;
         }
 
+        public Task<Subject> GetWithTopics(int id)
+        {
+            var result = _repository.GetByIdWithInclude(id, x => x.Topics);
+            return result;
+        }
+
         public async Task<Subject> Update(int id, UpdateSubjectDto dto)
         {
             Subject subject = await _repository.GetById(id);
