@@ -4,8 +4,12 @@ import axios from "axios";
 import { IUserForLogin, IUserForRegister } from "../data/UserData";
 import useLocalStorage from "../hooks/useLocalStorage";
 
-interface IUser {
+export interface IUser {
   username: string;
+  country: string;
+  firstname: string;
+  lastname: string;
+  rating: number;
 }
 interface IAuthToken {
   accessToken: string;

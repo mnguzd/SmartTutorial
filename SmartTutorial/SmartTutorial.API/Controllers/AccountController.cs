@@ -27,8 +27,16 @@ namespace SmartTutorial.API.Controllers
 
             if (signInResult.Succeeded)
             {
-                var token = _accountService.GenerateJwtToken(dto.Username);
-                return Ok(new { AccessToken = token });
+                var user = await _accountService.FindByUserName(dto.Username);
+                if (user != null)
+                {
+                    var token = _accountService.GenerateJwtToken(user.UserName, user.Country, user.Rating, user.FirstName, user.LastName);
+                    return Ok(new { AccessToken = token });
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = 401, Errors = new Error() { Message = "Server error. Try again or use another credentials" } });
+                }
             }
             return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = 401, Errors = new Error() { Message = "Invalid credentials! Failed to login" } });
         }

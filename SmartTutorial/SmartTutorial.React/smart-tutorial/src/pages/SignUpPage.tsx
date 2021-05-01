@@ -69,7 +69,7 @@ interface IFormInputs {
   email: string;
   password: string;
   passwordConfirm: string;
-  terms:boolean;
+  terms: boolean;
 }
 
 export default function SignUp() {
@@ -136,6 +136,8 @@ export default function SignUp() {
                   name="username"
                   render={() => (
                     <TextField
+                      autoComplete="username"
+                      autoFocus
                       variant="outlined"
                       fullWidth
                       id="username"
@@ -154,6 +156,7 @@ export default function SignUp() {
                   name="email"
                   render={() => (
                     <TextField
+                      autoComplete="email"
                       variant="outlined"
                       fullWidth
                       id="email"
@@ -172,6 +175,7 @@ export default function SignUp() {
                   name="password"
                   render={() => (
                     <TextField
+                      autoComplete="new-password"
                       variant="outlined"
                       fullWidth
                       label="Password"
@@ -199,7 +203,9 @@ export default function SignUp() {
                       {...register("passwordConfirm", { required: true })}
                       error={!!errors.passwordConfirm}
                       helperText={errors?.passwordConfirm?.message}
-                      onChange={(e) => setValue("passwordConfirm", e.target.value)}
+                      onChange={(e) =>
+                        setValue("passwordConfirm", e.target.value)
+                      }
                     />
                   )}
                 />
@@ -222,11 +228,9 @@ export default function SignUp() {
                   />
                 }
               />
-               {Boolean(errors.terms) && (
-                  <FormHelperText error>
-                    {errors.terms?.message}
-                  </FormHelperText>
-                )}
+              {Boolean(errors.terms) && (
+                <FormHelperText error>{errors.terms?.message}</FormHelperText>
+              )}
             </Grid>
             <Button
               type="submit"

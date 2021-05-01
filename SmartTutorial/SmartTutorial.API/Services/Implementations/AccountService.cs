@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using SmartTutorial.API.Infrastucture.Configurations;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain.Auth;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Services.Implementations
@@ -32,7 +29,7 @@ namespace SmartTutorial.API.Services.Implementations
             return signInResult;
         }
 
-        public string GenerateJwtToken(string payloadUsername)
+        public string GenerateJwtToken(string payloadUsername, string payloadCountry, int payloadRating, string payloadFirstname, string payloadLastname)
         {
             var signinCredentials = new SigningCredentials(_authenticationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256);
             var jwtSecurityToken = new JwtSecurityToken(
@@ -42,6 +39,10 @@ namespace SmartTutorial.API.Services.Implementations
                  signingCredentials: signinCredentials
             );
             jwtSecurityToken.Payload["username"] = payloadUsername;
+            jwtSecurityToken.Payload["country"] = payloadCountry;
+            jwtSecurityToken.Payload["firstname"] = payloadFirstname;
+            jwtSecurityToken.Payload["lastname"] = payloadLastname;
+            jwtSecurityToken.Payload["rating"] = payloadRating;
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -52,6 +53,12 @@ namespace SmartTutorial.API.Services.Implementations
         public async Task<User> FindByEmail(string email)
         {
             var userFound = await _userManager.FindByEmailAsync(email);
+            return userFound;
+        }
+
+        public async Task<User> FindByUserName(string username)
+        {
+            var userFound = await _userManager.FindByNameAsync(username);
             return userFound;
         }
 

@@ -96,10 +96,7 @@ export default function SignIn() {
 
   return (
     <Page title="WebTutor | Sign In">
-      <Breadcrumbs
-        aria-label="breadcrumb"
-        className={classes.bread}
-      >
+      <Breadcrumbs aria-label="breadcrumb" className={classes.bread}>
         <StyledBreadcrumb
           component={Link}
           to="/"
@@ -131,6 +128,8 @@ export default function SignIn() {
               defaultValue={getRememberedInfo().username}
               render={() => (
                 <TextField
+                  autoFocus
+                  autoComplete="username"
                   variant="outlined"
                   margin="normal"
                   fullWidth
@@ -149,6 +148,7 @@ export default function SignIn() {
               name="password"
               render={() => (
                 <TextField
+                  autoComplete="current-password"
                   variant="outlined"
                   margin="normal"
                   fullWidth
