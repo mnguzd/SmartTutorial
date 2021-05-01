@@ -10,9 +10,12 @@ import { Controller, useForm } from "react-hook-form/";
 import { Link } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import { useHistory } from "react-router-dom";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import Checkbox from "@material-ui/core/Checkbox";
 import HomeIcon from "@material-ui/icons/Home";
+import FormHelperText from "@material-ui/core/FormHelperText";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 import * as yup from "yup";
 import { useAuth, IServerSignUpError } from "../auth/Auth";
@@ -58,14 +61,15 @@ const schema = yup.object().shape({
     .required("Enter your password"),
   passwordConfirm: yup
     .string()
-    .oneOf([yup.ref("password")], "Passwords must match")
-    .required("Enter password confirmation"),
+    .oneOf([yup.ref("password")], "Passwords must match"),
+  terms: yup.boolean().oneOf([true], "You must read the Terms and Conditions"),
 });
 interface IFormInputs {
   username: string;
   email: string;
   password: string;
   passwordConfirm: string;
+  terms:boolean;
 }
 
 export default function SignUp() {
@@ -99,10 +103,7 @@ export default function SignUp() {
   }
   return (
     <Page title="WebTutor | Sign-Up">
-      <Breadcrumbs
-        aria-label="breadcrumb"
-        className={classes.bread}
-      >
+      <Breadcrumbs aria-label="breadcrumb" className={classes.bread}>
         <StyledBreadcrumb
           component={Link}
           to="/"
@@ -140,7 +141,7 @@ export default function SignUp() {
                       id="username"
                       label="Username"
                       {...register("username", { required: true })}
-                      error={errors.username !== undefined}
+                      error={!!errors.username}
                       helperText={errors?.username?.message}
                       onChange={(e) => setValue("username", e.target.value)}
                     />
@@ -158,7 +159,7 @@ export default function SignUp() {
                       id="email"
                       label="Email Address"
                       {...register("email", { required: true })}
-                      error={errors.email !== undefined}
+                      error={!!errors.email}
                       helperText={errors?.email?.message}
                       onChange={(e) => setValue("email", e.target.value)}
                     />
@@ -177,7 +178,7 @@ export default function SignUp() {
                       type="password"
                       id="password"
                       {...register("password", { required: true })}
-                      error={errors.password !== undefined}
+                      error={!!errors.password}
                       helperText={errors?.password?.message}
                       onChange={(e) => setValue("password", e.target.value)}
                     />
@@ -198,11 +199,34 @@ export default function SignUp() {
                       {...register("passwordConfirm", { required: true })}
                       error={!!errors.passwordConfirm}
                       helperText={errors?.passwordConfirm?.message}
-                      onChange={(e) => setValue("password", e.target.value)}
+                      onChange={(e) => setValue("passwordConfirm", e.target.value)}
                     />
                   )}
                 />
               </Grid>
+              <FormControlLabel
+                label="I have read the Terms and Conditions"
+                control={
+                  <Controller
+                    name="terms"
+                    control={control}
+                    defaultValue={false}
+                    render={() => (
+                      <Checkbox
+                        id="terms"
+                        defaultChecked={false}
+                        {...register("terms", { required: true })}
+                        onChange={(e) => setValue("terms", e.target.checked)}
+                      />
+                    )}
+                  />
+                }
+              />
+               {Boolean(errors.terms) && (
+                  <FormHelperText error>
+                    {errors.terms?.message}
+                  </FormHelperText>
+                )}
             </Grid>
             <Button
               type="submit"

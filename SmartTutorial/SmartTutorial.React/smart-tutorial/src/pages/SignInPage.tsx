@@ -138,7 +138,7 @@ export default function SignIn() {
                   label="Username"
                   defaultValue={getRememberedInfo().username}
                   {...register("username", { required: true })}
-                  error={errors.username !== undefined}
+                  error={!!errors.username}
                   helperText={errors?.username?.message}
                   onChange={(e) => setValue("username", e.target.value)}
                 />
@@ -156,7 +156,7 @@ export default function SignIn() {
                   type="password"
                   id="password"
                   {...register("password", { required: true })}
-                  error={errors.password !== undefined}
+                  error={!!errors.password}
                   helperText={errors?.password?.message}
                   onChange={(e) => setValue("password", e.target.value)}
                 />
