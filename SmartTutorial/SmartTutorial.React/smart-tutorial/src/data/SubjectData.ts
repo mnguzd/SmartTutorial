@@ -1,4 +1,5 @@
-import {ITopicData} from "./TopicData";
+import { IThemeData } from "./ThemeData";
+import { ITopicData } from "./TopicData";
 
 export interface ISubjectData {
   name: string;
@@ -6,10 +7,10 @@ export interface ISubjectData {
   id: number;
   date: string;
 }
-export interface ISubjectDataWithTopics{
-  name:string;
-  complexity:number;
-  id:number;
-  themeId:number;
-  topics:ITopicData[];
+export interface ISubjectDataWithTopics {
+  name: string;
+  complexity: number;
+  id: number;
+  topics: ITopicData[];
+  theme: IThemeData;
 }

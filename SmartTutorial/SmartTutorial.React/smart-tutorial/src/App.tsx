@@ -11,6 +11,7 @@ import { AuthProvider } from "./auth/Auth";
 import LogOut from "./pages/LogOutPage";
 import NotFound from "./pages/NotFoundPage";
 import TopicPage from "./pages/TopicPage";
+import AccountPage from "./pages/AccountPage";
 import { ThemeProvider } from "@material-ui/core";
 import MainTheme from "./themes/MainTheme";
 
@@ -25,12 +26,16 @@ function App() {
             <Route exact path="/" component={HomePage} />
             <Route path="/SignIn" component={SignIn} />
             <Route path="/SignUp" component={SignUp} />
-            <Route path="Themes/:themeId/Subjects/:subjectId/Topic/:topicId" component={TopicPage}/>
+            <Route
+              path="Themes/:themeId/Subjects/:subjectId/Topic/:topicId"
+              component={TopicPage}
+            />
             <Route
               path="/Themes/:themeId/Subjects/:subjectId"
               component={SubjectPage}
             />
             <Route path="/Themes/:themeId" component={ThemePage} />
+            <Route path="/Profile" component={AccountPage} />
             <Route path="/LogOut" component={LogOut} />
             <Route component={NotFound} />
           </Switch>

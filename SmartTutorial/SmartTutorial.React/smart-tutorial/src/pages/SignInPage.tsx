@@ -64,7 +64,7 @@ interface IFormInputs {
 }
 
 export default function SignIn() {
-  const { logIn, isAuthenticated, getRememberedInfo } = useAuth();
+  const { logIn, isAuthenticated, storedUsername } = useAuth();
 
   const history = useHistory();
 
@@ -125,7 +125,7 @@ export default function SignIn() {
             <Controller
               control={control}
               name="username"
-              defaultValue={getRememberedInfo().username}
+              defaultValue={storedUsername}
               render={() => (
                 <TextField
                   autoFocus
@@ -135,7 +135,7 @@ export default function SignIn() {
                   fullWidth
                   id="username"
                   label="Username"
-                  defaultValue={getRememberedInfo().username}
+                  defaultValue={storedUsername}
                   {...register("username", { required: true })}
                   error={!!errors.username}
                   helperText={errors?.username?.message}

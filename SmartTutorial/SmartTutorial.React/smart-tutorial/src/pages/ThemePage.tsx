@@ -111,9 +111,8 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
           to="/"
           label="Home"
           clickable
-          icon={<HomeIcon/>}
+          icon={<HomeIcon />}
         />
-        <StyledBreadcrumb component={Link} to="/" label="Themes" clickable />
         <StyledBreadcrumb label={theme?.name} />
       </Breadcrumbs>
       <Grid
@@ -159,28 +158,28 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
                   val.name.toLowerCase().includes(searchTerm.toLowerCase())
                 )
                 .map((subject, index) => (
-                    <ListItem
-                      button
-                      component={Link}
-                      to={`/themes/${theme.id}/subjects/${subject.id}`}
-                      key={subject.id.toString()}
-                      divider={index < theme.subjects.length - 1}
-                    >
-                      <ListItemIcon>
-                        <Chip
-                          size="small"
-                          label={subject.complexity}
-                          className={`${classes.light} ${
-                            subject.complexity < 3
-                              ? classes.light
-                              : subject.complexity < 5
-                              ? classes.medium
-                              : classes.hard
-                          }`}
-                        />
-                      </ListItemIcon>
-                      <ListItemText primary={subject.name} />
-                    </ListItem>
+                  <ListItem
+                    button
+                    component={Link}
+                    to={`/themes/${theme.id}/subjects/${subject.id}`}
+                    key={subject.id.toString()}
+                    divider={index < theme.subjects.length - 1}
+                  >
+                    <ListItemIcon>
+                      <Chip
+                        size="small"
+                        label={subject.complexity}
+                        className={`${classes.light} ${
+                          subject.complexity < 3
+                            ? classes.light
+                            : subject.complexity < 5
+                            ? classes.medium
+                            : classes.hard
+                        }`}
+                      />
+                    </ListItemIcon>
+                    <ListItemText primary={subject.name} />
+                  </ListItem>
                 ))}
             </List>
           )}

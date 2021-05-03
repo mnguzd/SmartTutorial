@@ -14,9 +14,7 @@ export interface IUser {
 interface IAuthToken {
   accessToken: string;
 }
-interface IRememberedInfo {
-  username: string;
-}
+
 export interface IServerSignUpError {
   name: "password" | "username" | "email" | "passwordConfirm";
   type: string;
@@ -31,12 +29,13 @@ export interface IServerSignInError {
 interface IAuthContext {
   isAuthenticated: boolean;
   user?: IUser;
+  storedUsername: string;
   loading: boolean;
+  userLocalAuthenticated: boolean;
   loginSuccess: boolean;
   logIn: (user: IUserForLogin) => Promise<IServerSignInError | null>;
   logOut: () => void;
   signUp: (user: IUserForRegister) => Promise<IServerSignUpError | null>;
-  getRememberedInfo: () => IRememberedInfo;
   calmSuccess: () => void;
 }
 
@@ -44,12 +43,11 @@ export const AuthContext = createContext<IAuthContext>({
   isAuthenticated: false,
   loading: true,
   loginSuccess: false,
+  storedUsername: "",
+  userLocalAuthenticated: false,
   logIn: async () => null,
   logOut: async () => {},
   signUp: async () => null,
-  getRememberedInfo: () => {
-    return { username: "" };
-  },
   calmSuccess: () => {},
 });
 
@@ -79,13 +77,13 @@ export const AuthProvider: FC = ({ children }) => {
     "username",
     ""
   );
+  const [
+    userLocalAuthenticated,
+    setUserLocalAuthenticated,
+  ] = useLocalStorage<boolean>("authenticated", false);
 
   function calmSuccess() {
     setSuccess(false);
-  }
-
-  function getRememberedInfo(): IRememberedInfo {
-    return { username: storedUsername };
   }
   async function logIn(
     data: IUserForLogin
@@ -108,6 +106,7 @@ export const AuthProvider: FC = ({ children }) => {
           const userData: IUser = parseJwt(token);
           setUser(userData);
           setIsAuthenticated(true);
+          setUserLocalAuthenticated(true);
           setSuccess(true);
           if (data.remember && userData) {
             setStoredUsername(userData.username);
@@ -222,6 +221,7 @@ export const AuthProvider: FC = ({ children }) => {
         }
         setUser(undefined);
         setIsAuthenticated(false);
+        setUserLocalAuthenticated(false);
       })
       .catch((err) => console.log(err));
     setLoading(false);
@@ -234,22 +234,24 @@ export const AuthProvider: FC = ({ children }) => {
         const localUser: IUser = parseJwt(token);
         setUser(localUser);
         setIsAuthenticated(true);
+        setUserLocalAuthenticated(true);
       }
     }
     setLoading(false);
-  }, [isAuthenticated, token]);
+  }, [isAuthenticated, token, setUserLocalAuthenticated]);
 
   return (
     <AuthContext.Provider
       value={{
         isAuthenticated,
         user,
+        storedUsername: storedUsername,
         loading,
         loginSuccess,
+        userLocalAuthenticated,
         logIn: logIn,
         logOut: logOut,
         signUp: signUp,
-        getRememberedInfo: getRememberedInfo,
         calmSuccess: calmSuccess,
       }}
     >

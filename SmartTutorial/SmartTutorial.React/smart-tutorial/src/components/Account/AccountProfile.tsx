@@ -1,7 +1,8 @@
 import moment from "moment";
 import { Box, Card, CardContent, Divider, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import {IUser} from "../../auth/Auth";
+import { IUser } from "../../auth/Auth";
+
 
 const useStyles = makeStyles((theme) => ({
   box: {
@@ -11,17 +12,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AccountProfile = (user: IUser) => {
+export default function AccountProfile(user: IUser) {
   const classes = useStyles();
-
   return (
     <Card {...user}>
       <CardContent>
         <Box className={classes.box}>
-          <Typography color="textPrimary" gutterBottom variant="h3">
-            {user.firstname+" "+user.lastname}
+          <Typography color="textPrimary" gutterBottom variant="h6">
+            {user.firstname + " " + user.lastname}
           </Typography>
-          <Typography color="textSecondary" gutterBottom variant="h3">
+          <Typography color="textSecondary" gutterBottom variant="body2">
             {"Rating: " + user.rating}
           </Typography>
           <Typography color="textSecondary" variant="body1">
@@ -35,6 +35,4 @@ const AccountProfile = (user: IUser) => {
       <Divider />
     </Card>
   );
-};
-
-export default AccountProfile;
+}
