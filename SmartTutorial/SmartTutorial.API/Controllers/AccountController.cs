@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SmartTutorial.API.Dtos;
 using SmartTutorial.API.Dtos.UserDtos;
 using SmartTutorial.API.Services.Interfaces;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Controllers
@@ -13,10 +16,12 @@ namespace SmartTutorial.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
+        private readonly IWebHostEnvironment _environment;
 
-        public AccountController(IAccountService accountService)
+        public AccountController(IAccountService accountService, IWebHostEnvironment environment)
         {
             _accountService = accountService;
+            _environment = environment;
         }
 
         [AllowAnonymous]
@@ -30,7 +35,7 @@ namespace SmartTutorial.API.Controllers
                 var user = await _accountService.FindByUserName(dto.Username);
                 if (user != null)
                 {
-                    var token = _accountService.GenerateJwtToken(user.UserName, user.Country, user.Rating, user.FirstName, user.LastName);
+                    var token = _accountService.GenerateJwtToken(user.UserName, user.Country, user.Rating, user.FirstName, user.LastName, user.Email);
                     return Ok(new { AccessToken = token });
                 }
                 else
@@ -60,6 +65,55 @@ namespace SmartTutorial.API.Controllers
                 return StatusCode(StatusCodes.Status404NotFound, response);
             }
             return CreatedAtAction("Register", createdResult);
+        }
+
+        [HttpPatch("patch")]
+        public async Task<IActionResult> EditDetails(UserEditDto dto)
+        {
+            var userFound = await _accountService.FindByUserName(dto.Username);
+            if (userFound != null)
+            {
+                var editedResult = await _accountService.EditUserInfo(userFound, dto.Firstname, dto.Lastname, dto.Email, dto.Country);
+                if (editedResult.Succeeded)
+                {
+                    return CreatedAtAction(nameof(EditDetails), dto);
+                }
+                return StatusCode(StatusCodes.Status406NotAcceptable, new Response { Status = 406, Errors = new Error() { Message = "Error, try using another credentials" } });
+            }
+            return StatusCode(StatusCodes.Status406NotAcceptable, new Response { Status = 406, Errors = new Error() { Message = "Error, try using another credentials" } });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("uploadImage")]
+        public async Task<IActionResult> UploadImage([FromForm] UploadUserAvatarDto dto)
+        {
+            try
+            {
+                if (dto.Avatar.Length > 0)
+                {
+                    string path = _environment.WebRootPath + "\\UsersImages\\";
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    using (FileStream fileStream = System.IO.File.Create(path + dto.Avatar.FileName))
+                    {
+                        await dto.Avatar.CopyToAsync(fileStream);
+                        await fileStream.FlushAsync();
+                        var dbPath = path + dto.Avatar.FileName;
+                        return Ok(new { dbPath });
+                    }
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = 500, Errors = new Error() { Message = "Internal server error" } });
+
+            }
         }
 
         [HttpPost("logout")]

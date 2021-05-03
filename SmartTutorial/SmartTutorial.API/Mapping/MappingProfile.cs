@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Dtos.ThemeDtos;
+using SmartTutorial.API.Dtos.TopicDtos;
 using SmartTutorial.Domain;
 
 namespace SmartTutorial.API.Mapping
@@ -16,6 +17,8 @@ namespace SmartTutorial.API.Mapping
             CreateMap<ThemeDto, Theme>();
             CreateMap<Theme, ThemeDto>();
             CreateMap<ThemeWithSubjectsDto, Theme>();
+            CreateMap<Topic, TopicDto>();
+            CreateMap<TopicDto, Topic>();
             CreateMap<Theme, ThemeWithSubjectsDto>();
             CreateMap<Subject, SubjectWithTopicsDto>();
         }

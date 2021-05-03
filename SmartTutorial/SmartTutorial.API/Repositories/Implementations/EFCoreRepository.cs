@@ -58,7 +58,7 @@ namespace SmartTutorial.API.Repositories.Implementations
             return await _context.SaveChangesAsync()>=0;
         }
 
-        public async Task<TEntity> Update(TEntity entity)
+        public TEntity Update(TEntity entity)
         {
             _context.Entry(entity).State = EntityState.Modified;
             return entity;

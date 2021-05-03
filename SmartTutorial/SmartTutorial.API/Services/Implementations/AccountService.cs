@@ -29,7 +29,7 @@ namespace SmartTutorial.API.Services.Implementations
             return signInResult;
         }
 
-        public string GenerateJwtToken(string payloadUsername, string payloadCountry, int payloadRating, string payloadFirstname, string payloadLastname)
+        public string GenerateJwtToken(string payloadUsername, string payloadCountry, int payloadRating, string payloadFirstname, string payloadLastname, string payloadEmail)
         {
             var signinCredentials = new SigningCredentials(_authenticationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256);
             var jwtSecurityToken = new JwtSecurityToken(
@@ -43,6 +43,7 @@ namespace SmartTutorial.API.Services.Implementations
             jwtSecurityToken.Payload["firstname"] = payloadFirstname;
             jwtSecurityToken.Payload["lastname"] = payloadLastname;
             jwtSecurityToken.Payload["rating"] = payloadRating;
+            jwtSecurityToken.Payload["email"] = payloadEmail;
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -73,6 +74,20 @@ namespace SmartTutorial.API.Services.Implementations
             var createdResult = await _userManager.CreateAsync(user, password);
             return createdResult;
         }
+
+        public async Task<IdentityResult> EditUserInfo(User user,string firstname,string lastname,string email,string country)
+        {
+            user.FirstName = firstname;
+            user.LastName = lastname;
+            user.Email = email;
+            if (!string.IsNullOrWhiteSpace(country))
+            {
+                user.Country = country;
+            }
+            var result = await _userManager.UpdateAsync(user);
+            return result;
+        }
+
 
         public async Task LogOut()
         {

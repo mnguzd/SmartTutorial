@@ -7,7 +7,6 @@ namespace SmartTutorial.API.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            return;
             migrationBuilder.EnsureSchema(
                 name: "Auth");
 

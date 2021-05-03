@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SmartTutorial.API.Infrastucture.Extensions;
 using SmartTutorial.API.Mapping;
+using Newtonsoft.Json;
+using Newtonsoft;
 using SmartTutorial.API.Repositories.Implementations;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Implementations;
@@ -24,11 +26,12 @@ namespace SmartTutorial.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<SmartTutorialDbContext>(optionBuilder => optionBuilder.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("SmartTutorialConnection")));
-            services.AddIdentity<User, Role>(options => { options.Password.RequiredLength = 8;
+            services.AddIdentity<User, Role>(options =>
+            {
+                options.Password.RequiredLength = 8;
                 options.Password.RequireNonAlphanumeric = false;
             }).AddEntityFrameworkStores<SmartTutorialDbContext>();
             var authOptions = services.ConfigureAuthOptions(Configuration);
@@ -37,8 +40,7 @@ namespace SmartTutorial.API
                 options =>
                 {
                     options.Filters.Add(new AuthorizeFilter());
-                }
-                );
+                });
             services.AddScoped(typeof(IGenericRepository<>), typeof(EFCoreRepository<>));
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<IAccountService, AccountService>();
@@ -47,7 +49,6 @@ namespace SmartTutorial.API
             services.AddSwaggerGen();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseSwagger();
@@ -65,15 +66,18 @@ namespace SmartTutorial.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseCors(configurePolicy=>configurePolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseCors(configurePolicy => configurePolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseStaticFiles();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }

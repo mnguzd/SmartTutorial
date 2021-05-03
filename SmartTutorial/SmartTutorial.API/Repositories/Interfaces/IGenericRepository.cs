@@ -18,7 +18,7 @@ namespace SmartTutorial.API.Repositories.Interfaces
 
         Task<TEntity> Add(TEntity entity);
 
-        Task<TEntity> Update(TEntity entity);
+        TEntity Update(TEntity entity);
 
         Task<TEntity> Delete(int id);
     }

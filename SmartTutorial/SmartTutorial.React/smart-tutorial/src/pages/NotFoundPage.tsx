@@ -19,7 +19,7 @@ export default function NotFound() {
         </Grid>
         <Grid item>
           <Typography color="inherit" variant="h6">
-            Oops... This page doesn`t exist.
+            404: The page you are looking for isn’t here
           </Typography>
         </Grid>
       </Grid>

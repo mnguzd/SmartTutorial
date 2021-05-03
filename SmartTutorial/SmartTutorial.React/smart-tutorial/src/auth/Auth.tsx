@@ -6,11 +6,21 @@ import useLocalStorage from "../hooks/useLocalStorage";
 
 export interface IUser {
   username: string;
+  email: string;
   country: string;
   firstname: string;
   lastname: string;
   rating: number;
 }
+
+export interface IUpdatedUserInfo {
+  username: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  country: string;
+}
+
 interface IAuthToken {
   accessToken: string;
 }
@@ -31,8 +41,10 @@ interface IAuthContext {
   user?: IUser;
   storedUsername: string;
   loading: boolean;
+  token: string;
   userLocalAuthenticated: boolean;
   loginSuccess: boolean;
+  updateUserInfo:(data:IUpdatedUserInfo) =>void;
   logIn: (user: IUserForLogin) => Promise<IServerSignInError | null>;
   logOut: () => void;
   signUp: (user: IUserForRegister) => Promise<IServerSignUpError | null>;
@@ -44,6 +56,8 @@ export const AuthContext = createContext<IAuthContext>({
   loading: true,
   loginSuccess: false,
   storedUsername: "",
+  token: "",
+  updateUserInfo :()=>{},
   userLocalAuthenticated: false,
   logIn: async () => null,
   logOut: async () => {},
@@ -52,20 +66,6 @@ export const AuthContext = createContext<IAuthContext>({
 });
 
 export const useAuth = () => useContext(AuthContext);
-
-function parseJwt(token: string): any {
-  var base64Url = token.split(".")[1];
-  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  var jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split("")
-      .map(function (c) {
-        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join("")
-  );
-  return JSON.parse(jsonPayload);
-}
 
 export const AuthProvider: FC = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
@@ -84,6 +84,19 @@ export const AuthProvider: FC = ({ children }) => {
 
   function calmSuccess() {
     setSuccess(false);
+  }
+  function updateUserInfo(data: IUpdatedUserInfo) {
+    if (user) {
+        let newData:IUser = {
+        username: data.username,
+        firstname: data.firstname,
+        lastname: data.lastname,
+        email: data.email,
+        country: data.country,
+        rating: user.rating,
+      };
+      setUser(newData);
+    }
   }
   async function logIn(
     data: IUserForLogin
@@ -247,6 +260,8 @@ export const AuthProvider: FC = ({ children }) => {
         user,
         storedUsername: storedUsername,
         loading,
+        updateUserInfo:updateUserInfo,
+        token: token,
         loginSuccess,
         userLocalAuthenticated,
         logIn: logIn,
@@ -259,3 +274,17 @@ export const AuthProvider: FC = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+function parseJwt(token: string): any {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+  return JSON.parse(jsonPayload);
+}
