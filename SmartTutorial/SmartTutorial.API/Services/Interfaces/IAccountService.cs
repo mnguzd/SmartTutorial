@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using SmartTutorial.API.Dtos;
 using SmartTutorial.Domain.Auth;
+using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Services.Interfaces
@@ -7,11 +11,14 @@ namespace SmartTutorial.API.Services.Interfaces
     public interface IAccountService
     {
         Task<SignInResult> SignInAsync(string userName, string password);
-        string GenerateJwtToken(string payloadUsername, string payloadCountry, int payloadRating, string payloadFirstname, string payloadLastname, string payloadEmail);
+        Task<JwtAuthResult> GenerateTokens(string username, Claim[] claims, DateTime now);
+        Task RemoveRefreshTokenByUserName(string userName);
+        Task<JwtAuthResult> Refresh(string refreshToken, string accessToken, DateTime now);
         Task<User> FindByEmail(string email);
         Task<User> FindByUserName(string username);
         Task<IdentityResult> EditUserInfo(User user, string firstname, string lastname, string email, string country);
-        public Task<IdentityResult> CreateUser(string email, string username, string password);
-        public Task LogOut();
+        Task<IdentityResult> CreateUser(string email, string username, string password);
+        Task<string> UploadImage(IFormFile avatar, User user);
+        Task LogOut();
     }
 }

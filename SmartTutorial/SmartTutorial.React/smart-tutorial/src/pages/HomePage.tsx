@@ -74,23 +74,17 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    let isMounted = true;
     const getThemesAsync = async () => {
       setLoading(true);
       const themes = await getThemes();
       setData(themes);
       setLoading(false);
     };
-    if (isMounted) {
-      getThemesAsync();
-    }
+    getThemesAsync();
     if (loginSuccess) {
       handleClick(SlideTransition);
       calmSuccess();
     }
-    return () => {
-      isMounted = false;
-    };
   }, [calmSuccess, loginSuccess]);
 
   return (

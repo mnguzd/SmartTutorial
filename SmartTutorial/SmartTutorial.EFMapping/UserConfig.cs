@@ -14,10 +14,16 @@ namespace SmartTutorial.EFMapping
                 .IsRequired()
                 .HasMaxLength(30)
                 .HasDefaultValue("Webtutor");
+            builder.Property(e => e.Country)
+                .IsRequired()
+                .HasMaxLength(30)
+                .HasDefaultValue("WebTutorLand");
             builder.Property(e => e.LastName)
                 .IsRequired()
                 .HasMaxLength(30)
                 .HasDefaultValue("User");
+            builder.Property(e => e.AvatarPath)
+                .HasDefaultValue(@"C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\wwwroot\UsersImages\Default.jpg");
         }
     }
 }

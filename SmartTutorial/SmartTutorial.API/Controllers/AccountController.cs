@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SmartTutorial.API.Dtos;
+using SmartTutorial.API.Dtos.Auth;
 using SmartTutorial.API.Dtos.UserDtos;
 using SmartTutorial.API.Services.Interfaces;
 using System;
 using System.IO;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Controllers
@@ -28,6 +31,10 @@ namespace SmartTutorial.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new Response { Status = 400, Errors = new Error() { Message = "Server error. Try again or use another credentials" } });
+            }
             var signInResult = await _accountService.SignInAsync(dto.Username, dto.Password);
 
             if (signInResult.Succeeded)
@@ -35,8 +42,19 @@ namespace SmartTutorial.API.Controllers
                 var user = await _accountService.FindByUserName(dto.Username);
                 if (user != null)
                 {
-                    var token = _accountService.GenerateJwtToken(user.UserName, user.Country, user.Rating, user.FirstName, user.LastName, user.Email);
-                    return Ok(new { AccessToken = token });
+                    var serverName = "https://localhost:44314/UsersImages/";
+                    var fileName = Path.GetFileName(user.AvatarPath);
+                    var claims = new[]{
+                        new Claim(ClaimTypes.Name,user.UserName),
+                        new Claim("email",user.Email),
+                        new Claim("country",user.Country),
+                        new Claim("firstname",user.FirstName),
+                        new Claim("lastname",user.LastName),
+                        new Claim("rating",user.Rating.ToString()),
+                        new Claim("avatar",serverName+fileName)
+                    };
+                    var jwtResult = await _accountService.GenerateTokens(user.UserName, claims, DateTime.Now);
+                    return Ok(jwtResult);
                 }
                 else
                 {
@@ -45,6 +63,7 @@ namespace SmartTutorial.API.Controllers
             }
             return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = 401, Errors = new Error() { Message = "Invalid credentials! Failed to login" } });
         }
+
         [AllowAnonymous]
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto dto)
@@ -67,6 +86,25 @@ namespace SmartTutorial.API.Controllers
             return CreatedAtAction("Register", createdResult);
         }
 
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto dto)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(dto.RefreshToken))
+                {
+                    return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = 401, Errors = new Error() { Message = "Empty refresh token is not allowed" } });
+                }
+                var accessToken = await HttpContext.GetTokenAsync("Bearer", "access_token");
+                var jwtResult = await _accountService.Refresh(dto.RefreshToken, accessToken, DateTime.Now);
+                return Ok(jwtResult);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = 401, Errors = new Error() { Message = ex.Message } });
+            }
+        }
+
         [HttpPatch("patch")]
         public async Task<IActionResult> EditDetails(UserEditDto dto)
         {
@@ -87,39 +125,20 @@ namespace SmartTutorial.API.Controllers
         [HttpPost("uploadImage")]
         public async Task<IActionResult> UploadImage([FromForm] UploadUserAvatarDto dto)
         {
-            try
+            var userFound = await _accountService.FindByUserName(dto.Username);
+            if (userFound == null)
             {
-                if (dto.Avatar.Length > 0)
-                {
-                    string path = _environment.WebRootPath + "\\UsersImages\\";
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                    using (FileStream fileStream = System.IO.File.Create(path + dto.Avatar.FileName))
-                    {
-                        await dto.Avatar.CopyToAsync(fileStream);
-                        await fileStream.FlushAsync();
-                        var dbPath = path + dto.Avatar.FileName;
-                        return Ok(new { dbPath });
-                    }
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                return NotFound();
             }
-            catch
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = 500, Errors = new Error() { Message = "Internal server error" } });
-
-            }
+            var result = await _accountService.UploadImage(dto.Avatar, userFound);
+            return Ok(result);
         }
 
         [HttpPost("logout")]
-        public async Task<object> Logout()
+        public IActionResult Logout()
         {
-            await _accountService.LogOut();
+            var userName = User.Identity.Name;
+            _accountService.RemoveRefreshTokenByUserName(userName);
             return Ok();
         }
     }

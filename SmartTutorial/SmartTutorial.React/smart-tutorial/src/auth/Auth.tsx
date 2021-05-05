@@ -11,6 +11,7 @@ export interface IUser {
   firstname: string;
   lastname: string;
   rating: number;
+  avatar: string;
 }
 
 export interface IUpdatedUserInfo {
@@ -44,7 +45,7 @@ interface IAuthContext {
   token: string;
   userLocalAuthenticated: boolean;
   loginSuccess: boolean;
-  updateUserInfo:(data:IUpdatedUserInfo) =>void;
+  updateUserInfo: (data: IUpdatedUserInfo) => void;
   logIn: (user: IUserForLogin) => Promise<IServerSignInError | null>;
   logOut: () => void;
   signUp: (user: IUserForRegister) => Promise<IServerSignUpError | null>;
@@ -57,7 +58,7 @@ export const AuthContext = createContext<IAuthContext>({
   loginSuccess: false,
   storedUsername: "",
   token: "",
-  updateUserInfo :()=>{},
+  updateUserInfo: () => {},
   userLocalAuthenticated: false,
   logIn: async () => null,
   logOut: async () => {},
@@ -87,13 +88,14 @@ export const AuthProvider: FC = ({ children }) => {
   }
   function updateUserInfo(data: IUpdatedUserInfo) {
     if (user) {
-        let newData:IUser = {
+      let newData: IUser = {
         username: data.username,
         firstname: data.firstname,
         lastname: data.lastname,
         email: data.email,
         country: data.country,
         rating: user.rating,
+        avatar: user.avatar,
       };
       setUser(newData);
     }
@@ -260,7 +262,7 @@ export const AuthProvider: FC = ({ children }) => {
         user,
         storedUsername: storedUsername,
         loading,
-        updateUserInfo:updateUserInfo,
+        updateUserInfo: updateUserInfo,
         token: token,
         loginSuccess,
         userLocalAuthenticated,
