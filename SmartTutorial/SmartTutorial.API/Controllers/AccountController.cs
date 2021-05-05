@@ -46,10 +46,10 @@ namespace SmartTutorial.API.Controllers
                     var fileName = Path.GetFileName(user.AvatarPath);
                     var claims = new[]{
                         new Claim(ClaimTypes.Name,user.UserName),
-                        new Claim("email",user.Email),
-                        new Claim("country",user.Country),
-                        new Claim("firstname",user.FirstName),
-                        new Claim("lastname",user.LastName),
+                        new Claim(ClaimTypes.Email,user.Email),
+                        new Claim(ClaimTypes.Country,user.Country),
+                        new Claim(ClaimTypes.GivenName,user.FirstName),
+                        new Claim(ClaimTypes.Surname,user.LastName),
                         new Claim("rating",user.Rating.ToString()),
                         new Claim("avatar",serverName+fileName)
                     };
@@ -86,6 +86,7 @@ namespace SmartTutorial.API.Controllers
             return CreatedAtAction("Register", createdResult);
         }
 
+        
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto dto)
         {

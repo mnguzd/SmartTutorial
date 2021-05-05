@@ -102,11 +102,24 @@ namespace SmartTutorial.API.Services.Implementations
             }
             var userName = principal.Identity?.Name;
             var userFound = await FindByUserName(userName);
+
+            //because principal.identity.claims returns old data
+            var serverName = "https://localhost:44314/UsersImages/";
+            var fileName = Path.GetFileName(userFound.AvatarPath);
+            var claims = new[]{
+                        new Claim(ClaimTypes.Name,userFound.UserName),
+                        new Claim(ClaimTypes.Email,userFound.Email),
+                        new Claim(ClaimTypes.Country,userFound.Country),
+                        new Claim(ClaimTypes.GivenName,userFound.FirstName),
+                        new Claim(ClaimTypes.Surname,userFound.LastName),
+                        new Claim("rating",userFound.Rating.ToString()),
+                        new Claim("avatar",serverName+fileName)
+                    };
             if (refreshToken!=userFound.RefreshToken)
             { 
                 throw new SecurityTokenException(userFound.RefreshToken.ToString());
             }
-            var result = await GenerateTokens(userFound.UserName, principal.Claims.ToArray(), now);
+            var result = await GenerateTokens(userFound.UserName, claims, now);
             return result;
         }
 

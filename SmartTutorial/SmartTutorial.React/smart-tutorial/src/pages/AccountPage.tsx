@@ -23,14 +23,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AccountPage() {
-  const { user, userLocalAuthenticated } = useAuth();
+  const { user, token } = useAuth();
   const history = useHistory();
   const classes = useStyles();
   useEffect(() => {
-    if (!userLocalAuthenticated) {
+    if (!token) {
       history.push("/");
     }
-  }, [userLocalAuthenticated, history]);
+  }, [token, history]);
   return (
     <Page title={"Profile: " + user?.username}>
       <Breadcrumbs aria-label="breadcrumb" className={classes.bread}>

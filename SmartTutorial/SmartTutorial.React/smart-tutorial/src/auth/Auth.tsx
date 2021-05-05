@@ -24,6 +24,17 @@ export interface IUpdatedUserInfo {
 
 interface IAuthToken {
   accessToken: string;
+  refreshToken: IRefreshToken;
+}
+
+interface IRefreshToken {
+  username: string;
+  tokenString: string;
+  expireAt: string;
+}
+
+interface ISendRefreshToken {
+  refreshToken: string;
 }
 
 export interface IServerSignUpError {
@@ -43,9 +54,8 @@ interface IAuthContext {
   storedUsername: string;
   loading: boolean;
   token: string;
-  userLocalAuthenticated: boolean;
   loginSuccess: boolean;
-  updateUserInfo: (data: IUpdatedUserInfo) => void;
+  updateUserInfo: () => Promise<void>;
   logIn: (user: IUserForLogin) => Promise<IServerSignInError | null>;
   logOut: () => void;
   signUp: (user: IUserForRegister) => Promise<IServerSignUpError | null>;
@@ -58,13 +68,32 @@ export const AuthContext = createContext<IAuthContext>({
   loginSuccess: false,
   storedUsername: "",
   token: "",
-  updateUserInfo: () => {},
-  userLocalAuthenticated: false,
+  updateUserInfo: async () => {},
   logIn: async () => null,
   logOut: async () => {},
   signUp: async () => null,
   calmSuccess: () => {},
 });
+
+function getUserFromToken(token: any): IUser {
+  const userData: IUser = {
+    username:
+      token["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
+    lastname:
+      token["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"],
+    firstname:
+      token["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname"],
+    country:
+      token["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country"],
+    rating: token["rating"],
+    avatar: token["avatar"],
+    email:
+      token[
+        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+      ],
+  };
+  return userData;
+}
 
 export const useAuth = () => useContext(AuthContext);
 
@@ -74,31 +103,39 @@ export const AuthProvider: FC = ({ children }) => {
   const [loginSuccess, setSuccess] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useLocalStorage<string>("token", "");
+  const [refreshToken, setRefreshToken] = useLocalStorage<string>(
+    "refreshToken",
+    ""
+  );
   const [storedUsername, setStoredUsername] = useLocalStorage<string>(
     "username",
     ""
   );
-  const [
-    userLocalAuthenticated,
-    setUserLocalAuthenticated,
-  ] = useLocalStorage<boolean>("authenticated", false);
-
   function calmSuccess() {
     setSuccess(false);
   }
-  function updateUserInfo(data: IUpdatedUserInfo) {
-    if (user) {
-      let newData: IUser = {
-        username: data.username,
-        firstname: data.firstname,
-        lastname: data.lastname,
-        email: data.email,
-        country: data.country,
-        rating: user.rating,
-        avatar: user.avatar,
-      };
-      setUser(newData);
-    }
+  async function updateUserInfo(): Promise<void> {
+    let sendRefreshToken: ISendRefreshToken = {
+      refreshToken: refreshToken,
+    };
+    await axios
+      .post<IAuthToken>(
+        webAPIUrl + "/account/refresh-token",
+        sendRefreshToken,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+      .then((res) => {
+        const token = res.data.accessToken;
+        const refreshToken = res.data.refreshToken.tokenString;
+        if (token && refreshToken) {
+          setToken(token);
+          setRefreshToken(refreshToken);
+          const parsedToken = parseJwt(token);
+          setUser(getUserFromToken(parsedToken));
+        }
+      });
   }
   async function logIn(
     data: IUserForLogin
@@ -116,12 +153,14 @@ export const AuthProvider: FC = ({ children }) => {
       })
       .then((res) => {
         const token = res.data.accessToken;
-        if (token) {
+        const refreshToken = res.data.refreshToken.tokenString;
+        if (token && refreshToken) {
           setToken(token);
-          const userData: IUser = parseJwt(token);
+          setRefreshToken(refreshToken);
+          const parsedToken = parseJwt(token);
+          const userData = getUserFromToken(parsedToken);
           setUser(userData);
           setIsAuthenticated(true);
-          setUserLocalAuthenticated(true);
           setSuccess(true);
           if (data.remember && userData) {
             setStoredUsername(userData.username);
@@ -231,12 +270,12 @@ export const AuthProvider: FC = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => {
-        if (token) {
+        if (token && refreshToken) {
           setToken("");
+          setRefreshToken("");
         }
         setUser(undefined);
         setIsAuthenticated(false);
-        setUserLocalAuthenticated(false);
       })
       .catch((err) => console.log(err));
     setLoading(false);
@@ -246,14 +285,13 @@ export const AuthProvider: FC = ({ children }) => {
     setLoading(true);
     if (isAuthenticated === false) {
       if (token) {
-        const localUser: IUser = parseJwt(token);
-        setUser(localUser);
+        const parsedToken = parseJwt(token);
+        setUser(getUserFromToken(parsedToken));
         setIsAuthenticated(true);
-        setUserLocalAuthenticated(true);
       }
     }
     setLoading(false);
-  }, [isAuthenticated, token, setUserLocalAuthenticated]);
+  }, [isAuthenticated, token]);
 
   return (
     <AuthContext.Provider
@@ -265,7 +303,6 @@ export const AuthProvider: FC = ({ children }) => {
         updateUserInfo: updateUserInfo,
         token: token,
         loginSuccess,
-        userLocalAuthenticated,
         logIn: logIn,
         logOut: logOut,
         signUp: signUp,

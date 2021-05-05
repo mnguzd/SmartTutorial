@@ -71,7 +71,7 @@ const AccountProfileDetails = (user: IUser) => {
     data.username = user.username;
     const newUser: IUpdatedUserInfo | undefined = await editUser(data, token);
     if (newUser) {
-      updateUserInfo(newUser);
+      await updateUserInfo();
     }
   }
   return (
