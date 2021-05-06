@@ -74,7 +74,9 @@ export async function uploadImage(
   token: string
 ): Promise<IServerImageUploadError | null> {
   let formData = new FormData();
-  formData.append("Avatar", data);
+  if (data) {
+    formData.append("Avatar", data);
+  }
   let error: IServerImageUploadError = {
     name: "image",
     type: "server",
@@ -89,11 +91,15 @@ export async function uploadImage(
     })
     .then(() => {})
     .catch((err) => {
-      const dataError = err.response.data;
-      if (dataError.errors) {
-        if (dataError.errors.Avatar) {
-          error.message = dataError.errors.Avatar[0];
+      if (err.response) {
+        const dataError = err.response.data;
+        if (dataError.errors) {
+          if (dataError.errors.Avatar) {
+            error.message = dataError.errors.Avatar[0];
+          }
         }
+      } else {
+        error.message = "Server error, try uploading another image";
       }
     });
   if (error.message) {

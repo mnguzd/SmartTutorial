@@ -22,8 +22,6 @@ namespace SmartTutorial.EFMapping
                 .IsRequired()
                 .HasMaxLength(30)
                 .HasDefaultValue("User");
-            builder.Property(e => e.AvatarPath)
-                .HasDefaultValue(@"C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\wwwroot\UsersImages\Default.jpg");
         }
     }
 }

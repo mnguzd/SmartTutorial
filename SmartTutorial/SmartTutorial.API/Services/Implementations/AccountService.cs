@@ -94,8 +94,6 @@ namespace SmartTutorial.API.Services.Implementations
 
         public Claim[] GenerateClaims(User user)
         {
-            var serverName = "https://localhost:44314/UsersImages/";
-            var fileName = Path.GetFileName(user.AvatarPath);
             var claims = new[]{
                         new Claim(ClaimTypes.Name,user.UserName),
                         new Claim(ClaimTypes.Email,user.Email),
@@ -103,7 +101,7 @@ namespace SmartTutorial.API.Services.Implementations
                         new Claim(ClaimTypes.GivenName,user.FirstName),
                         new Claim(ClaimTypes.Surname,user.LastName),
                         new Claim("rating",user.Rating.ToString()),
-                        new Claim("avatar",serverName+fileName)
+                        new Claim("avatar",user.AvatarPath ?? string.Empty)
                     };
             return claims;
         }
@@ -209,10 +207,10 @@ namespace SmartTutorial.API.Services.Implementations
                     {
                         await avatar.CopyToAsync(fileStream);
                         await fileStream.FlushAsync();
-                        var dbPath = fileStream.Name;
-                        user.AvatarPath = dbPath;
+                        var localServerName = "https://localhost:44314/UsersImages/";
+                        user.AvatarPath = localServerName+pngPath;
                         await _userManager.UpdateAsync(user);
-                        return dbPath;
+                        return user.AvatarPath;
                     }
                 }
                 else
