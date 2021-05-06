@@ -9,8 +9,6 @@ using SmartTutorial.API.Infrastucture.Configurations;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain.Auth;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Immutable;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
@@ -115,8 +113,8 @@ namespace SmartTutorial.API.Services.Implementations
                         new Claim("rating",userFound.Rating.ToString()),
                         new Claim("avatar",serverName+fileName)
                     };
-            if (refreshToken!=userFound.RefreshToken)
-            { 
+            if (refreshToken != userFound.RefreshToken)
+            {
                 throw new SecurityTokenException(userFound.RefreshToken.ToString());
             }
             var result = await GenerateTokens(userFound.UserName, claims, now);
@@ -194,7 +192,8 @@ namespace SmartTutorial.API.Services.Implementations
                     {
                         Directory.CreateDirectory(path);
                     }
-                    if (File.Exists(user.AvatarPath))
+                    var defaultImage = @"C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\wwwroot\UsersImages\Default.jpg";
+                    if (File.Exists(user.AvatarPath) && user.AvatarPath != defaultImage)
                     {
                         File.Delete(user.AvatarPath);
                     }
@@ -220,10 +219,6 @@ namespace SmartTutorial.API.Services.Implementations
                 return "Internal server error";
             }
         }
-
-        public async Task LogOut()
-        {
-            await _signInManager.SignOutAsync();
-        }
+        
     }
 }

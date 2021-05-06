@@ -11,10 +11,5 @@ namespace SmartTutorial.API.Dtos.UserDtos
         [MaxFileSize(2 * 1024 * 1024)]
         [AllowedExtensions(new string[] { ".jpg", ".png",".jpeg" })]
         public IFormFile Avatar { get; set; }
-
-        [Required]
-        [StringLength(20)]
-        [MinLength(4)]
-        public string Username { get; set; }
     }
 }

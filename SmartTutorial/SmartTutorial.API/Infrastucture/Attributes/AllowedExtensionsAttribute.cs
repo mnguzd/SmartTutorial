@@ -32,7 +32,13 @@ namespace SmartTutorial.API.Infrastucture.Attributes
 
         public string GetErrorMessage()
         {
-            return $"This photo extension is not allowed!";
+            string result = "Only ";
+            foreach(var s in _extensions)
+            {
+                result += s+" ";
+            }
+            result += "file extensions are allowed";
+            return result;
         }
     }
 }

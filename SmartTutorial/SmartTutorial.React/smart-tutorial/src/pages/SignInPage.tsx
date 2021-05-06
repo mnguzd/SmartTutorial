@@ -83,7 +83,7 @@ export default function SignIn() {
 
   async function onSubmit(data: IFormInputs) {
     const result: IServerSignInError | null = await logIn(data);
-    if (result != null) {
+    if (result) {
       setError(result.name, { type: result.type, message: result.message });
     }
   }

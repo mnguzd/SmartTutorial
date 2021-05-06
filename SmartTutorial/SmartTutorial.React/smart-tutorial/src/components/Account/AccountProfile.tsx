@@ -9,9 +9,14 @@ import {
   CardActions,
   Button,
   FormHelperText,
+  Grid,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { IUser } from "../../auth/Auth";
+import {
+  uploadImage,
+  IServerImageUploadError,
+} from "../../services/api/AccountApi";
+import { IUser, useAuth } from "../../auth/Auth";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -26,33 +31,45 @@ const useStyles = makeStyles((theme) => ({
     height: 100,
     width: 100,
   },
+  form: {
+    width: "100%",
+  },
 }));
 
+//front validations doesn`t work (don`t know why)
 const schema = yup.object().shape({
-  file: yup
+  image: yup
     .mixed()
-    .required("You have to provide a file")
-    .test("size", "The file weights more than 2 MB.", (value) => {
+    .test("fileSize", "The file weights more than 2 MB.", (value) => {
       console.log(value);
-      return value && value[0].size <= 200;
+      return value.size <= 200;
     }),
 });
 
 export interface IFormInputs {
-  file: File;
+  image: File;
 }
 
 export default function AccountProfile(user: IUser) {
+  const { token, updateUserInfo } = useAuth();
   const classes = useStyles();
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
+    setError,
   } = useForm<IFormInputs>({ resolver: yupResolver(schema) });
 
   async function onSubmit(data: File): Promise<void> {
-    console.log(data);
+    const result: IServerImageUploadError | null = await uploadImage(
+      data,
+      token
+    );
+    if (result) {
+      setError(result.name, { type: result.type, message: result.message });
+    }
+    await updateUserInfo();
   }
   async function onChange(
     event: React.ChangeEvent<HTMLInputElement>
@@ -61,7 +78,7 @@ export default function AccountProfile(user: IUser) {
     if (!input.files?.length) {
       return;
     }
-    await onSubmit(input.files[0]);
+    onSubmit(input.files[0]);
   }
   return (
     <Card {...user}>
@@ -84,17 +101,21 @@ export default function AccountProfile(user: IUser) {
       </CardContent>
       <Divider />
       <CardActions>
-        <form noValidate onSubmit={handleSubmit(onSubmit)}>
+        <form
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className={classes.form}
+        >
           <Button color="primary" component="label" fullWidth variant="text">
             Upload picture
             <Controller
               control={control}
-              name="file"
+              name="image"
               render={() => (
                 <input
                   type="file"
-                  id="file"
-                  {...register("file", { required: true })}
+                  id="image"
+                  {...register("image", { required: true })}
                   onChange={(e) => {
                     onChange(e);
                   }}
@@ -103,10 +124,19 @@ export default function AccountProfile(user: IUser) {
               )}
             />
           </Button>
-          {Boolean(errors.file) && (
-            <FormHelperText error>
-              {(errors.file as any)?.message}
-            </FormHelperText>
+          {Boolean(errors.image) && (
+            <Grid
+              container
+              direction="row"
+              alignItems="center"
+              justify="center"
+            >
+              <Grid item>
+                <FormHelperText error>
+                  {(errors.image as any)?.message}
+                </FormHelperText>
+              </Grid>
+            </Grid>
           )}
         </form>
       </CardActions>

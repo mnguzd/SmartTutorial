@@ -19,6 +19,5 @@ namespace SmartTutorial.API.Services.Interfaces
         Task<IdentityResult> EditUserInfo(User user, string firstname, string lastname, string email, string country);
         Task<IdentityResult> CreateUser(string email, string username, string password);
         Task<string> UploadImage(IFormFile avatar, User user);
-        Task LogOut();
     }
 }

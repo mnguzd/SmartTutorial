@@ -122,11 +122,10 @@ namespace SmartTutorial.API.Controllers
             return StatusCode(StatusCodes.Status406NotAcceptable, new Response { Status = 406, Errors = new Error() { Message = "Error, try using another credentials" } });
         }
 
-        [AllowAnonymous]
         [HttpPost("uploadImage")]
         public async Task<IActionResult> UploadImage([FromForm] UploadUserAvatarDto dto)
         {
-            var userFound = await _accountService.FindByUserName(dto.Username);
+            var userFound = await _accountService.FindByUserName(User.Identity.Name);
             if (userFound == null)
             {
                 return NotFound();

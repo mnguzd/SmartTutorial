@@ -95,7 +95,7 @@ export default function SignUp() {
   }, [isAuthenticated, history]);
   async function onSubmit(data: IFormInputs) {
     const result: IServerSignUpError | null = await signUp(data);
-    if (result != null) {
+    if (result) {
       setError(result.name, { type: result.type, message: result.message });
     } else {
       history.push("/signin");
