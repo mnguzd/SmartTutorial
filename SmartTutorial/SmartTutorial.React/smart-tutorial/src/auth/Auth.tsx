@@ -263,8 +263,8 @@ export const AuthProvider: FC = ({ children }) => {
     }
   }
 
-  async function logOut() {
-    setLoading(false);
+  async function logOut(): Promise<void> {
+    setLoading(true);
     await axios
       .post(webAPIUrl + "/account/logout", null, {
         headers: { Authorization: `Bearer ${token}` },
