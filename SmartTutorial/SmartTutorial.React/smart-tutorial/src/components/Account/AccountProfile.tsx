@@ -10,6 +10,7 @@ import {
   Button,
   FormHelperText,
   Grid,
+  Badge,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -68,8 +69,9 @@ export default function AccountProfile(user: IUser) {
     );
     if (result) {
       setError(result.name, { type: result.type, message: result.message });
+    } else {
+      await updateUserInfo();
     }
-    await updateUserInfo();
   }
   async function onChange(
     event: React.ChangeEvent<HTMLInputElement>
@@ -84,18 +86,19 @@ export default function AccountProfile(user: IUser) {
     <Card {...user}>
       <CardContent>
         <Box className={classes.box}>
-          <Avatar src={user.avatar} className={classes.avatar} />
+          <Badge
+            badgeContent={user.rating}
+            color="primary"
+            overlap="circle"
+            max={999}
+          >
+            <Avatar src={user.avatar} className={classes.avatar} />
+          </Badge>
           <Typography color="textPrimary" gutterBottom variant="h6">
             {user.firstname + " " + user.lastname}
           </Typography>
-          <Typography color="textSecondary" gutterBottom variant="body2">
-            {"Rating: " + user.rating}
-          </Typography>
           <Typography color="textSecondary" variant="body1">
-            {user?.country}
-          </Typography>
-          <Typography color="textSecondary" variant="body1">
-            {moment().format("hh:mm A")}
+            {user?.country + " " + moment().format("hh:mm A")}
           </Typography>
         </Box>
       </CardContent>

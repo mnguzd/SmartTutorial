@@ -14,14 +14,6 @@ export interface IUser {
   avatar: string;
 }
 
-export interface IUpdatedUserInfo {
-  username: string;
-  firstname: string;
-  lastname: string;
-  email: string;
-  country: string;
-}
-
 interface IAuthToken {
   accessToken: string;
   refreshToken: IRefreshToken;

@@ -1,5 +1,4 @@
 import { IAccountEditInputs } from "../../components/Account/AccountProfileDetails";
-import { IUpdatedUserInfo } from "../../auth/Auth";
 import { webAPIUrl } from "../../AppSettings";
 import axios from "axios";
 
@@ -9,23 +8,64 @@ export interface IServerImageUploadError {
   message: string;
 }
 
+export interface IServerEditUserError {
+  name: "firstname" | "lastname" | "email" | "country";
+  type: string;
+  message: string;
+}
+
 export async function editUser(
   data: IAccountEditInputs,
   token: string
-): Promise<IUpdatedUserInfo | undefined> {
-  let updatedUser: IUpdatedUserInfo | undefined = undefined;
+): Promise<IServerEditUserError | null> {
+  let error: IServerEditUserError = {
+    name: "country",
+    type: "server",
+    message: "",
+  };
   await axios
     .patch(webAPIUrl + "/account/patch", data, {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((response) => {
-      updatedUser = response.data;
-    })
-    .catch((err) => console.log(err));
-  if (updatedUser) {
-    return updatedUser;
+    .then(() => {})
+    .catch((err) => {
+      const dataError = err.response.data;
+      if (dataError.errors) {
+        const serverErrors: string[] = Object.getOwnPropertyNames(
+          dataError.errors
+        );
+        switch (serverErrors[0]) {
+          case "Firstname":
+            error.name = "firstname";
+            error.message = dataError.errors.Firstname;
+            break;
+          case "Lastname":
+            error.name = "lastname";
+            error.message = dataError.errors.Lastname;
+            break;
+          case "Email":
+            error.name = "email";
+            error.message = dataError.errors.Email;
+            break;
+          case "Country":
+            error.name = "country";
+            error.message = dataError.errors.Country;
+            break;
+          case "message":
+            error.name = "country";
+            error.message = dataError.errors.message;
+            break;
+          default:
+            error.name = "country";
+            error.message = "Internal server error. Try again later";
+            break;
+        }
+      }
+    });
+  if (error.message) {
+    return error;
   } else {
-    return undefined;
+    return null;
   }
 }
 

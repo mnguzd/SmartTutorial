@@ -4,9 +4,6 @@ namespace SmartTutorial.API.Dtos.UserDtos
 {
     public class UserEditDto
     {
-        [Required]
-        public string Username { get; set; }
-
         [StringLength(20, MinimumLength = 2)]
         [Required]
         public string Firstname { get; set; }

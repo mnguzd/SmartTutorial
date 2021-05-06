@@ -8,8 +8,6 @@ using SmartTutorial.API.Dtos.Auth;
 using SmartTutorial.API.Dtos.UserDtos;
 using SmartTutorial.API.Services.Interfaces;
 using System;
-using System.IO;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Controllers
@@ -42,17 +40,7 @@ namespace SmartTutorial.API.Controllers
                 var user = await _accountService.FindByUserName(dto.Username);
                 if (user != null)
                 {
-                    var serverName = "https://localhost:44314/UsersImages/";
-                    var fileName = Path.GetFileName(user.AvatarPath);
-                    var claims = new[]{
-                        new Claim(ClaimTypes.Name,user.UserName),
-                        new Claim(ClaimTypes.Email,user.Email),
-                        new Claim(ClaimTypes.Country,user.Country),
-                        new Claim(ClaimTypes.GivenName,user.FirstName),
-                        new Claim(ClaimTypes.Surname,user.LastName),
-                        new Claim("rating",user.Rating.ToString()),
-                        new Claim("avatar",serverName+fileName)
-                    };
+                    var claims = _accountService.GenerateClaims(user);
                     var jwtResult = await _accountService.GenerateTokens(user.UserName, claims, DateTime.Now);
                     return Ok(jwtResult);
                 }
@@ -73,7 +61,7 @@ namespace SmartTutorial.API.Controllers
             {
                 return StatusCode(StatusCodes.Status404NotFound, new Response { Status = 404, Errors = new Error() { Message = "User with this email already exists!" } });
             }
-            var createdResult = await _accountService.CreateUser(dto.Email, dto.Username, dto.Password);
+            var createdResult = await _accountService.CreateUser(dto);
             if (!createdResult.Succeeded)
             {
                 var response = new Response { Status = 404, Errors = new Error() };
@@ -86,7 +74,7 @@ namespace SmartTutorial.API.Controllers
             return CreatedAtAction("Register", createdResult);
         }
 
-        
+
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto dto)
         {
@@ -100,7 +88,7 @@ namespace SmartTutorial.API.Controllers
                 var jwtResult = await _accountService.Refresh(dto.RefreshToken, accessToken, DateTime.Now);
                 return Ok(jwtResult);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = 401, Errors = new Error() { Message = ex.Message } });
             }
@@ -109,10 +97,15 @@ namespace SmartTutorial.API.Controllers
         [HttpPatch("patch")]
         public async Task<IActionResult> EditDetails(UserEditDto dto)
         {
-            var userFound = await _accountService.FindByUserName(dto.Username);
+            var userFound = await _accountService.FindByUserName(User.Identity.Name);
+            var theSameUser = await _accountService.FindByEmail(dto.Email);
+            if (theSameUser != null &&userFound.Email!=theSameUser.Email)
+            {
+                return StatusCode(StatusCodes.Status406NotAcceptable, new Response { Status = 406, Errors = new Error() { Message = "User with this email already exists!" } });
+            }
             if (userFound != null)
             {
-                var editedResult = await _accountService.EditUserInfo(userFound, dto.Firstname, dto.Lastname, dto.Email, dto.Country);
+                var editedResult = await _accountService.EditUserInfo(userFound, dto);
                 if (editedResult.Succeeded)
                 {
                     return CreatedAtAction(nameof(EditDetails), dto);

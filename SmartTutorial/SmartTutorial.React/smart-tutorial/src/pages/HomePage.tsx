@@ -28,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
   },
   cardGrid: {
     paddingTop: theme.spacing(8),
-    paddingBottom: theme.spacing(0),
   },
   snackBarContent: {
     backgroundColor: "#D55C81",

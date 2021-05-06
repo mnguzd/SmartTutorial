@@ -11,16 +11,16 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import { Controller, useForm } from "react-hook-form/";
 import { IUser } from "../../auth/Auth";
-import { useAuth, IUpdatedUserInfo } from "../../auth/Auth";
+import { useAuth } from "../../auth/Auth";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { editUser } from "../../services/api/AccountApi";
+import { editUser, IServerEditUserError } from "../../services/api/AccountApi";
 
 const useStyles = makeStyles((theme) => ({
   box: {
     display: "flex",
     justifyContent: "flex-end",
-    margin:theme.spacing(1,1,1,0),
+    margin: theme.spacing(1, 1, 1, 0),
   },
 }));
 
@@ -47,7 +47,6 @@ const schema = yup.object().shape({
 });
 
 export interface IAccountEditInputs {
-  username: string;
   firstname: string;
   lastname: string;
   email: string;
@@ -63,14 +62,16 @@ const AccountProfileDetails = (user: IUser) => {
     formState: { errors },
     setValue,
     handleSubmit,
+    setError,
   } = useForm<IAccountEditInputs>({
     mode: "onBlur",
     resolver: yupResolver(schema),
   });
   async function onSubmit(data: IAccountEditInputs) {
-    data.username = user.username;
-    const newUser: IUpdatedUserInfo | undefined = await editUser(data, token);
-    if (newUser) {
+    const result: IServerEditUserError | null = await editUser(data, token);
+    if (result) {
+      setError(result.name, { type: result.type, message: result.message });
+    } else {
       await updateUserInfo();
     }
   }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SmartTutorial.API.Dtos;
 using SmartTutorial.API.Dtos.JwtAuthDtos;
+using SmartTutorial.API.Dtos.UserDtos;
 using SmartTutorial.API.Infrastucture.Configurations;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain.Auth;
@@ -91,6 +92,22 @@ namespace SmartTutorial.API.Services.Implementations
             };
         }
 
+        public Claim[] GenerateClaims(User user)
+        {
+            var serverName = "https://localhost:44314/UsersImages/";
+            var fileName = Path.GetFileName(user.AvatarPath);
+            var claims = new[]{
+                        new Claim(ClaimTypes.Name,user.UserName),
+                        new Claim(ClaimTypes.Email,user.Email),
+                        new Claim(ClaimTypes.Country,user.Country),
+                        new Claim(ClaimTypes.GivenName,user.FirstName),
+                        new Claim(ClaimTypes.Surname,user.LastName),
+                        new Claim("rating",user.Rating.ToString()),
+                        new Claim("avatar",serverName+fileName)
+                    };
+            return claims;
+        }
+
         public async Task<JwtAuthResult> Refresh(string refreshToken, string accessToken, DateTime now)
         {
             var (principal, jwtToken) = DecodeJwtToken(accessToken);
@@ -100,19 +117,8 @@ namespace SmartTutorial.API.Services.Implementations
             }
             var userName = principal.Identity?.Name;
             var userFound = await FindByUserName(userName);
-
             //because principal.identity.claims returns old data
-            var serverName = "https://localhost:44314/UsersImages/";
-            var fileName = Path.GetFileName(userFound.AvatarPath);
-            var claims = new[]{
-                        new Claim(ClaimTypes.Name,userFound.UserName),
-                        new Claim(ClaimTypes.Email,userFound.Email),
-                        new Claim(ClaimTypes.Country,userFound.Country),
-                        new Claim(ClaimTypes.GivenName,userFound.FirstName),
-                        new Claim(ClaimTypes.Surname,userFound.LastName),
-                        new Claim("rating",userFound.Rating.ToString()),
-                        new Claim("avatar",serverName+fileName)
-                    };
+            var claims = GenerateClaims(userFound);
             if (refreshToken != userFound.RefreshToken)
             {
                 throw new SecurityTokenException(userFound.RefreshToken.ToString());
@@ -156,26 +162,26 @@ namespace SmartTutorial.API.Services.Implementations
             return userFound;
         }
 
-        public async Task<IdentityResult> CreateUser(string email, string username, string password)
+        public async Task<IdentityResult> CreateUser(UserForRegisterDto dto)
         {
             User user = new User()
             {
-                Email = email,
+                Email = dto.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = username
+                UserName = dto.Username
             };
-            var createdResult = await _userManager.CreateAsync(user, password);
+            var createdResult = await _userManager.CreateAsync(user, dto.Password);
             return createdResult;
         }
 
-        public async Task<IdentityResult> EditUserInfo(User user, string firstname, string lastname, string email, string country)
+        public async Task<IdentityResult> EditUserInfo(User user, UserEditDto dto)
         {
-            user.FirstName = firstname;
-            user.LastName = lastname;
-            user.Email = email;
-            if (!string.IsNullOrWhiteSpace(country))
+            user.FirstName = dto.Firstname;
+            user.LastName = dto.Lastname;
+            user.Email = dto.Email;
+            if (!string.IsNullOrWhiteSpace(dto.Country))
             {
-                user.Country = country;
+                user.Country = dto.Country;
             }
             var result = await _userManager.UpdateAsync(user);
             return result;
