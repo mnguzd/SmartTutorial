@@ -1,14 +1,13 @@
 import { FC, useState, useEffect } from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 import { ISubjectDataWithTopics } from "../data/SubjectData";
 import { getSubjectWithTopics } from "../services/api/SubjectsApi";
-import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 import HomeIcon from "@material-ui/icons/Home";
-import Page from "./Page";
-import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import ProgressCircle from "../components/ProgressCircle";
+import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import Page from "./Page";
 
 const useStyles = makeStyles((theme) => ({
   bread: {

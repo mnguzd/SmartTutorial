@@ -1,22 +1,26 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
-import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import Grow from "@material-ui/core/Grow";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Popper from "@material-ui/core/Popper";
-import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
-import MenuList from "@material-ui/core/MenuList";
-import Avatar from "@material-ui/core/Avatar";
+import {
+  Button,
+  ClickAwayListener,
+  Grow,
+  Paper,
+  Grid,
+  Popper,
+  Typography,
+  Divider,
+  MenuList,
+  Avatar,
+  MenuItem,
+  ListItemIcon,
+} from "@material-ui/core";
+import {
+  KeyboardArrowDown,
+  Person,
+  Settings,
+  ExitToApp,
+} from "@material-ui/icons";
 import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import PersonIcon from "@material-ui/icons/Person";
-import SettingsIcon from "@material-ui/icons/Settings";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import { Link } from "react-router-dom";
-import MenuItem from "@material-ui/core/MenuItem";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -92,7 +96,7 @@ export default function ButtonMenu(user: IUser) {
           className={classes.userButton}
           color="inherit"
           onClick={handleToggle}
-          endIcon={<KeyboardArrowDownIcon />}
+          endIcon={<KeyboardArrowDown />}
         >
           {user.username}
         </Button>
@@ -150,7 +154,7 @@ export default function ButtonMenu(user: IUser) {
                       onClick={handleClose}
                     >
                       <ListItemIcon>
-                        <PersonIcon fontSize="small" />
+                        <Person fontSize="small" />
                       </ListItemIcon>
                       <Typography variant="inherit">Profile</Typography>
                     </MenuItem>
@@ -160,7 +164,7 @@ export default function ButtonMenu(user: IUser) {
                       onClick={handleClose}
                     >
                       <ListItemIcon>
-                        <SettingsIcon fontSize="small" />
+                        <Settings fontSize="small" />
                       </ListItemIcon>
                       <Typography variant="inherit">Settings</Typography>
                     </MenuItem>
@@ -170,7 +174,7 @@ export default function ButtonMenu(user: IUser) {
                       onClick={handleClose}
                     >
                       <ListItemIcon>
-                        <ExitToAppIcon fontSize="small" />
+                        <ExitToApp fontSize="small" />
                       </ListItemIcon>
                       <Typography variant="inherit">Logout</Typography>
                     </MenuItem>

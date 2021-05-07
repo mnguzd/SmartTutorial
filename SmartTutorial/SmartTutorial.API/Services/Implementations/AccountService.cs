@@ -55,6 +55,7 @@ namespace SmartTutorial.API.Services.Implementations
         {
             var userFound = await FindByUserName(userName);
             userFound.RefreshToken = "";
+            await _userManager.UpdateAsync(userFound);
         }
 
         public async Task<JwtAuthResult> GenerateTokens(string username, Claim[] claims, DateTime now)
@@ -76,7 +77,7 @@ namespace SmartTutorial.API.Services.Implementations
             {
                 UserName = username,
                 TokenString = GenerateRefreshTokenString(),
-                ExpireAt = now.AddMinutes(_authenticationOptions.RefreshTokenExpiration)
+                ExpireAt = now.AddDays(_authenticationOptions.RefreshTokenExpiration)
             };
             var userFound = await FindByUserName(username);
             if (userFound == null)
@@ -196,19 +197,18 @@ namespace SmartTutorial.API.Services.Implementations
                     {
                         Directory.CreateDirectory(path);
                     }
-                    var defaultImage = @"C:\Users\roman\Desktop\SmartTutorial\SmartTutorial\SmartTutorial.API\wwwroot\UsersImages\Default.jpg";
-                    if (File.Exists(user.AvatarPath) && user.AvatarPath != defaultImage)
+                    if (File.Exists(user.AvatarPath))
                     {
                         File.Delete(user.AvatarPath);
                     }
-                    var randomPath = Path.GetRandomFileName();
-                    var pngPath = Path.ChangeExtension(randomPath, ".png");
-                    using (FileStream fileStream = File.Create(path + pngPath))
+                    var randomFileName = Path.GetRandomFileName();
+                    var pngFileName = Path.ChangeExtension(randomFileName, ".png");
+                    using (FileStream fileStream = File.Create(path + pngFileName))
                     {
                         await avatar.CopyToAsync(fileStream);
                         await fileStream.FlushAsync();
                         var localServerName = "https://localhost:44314/UsersImages/";
-                        user.AvatarPath = localServerName+pngPath;
+                        user.AvatarPath = localServerName + pngFileName;
                         await _userManager.UpdateAsync(user);
                         return user.AvatarPath;
                     }
@@ -223,6 +223,6 @@ namespace SmartTutorial.API.Services.Implementations
                 return "Internal server error";
             }
         }
-        
+
     }
 }

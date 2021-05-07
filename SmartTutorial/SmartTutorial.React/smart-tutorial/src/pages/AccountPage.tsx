@@ -1,21 +1,18 @@
-import { Box, Container, Grid } from "@material-ui/core";
+import { Box, Container, Grid, Breadcrumbs } from "@material-ui/core";
+import HomeIcon from "@material-ui/icons/Home";
 import AccountProfile from "../components/Account/AccountProfile";
 import AccountProfileDetails from "../components/Account/AccountProfileDetails";
 import { makeStyles } from "@material-ui/core/styles";
+import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
+import { useHistory, Link } from "react-router-dom";
 import { useAuth } from "../auth/Auth";
 import { useEffect } from "react";
-import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
-import HomeIcon from "@material-ui/icons/Home";
-import { Link } from "react-router-dom";
-
-import { useHistory } from "react-router-dom";
 import Page from "./Page";
 
 const useStyles = makeStyles((theme) => ({
   box: {
     minHeight: "100%",
-    margin:theme.spacing(3,0,0,0)
+    margin: theme.spacing(3, 0, 0, 0),
   },
   bread: {
     margin: theme.spacing(3, 0, 0, 3),

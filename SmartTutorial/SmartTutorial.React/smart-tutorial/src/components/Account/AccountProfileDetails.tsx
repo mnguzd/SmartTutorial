@@ -10,8 +10,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Controller, useForm } from "react-hook-form/";
-import { IUser } from "../../auth/Auth";
-import { useAuth } from "../../auth/Auth";
+import { IUser, useAuth } from "../../auth/Auth";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { editUser, IServerEditUserError } from "../../services/api/AccountApi";

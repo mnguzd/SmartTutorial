@@ -1,23 +1,23 @@
 import { FC, useState, useEffect } from "react";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 import { IThemeDataWithSubjects } from "../data/ThemeData";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import Typography from "@material-ui/core/Typography";
-import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import Grid from "@material-ui/core/Grid";
-import { Link } from "react-router-dom";
+import {
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+  Breadcrumbs,
+  Grid,
+  InputBase,
+  Chip,
+} from "@material-ui/core";
+import { Home, Search } from "@material-ui/icons";
 import { makeStyles, fade } from "@material-ui/core/styles";
-import ProgressCircle from "../components/ProgressCircle";
-import HomeIcon from "@material-ui/icons/Home";
-import Page from "./Page";
 import { getThemeWithSubjects } from "../services/api/ThemesApi";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
-import Chip from "@material-ui/core/Chip";
-import SearchIcon from "@material-ui/icons/Search";
-import InputBase from "@material-ui/core/InputBase";
+import ProgressCircle from "../components/ProgressCircle";
+import Page from "./Page";
 
 interface IRouteParams {
   themeId: string;
@@ -111,7 +111,7 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
           to="/"
           label="Home"
           clickable
-          icon={<HomeIcon />}
+          icon={<Home />}
         />
         <StyledBreadcrumb label={theme?.name} />
       </Breadcrumbs>
@@ -133,7 +133,7 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
         <Grid item>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
-              <SearchIcon color="primary" />
+              <Search color="primary" />
             </div>
             <InputBase
               placeholder="Search…"

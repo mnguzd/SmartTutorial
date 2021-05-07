@@ -1,5 +1,4 @@
-import { IThemeData } from "../../data/ThemeData";
-import { IThemeDataWithSubjects } from "../../data/ThemeData";
+import { IThemeDataWithSubjects, IThemeData } from "../../data/ThemeData";
 import { webAPIUrl } from "../../AppSettings";
 import axios from "axios";
 

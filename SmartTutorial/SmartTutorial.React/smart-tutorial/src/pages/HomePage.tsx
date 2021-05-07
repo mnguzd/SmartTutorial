@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import Container from "@material-ui/core/Container";
+import {
+  Typography,
+  Grid,
+  Container,
+  Snackbar,
+  IconButton,
+  SnackbarContent,
+  Slide,
+  Fade,
+} from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
 import { makeStyles } from "@material-ui/core/styles";
 import ThemeCard from "../components/Theme/ThemeCard";
 import { IThemeData } from "../data/ThemeData";
@@ -10,13 +18,7 @@ import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";
 import { useAuth } from "../auth/Auth";
 import { getThemes } from "../services/api/ThemesApi";
-import Snackbar from "@material-ui/core/Snackbar";
-import IconButton from "@material-ui/core/IconButton";
-import SnackbarContent from "@material-ui/core/SnackbarContent";
-import Slide from "@material-ui/core/Slide";
 import { TransitionProps } from "@material-ui/core/transitions";
-import CloseIcon from "@material-ui/icons/Close";
-import Fade from "@material-ui/core/Fade";
 
 function SlideTransition(props: TransitionProps) {
   return <Slide {...props} direction="up" />;

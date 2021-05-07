@@ -6,13 +6,13 @@ import SignIn from "./pages/SignInPage";
 import SignUp from "./pages/SignUpPage";
 import ThemePage from "./pages/ThemePage";
 import SubjectPage from "./pages/SubjectPage";
-import { AuthProvider } from "./auth/Auth";
 import LogOut from "./pages/LogOutPage";
 import NotFound from "./pages/NotFoundPage";
 import TopicPage from "./pages/TopicPage";
 import AccountPage from "./pages/AccountPage";
-import { ThemeProvider } from "@material-ui/core";
+import { ThemeProvider } from "@material-ui/core/styles";
 import MainTheme from "./themes/MainTheme";
+import { AuthProvider } from "./auth/Auth";
 
 function App() {
   return (

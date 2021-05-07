@@ -1,19 +1,19 @@
 import React from "react";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Typography from "@material-ui/core/Typography";
-import useScrollTrigger from "@material-ui/core/useScrollTrigger";
-import Slide from "@material-ui/core/Slide";
+import {
+  AppBar,
+  Toolbar,
+  CssBaseline,
+  Typography,
+  useScrollTrigger,
+  Slide,
+  Fab,
+  Zoom,
+  Button,
+  Box,
+} from "@material-ui/core";
+import { KeyboardArrowUp, AccountCircle, Equalizer } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
-import Fab from "@material-ui/core/Fab";
-import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import Zoom from "@material-ui/core/Zoom";
-import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
-import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { Link } from "react-router-dom";
-import EqualizerIcon from "@material-ui/icons/Equalizer";
 import { useAuth } from "../../auth/Auth";
 import ButtonMenu from "./ButtonMenu";
 
@@ -91,7 +91,7 @@ const Header = (props: Props) => {
               >
                 WebTutor
               </Typography>
-              <EqualizerIcon fontSize="large" />
+              <Equalizer fontSize="large" />
             </Box>
             <Box ml={4}>
               {isAuthenticated && user ? (
@@ -101,7 +101,7 @@ const Header = (props: Props) => {
                   component={Link}
                   to="/signin"
                   color="inherit"
-                  startIcon={<AccountCircleIcon />}
+                  startIcon={<AccountCircle />}
                 >
                   Sign In
                 </Button>
@@ -113,7 +113,7 @@ const Header = (props: Props) => {
       <Toolbar id="back-to-top-anchor" />
       <ScrollTop {...props}>
         <Fab color="secondary" size="small" aria-label="scroll back to top">
-          <KeyboardArrowUpIcon />
+          <KeyboardArrowUp />
         </Fab>
       </ScrollTop>
     </React.Fragment>

@@ -1,24 +1,24 @@
-import Button from "@material-ui/core/Button";
-import LockOpenIcon from "@material-ui/icons/LockOpen";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
+import {
+  Button,
+  CssBaseline,
+  TextField,
+  Grid,
+  Typography,
+  Container,
+  FormControlLabel,
+  Checkbox,
+  Breadcrumbs,
+} from "@material-ui/core";
+import { LockOpen, Home } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
 import { Controller, useForm } from "react-hook-form/";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import StyledLink from "../components/StyledLink";
-import { useHistory } from "react-router-dom";
-import Breadcrumbs from "@material-ui/core/Breadcrumbs";
-import HomeIcon from "@material-ui/icons/Home";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { Link } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { useAuth, IServerSignInError } from "../auth/Auth";
-import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
-import * as yup from "yup";
 import { useEffect } from "react";
+import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
+import StyledLink from "../components/StyledLink";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import Page from "./Page";
 
 const schema = yup.object().shape({
@@ -102,14 +102,14 @@ export default function SignIn() {
           to="/"
           label="Home"
           clickable
-          icon={<HomeIcon />}
+          icon={<Home />}
         />
         <StyledBreadcrumb label="Sign In" />
       </Breadcrumbs>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <LockOpenIcon
+          <LockOpen
             className={classes.avatar}
             fontSize="large"
             color="secondary"
