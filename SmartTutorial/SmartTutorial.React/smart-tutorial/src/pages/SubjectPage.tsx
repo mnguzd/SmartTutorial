@@ -1,6 +1,6 @@
 import { FC, useState, useEffect } from "react";
 import { RouteComponentProps, Link } from "react-router-dom";
-import { ISubjectDataWithTopics } from "../data/SubjectData";
+import { ISubjectDataWithTopics } from "../services/api/dtos/SubjectData";
 import { getSubjectWithTopics } from "../services/api/SubjectsApi";
 import HomeIcon from "@material-ui/icons/Home";
 import { makeStyles } from "@material-ui/core/styles";

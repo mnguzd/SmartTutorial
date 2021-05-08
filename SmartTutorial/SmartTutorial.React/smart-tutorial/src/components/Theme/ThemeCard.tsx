@@ -7,7 +7,7 @@ import {
   CardMedia,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { IThemeData } from "../../data/ThemeData";
+import { IThemeData } from "../../services/api/dtos/ThemeData";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles({

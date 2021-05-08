@@ -1,6 +1,5 @@
 import { FC, useState, useEffect } from "react";
 import { RouteComponentProps, Link } from "react-router-dom";
-import { IThemeDataWithSubjects } from "../data/ThemeData";
 import {
   List,
   ListItem,
@@ -15,6 +14,7 @@ import {
 import { Home, Search } from "@material-ui/icons";
 import { makeStyles, fade } from "@material-ui/core/styles";
 import { getThemeWithSubjects } from "../services/api/ThemesApi";
+import { IThemeDataWithSubjects } from "../services/api/dtos/ThemeData";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";

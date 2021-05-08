@@ -1,7 +1,7 @@
 import { useState, useContext, createContext, FC, useEffect } from "react";
 import { webAPIUrl } from "../AppSettings";
 import axios from "axios";
-import { IUserForLogin, IUserForRegister } from "../data/UserData";
+import { IUserForLogin, IUserForRegister } from "../services/api/dtos/UserData";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { TokenStorage } from "../services/localStorage/tokenStorage";
 

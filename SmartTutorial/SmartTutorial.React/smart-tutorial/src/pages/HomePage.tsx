@@ -12,7 +12,7 @@ import {
 import CloseIcon from "@material-ui/icons/Close";
 import { makeStyles } from "@material-ui/core/styles";
 import ThemeCard from "../components/Theme/ThemeCard";
-import { IThemeData } from "../data/ThemeData";
+import { IThemeData } from "../services/api/dtos/ThemeData";
 import Footer from "../components/Footer/Footer";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";

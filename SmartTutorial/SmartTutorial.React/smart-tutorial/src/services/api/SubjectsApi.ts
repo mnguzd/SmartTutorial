@@ -1,4 +1,4 @@
-import { ISubjectDataWithTopics } from "./../../data/SubjectData";
+import { ISubjectDataWithTopics } from "./dtos/SubjectData";
 import { webAPIUrl } from "../../AppSettings";
 import axios from "axios";
 
@@ -17,7 +17,7 @@ export async function getSubjectWithTopics(
     )
     .then((response) => {
       data = response.data;
-    });
-  console.log(data);
+    })
+    .catch((err) => console.log(err.response));
   return data;
 }
