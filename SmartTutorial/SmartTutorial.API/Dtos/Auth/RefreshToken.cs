@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace SmartTutorial.API.Dtos.JwtAuthDtos
+namespace SmartTutorial.API.Dtos.Auth
 {
     public class RefreshToken
     {

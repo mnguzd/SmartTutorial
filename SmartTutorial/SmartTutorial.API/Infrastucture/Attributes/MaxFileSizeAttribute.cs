@@ -1,33 +1,31 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace SmartTutorial.API.Infrastucture.Attributes
 {
     public class MaxFileSizeAttribute : ValidationAttribute
     {
         private readonly int _maxFileSize;
+
         public MaxFileSizeAttribute(int maxFileSize)
         {
             _maxFileSize = maxFileSize;
         }
 
         protected override ValidationResult IsValid(
-        object value, ValidationContext validationContext)
+            object value, ValidationContext validationContext)
         {
-            if (value is IFormFile file)
+            if (!(value is IFormFile file))
             {
-                if (file.Length > _maxFileSize)
-                {
-                    return new ValidationResult(GetErrorMessage());
-                }
+                return ValidationResult.Success;
             }
 
-            return ValidationResult.Success;
+            return file.Length > _maxFileSize ? new ValidationResult(GetErrorMessage()) : ValidationResult.Success;
         }
 
-        public string GetErrorMessage()
+        private string GetErrorMessage()
         {
-            return $"Maximum allowed file size is { _maxFileSize/(1024*1024)} MB.";
+            return $"Maximum allowed file size is {_maxFileSize / (1024 * 1024)} MB.";
         }
     }
 }

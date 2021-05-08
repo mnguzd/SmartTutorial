@@ -8,6 +8,7 @@ import {
   Typography,
   Breadcrumbs,
   Grid,
+  Container,
   InputBase,
   Chip,
 } from "@material-ui/core";
@@ -25,7 +26,7 @@ interface IRouteParams {
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    margin: theme.spacing(6, 0, 5, 0),
+    margin: theme.spacing(6, 0, 0, 0),
   },
   bread: {
     margin: theme.spacing(3, 0, 0, 3),
@@ -45,6 +46,12 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     maxWidth: 360,
+  },
+  mainText: {
+    marginBottom: theme.spacing(4),
+  },
+  searchGrid: {
+    marginBottom: theme.spacing(4),
   },
   search: {
     position: "relative",
@@ -115,76 +122,77 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
         />
         <StyledBreadcrumb label={theme?.name} />
       </Breadcrumbs>
-      <Grid
-        className={classes.container}
-        container
-        direction="column"
-        alignItems="center"
-        spacing={6}
-      >
-        <Grid item>
-          <Typography variant="h5" align="center" paragraph>
-            {theme?.name}
-          </Typography>
-          <Typography variant="body1" align="center">
-            {theme?.description}
-          </Typography>
-        </Grid>
-        <Grid item>
-          <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <Search color="primary" />
+      <Container maxWidth="md">
+        <Grid
+          className={classes.container}
+          container
+          direction="column"
+          alignItems="center"
+        >
+          <Grid item className={classes.mainText}>
+            <Typography variant="h5" align="center" paragraph>
+              {theme?.name}
+            </Typography>
+            <Typography variant="body1" align="center">
+              {theme?.description}
+            </Typography>
+          </Grid>
+          <Grid item className={classes.searchGrid}>
+            <div className={classes.search}>
+              <div className={classes.searchIcon}>
+                <Search color="primary" />
+              </div>
+              <InputBase
+                placeholder="Search…"
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput,
+                }}
+                inputProps={{ "aria-label": "search" }}
+                onChange={(e) => {
+                  setSeatchTerm(e.target.value);
+                }}
+              />
             </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ "aria-label": "search" }}
-              onChange={(e) => {
-                setSeatchTerm(e.target.value);
-              }}
-            />
-          </div>
+          </Grid>
+          <Grid item className={classes.root}>
+            {loading ? (
+              <ProgressCircle />
+            ) : (
+              <List dense={false}>
+                {theme?.subjects
+                  .filter((val) =>
+                    val.name.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                  .map((subject, index) => (
+                    <ListItem
+                      button
+                      component={Link}
+                      to={`/themes/${theme.id}/subjects/${subject.id}`}
+                      key={subject.id.toString()}
+                      divider={index < theme.subjects.length - 1}
+                    >
+                      <ListItemIcon>
+                        <Chip
+                          size="small"
+                          label={subject.complexity}
+                          className={`${classes.light} ${
+                            subject.complexity < 3
+                              ? classes.light
+                              : subject.complexity < 5
+                              ? classes.medium
+                              : classes.hard
+                          }`}
+                        />
+                      </ListItemIcon>
+                      <ListItemText primary={subject.name} />
+                    </ListItem>
+                  ))}
+              </List>
+            )}
+          </Grid>
         </Grid>
-        <Grid item className={classes.root}>
-          {loading ? (
-            <ProgressCircle />
-          ) : (
-            <List dense={false}>
-              {theme?.subjects
-                .filter((val) =>
-                  val.name.toLowerCase().includes(searchTerm.toLowerCase())
-                )
-                .map((subject, index) => (
-                  <ListItem
-                    button
-                    component={Link}
-                    to={`/themes/${theme.id}/subjects/${subject.id}`}
-                    key={subject.id.toString()}
-                    divider={index < theme.subjects.length - 1}
-                  >
-                    <ListItemIcon>
-                      <Chip
-                        size="small"
-                        label={subject.complexity}
-                        className={`${classes.light} ${
-                          subject.complexity < 3
-                            ? classes.light
-                            : subject.complexity < 5
-                            ? classes.medium
-                            : classes.hard
-                        }`}
-                      />
-                    </ListItemIcon>
-                    <ListItemText primary={subject.name} />
-                  </ListItem>
-                ))}
-            </List>
-          )}
-        </Grid>
-      </Grid>
+      </Container>
     </Page>
   );
 };

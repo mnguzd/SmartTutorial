@@ -12,8 +12,7 @@ namespace SmartTutorial.EFMapping
             builder.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(20);
-            builder.Property(e => e.ImageUrl).
-                IsRequired();
+            builder.Property(e => e.ImageUrl).IsRequired();
             builder.Property(e => e.Description).HasMaxLength(300).IsRequired();
         }
     }

@@ -9,12 +9,12 @@ namespace SmartTutorial.EFMapping
         public void Configure(EntityTypeBuilder<Answer> builder)
         {
             builder.Property(e => e.Text)
-               .IsRequired()
-               .HasMaxLength(150);
+                .IsRequired()
+                .HasMaxLength(150);
 
             builder.HasOne(d => d.Question)
-            .WithMany(p => p.Answers)
-            .HasForeignKey(d => d.QuestionId);
+                .WithMany(p => p.Answers)
+                .HasForeignKey(d => d.QuestionId);
         }
     }
 }

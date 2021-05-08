@@ -1,7 +1,7 @@
-﻿using SmartTutorial.API.Dtos.JwtAuthDtos;
+﻿using SmartTutorial.API.Dtos.Auth;
 using System.Text.Json.Serialization;
 
-namespace SmartTutorial.API.Dtos
+namespace SmartTutorial.API.Dtos.Auth
 {
     public class JwtAuthResult
     {

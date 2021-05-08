@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using SmartTutorial.API.Dtos;
-using SmartTutorial.API.Dtos.UserDtos;
-using SmartTutorial.Domain.Auth;
-using System;
+﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using SmartTutorial.API.Dtos.Auth;
+using SmartTutorial.API.Dtos.UserDtos;
+using SmartTutorial.Domain.Auth;
 
 namespace SmartTutorial.API.Services.Interfaces
 {
@@ -13,7 +13,6 @@ namespace SmartTutorial.API.Services.Interfaces
     {
         Task<SignInResult> SignInAsync(string userName, string password);
         Task<JwtAuthResult> GenerateTokens(string username, Claim[] claims, DateTime now);
-        Task<IdentityResult> RemoveRefreshTokenByUserName(string userName);
         Task<JwtAuthResult> Refresh(string refreshToken, DateTime now);
         Task<User> FindByEmail(string email);
         Task<IdentityResult> Logout(string refreshToken);

@@ -9,8 +9,8 @@ namespace SmartTutorial.EFMapping
         public void Configure(EntityTypeBuilder<Topic> builder)
         {
             builder.Property(e => e.Name)
-                   .IsRequired()
-                   .HasMaxLength(20);
+                .IsRequired()
+                .HasMaxLength(20);
 
             builder.Property(e => e.Text)
                 .IsRequired()
@@ -25,7 +25,6 @@ namespace SmartTutorial.EFMapping
             builder.HasOne(d => d.Subject)
                 .WithMany(p => p.Topics)
                 .HasForeignKey(d => d.SubjectId);
-            
         }
     }
 }

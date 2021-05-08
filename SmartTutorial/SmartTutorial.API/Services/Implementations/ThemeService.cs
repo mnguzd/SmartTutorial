@@ -1,10 +1,8 @@
-﻿using SmartTutorial.API.Repositories.Interfaces;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Services.Implementations
 {

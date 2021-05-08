@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
@@ -17,25 +16,25 @@ namespace SmartTutorial.API.Infrastucture.Attributes
         protected override ValidationResult IsValid(
         object value, ValidationContext validationContext)
         {
-            var file = value as IFormFile;
-            if (file != null)
+            if (!(value is IFormFile file))
             {
-                var extension = Path.GetExtension(file.FileName);
-                if (!_extensions.Contains(extension.ToLower()))
-                {
-                    return new ValidationResult(GetErrorMessage());
-                }
+                return ValidationResult.Success;
+            }
+            var extension = Path.GetExtension(file.FileName);
+            if (extension != null && !_extensions.Contains(extension.ToLower()))
+            {
+                return new ValidationResult(GetErrorMessage());
             }
 
             return ValidationResult.Success;
         }
 
-        public string GetErrorMessage()
+        private string GetErrorMessage()
         {
-            string result = "Only ";
-            foreach(var s in _extensions)
+            var result = "Only ";
+            foreach (var s in _extensions)
             {
-                result += s+" ";
+                result += s + " ";
             }
             result += "file extensions are allowed";
             return result;

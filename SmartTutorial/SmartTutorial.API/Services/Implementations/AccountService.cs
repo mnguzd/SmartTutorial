@@ -1,40 +1,37 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using SmartTutorial.API.Dtos;
-using SmartTutorial.API.Dtos.JwtAuthDtos;
-using SmartTutorial.API.Dtos.UserDtos;
-using SmartTutorial.API.Infrastucture.Configurations;
-using SmartTutorial.API.Services.Interfaces;
-using SmartTutorial.Domain.Auth;
-using System;
+﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using SmartTutorial.API.Dtos.Auth;
+using SmartTutorial.API.Dtos.UserDtos;
+using SmartTutorial.API.Infrastucture.Configurations;
+using SmartTutorial.API.Services.Interfaces;
+using SmartTutorial.Domain.Auth;
 
 namespace SmartTutorial.API.Services.Implementations
 {
     public class AccountService : IAccountService
     {
         private readonly AuthOptions _authenticationOptions;
+        private readonly IWebHostEnvironment _environment;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-        private readonly IWebHostEnvironment _environment;
-        private readonly byte[] _secret;
 
-        public AccountService(IOptions<AuthOptions> authenticationOptions, SignInManager<User> signInManager, UserManager<User> userManager, IWebHostEnvironment environment)
+        public AccountService(IOptions<AuthOptions> authenticationOptions, SignInManager<User> signInManager,
+            UserManager<User> userManager, IWebHostEnvironment environment)
         {
             _authenticationOptions = authenticationOptions.Value;
             _signInManager = signInManager;
             _userManager = userManager;
             _environment = environment;
-            _secret = Encoding.ASCII.GetBytes(_authenticationOptions.SecretKey);
         }
 
         public async Task<SignInResult> SignInAsync(string userName, string password)
@@ -43,33 +40,20 @@ namespace SmartTutorial.API.Services.Implementations
             return signInResult;
         }
 
-        private static string GenerateRefreshTokenString()
-        {
-            var randomNumber = new byte[32];
-            using var randomNumberGenerator = RandomNumberGenerator.Create();
-            randomNumberGenerator.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
-        }
-
-        public async Task<IdentityResult> RemoveRefreshTokenByUserName(string userName)
-        {
-            var userFound = await FindByUserName(userName);
-            userFound.RefreshToken = "";
-            return await _userManager.UpdateAsync(userFound);
-        }
-
         public async Task<JwtAuthResult> GenerateTokens(string username, Claim[] claims, DateTime now)
         {
-            bool shouldAddAudienceClaim = string.IsNullOrWhiteSpace(claims?.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Aud)?.Value);
+            var shouldAddAudienceClaim =
+                string.IsNullOrWhiteSpace(claims?.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Aud)?.Value);
 
-            var signinCredentials = new SigningCredentials(_authenticationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256);
+            var signinCredentials = new SigningCredentials(_authenticationOptions.GetSymmetricSecurityKey(),
+                SecurityAlgorithms.HmacSha256);
 
             var jwtToken = new JwtSecurityToken(
-                 issuer: _authenticationOptions.Issuer,
-                 shouldAddAudienceClaim ? _authenticationOptions.Audience : string.Empty,
-                 claims,
-                 expires: now.AddHours(_authenticationOptions.AccessTokenExpiration),
-                 signingCredentials: signinCredentials
+                _authenticationOptions.Issuer,
+                shouldAddAudienceClaim ? _authenticationOptions.Audience : string.Empty,
+                claims,
+                expires: now.AddHours(_authenticationOptions.AccessTokenExpiration),
+                signingCredentials: signinCredentials
             );
             var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 
@@ -84,6 +68,7 @@ namespace SmartTutorial.API.Services.Implementations
             {
                 throw new SecurityTokenException("User with such username not found");
             }
+
             userFound.RefreshToken = refreshToken.TokenString;
             await _userManager.UpdateAsync(userFound);
             return new JwtAuthResult
@@ -95,15 +80,16 @@ namespace SmartTutorial.API.Services.Implementations
 
         public Claim[] GenerateClaims(User user)
         {
-            var claims = new[]{
-                        new Claim(ClaimTypes.Name,user.UserName),
-                        new Claim(ClaimTypes.Email,user.Email),
-                        new Claim(ClaimTypes.Country,user.Country),
-                        new Claim(ClaimTypes.GivenName,user.FirstName),
-                        new Claim(ClaimTypes.Surname,user.LastName),
-                        new Claim("rating",user.Rating.ToString()),
-                        new Claim("avatar",user.AvatarPath ?? string.Empty)
-                    };
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Country, user.Country),
+                new Claim(ClaimTypes.GivenName, user.FirstName),
+                new Claim(ClaimTypes.Surname, user.LastName),
+                new Claim("rating", user.Rating.ToString()),
+                new Claim("avatar", user.AvatarPath ?? string.Empty)
+            };
             return claims;
         }
 
@@ -112,8 +98,9 @@ namespace SmartTutorial.API.Services.Implementations
             var userFound = FindByRefreshToken(refreshToken);
             if (userFound == null)
             {
-                throw new SecurityTokenException("User with this refresh token doesn`t exists"+refreshToken);
+                throw new SecurityTokenException("User with this refresh token do not exists" + refreshToken);
             }
+
             var claims = GenerateClaims(userFound);
             var result = await GenerateTokens(userFound.UserName, claims, now);
             return result;
@@ -130,11 +117,7 @@ namespace SmartTutorial.API.Services.Implementations
             var userFound = await _userManager.FindByNameAsync(username);
             return userFound;
         }
-        private User FindByRefreshToken(string refreshToken)
-        {
-            var userFound = _userManager.Users.FirstOrDefault(x => x.RefreshToken == refreshToken.Replace(@"""", ""));
-            return userFound;
-        }
+
         public async Task<IdentityResult> Logout(string refreshToken)
         {
             var userFound = FindByRefreshToken(refreshToken);
@@ -142,14 +125,16 @@ namespace SmartTutorial.API.Services.Implementations
             var result = await _userManager.UpdateAsync(userFound);
             return result;
         }
+
         public async Task<IdentityResult> CreateUser(UserForRegisterDto dto)
         {
-            User user = new User()
+            var user = new User
             {
                 Email = dto.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = dto.Username
             };
+            await _userManager.AddToRoleAsync(user, "User");
             var createdResult = await _userManager.CreateAsync(user, dto.Password);
             return createdResult;
         }
@@ -163,6 +148,7 @@ namespace SmartTutorial.API.Services.Implementations
             {
                 user.Country = dto.Country;
             }
+
             var result = await _userManager.UpdateAsync(user);
             return result;
         }
@@ -171,34 +157,32 @@ namespace SmartTutorial.API.Services.Implementations
         {
             try
             {
-                if (avatar.Length > 0)
-                {
-                    string path = _environment.WebRootPath + "\\UsersImages\\";
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                    string oldFilePath = path + Path.GetFileName(user.AvatarPath);
-                    if (File.Exists(oldFilePath))
-                    {
-                        File.Delete(oldFilePath);
-                    }
-                    var randomFileName = Path.GetRandomFileName();
-                    var pngFileName = Path.ChangeExtension(randomFileName, ".png");
-                    using (FileStream fileStream = File.Create(path + pngFileName))
-                    {
-                        await avatar.CopyToAsync(fileStream);
-                        await fileStream.FlushAsync();
-                        var localServerName = "https://localhost:44314/UsersImages/";
-                        user.AvatarPath = localServerName + pngFileName;
-                        await _userManager.UpdateAsync(user);
-                        return user.AvatarPath;
-                    }
-                }
-                else
+                if (avatar.Length <= 0)
                 {
                     return "Avatar is empty";
                 }
+                var path = _environment.WebRootPath + "\\UsersImages\\";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                var oldFilePath = path + Path.GetFileName(user.AvatarPath);
+                if (File.Exists(oldFilePath))
+                {
+                    File.Delete(oldFilePath);
+                }
+
+                var randomFileName = Path.GetRandomFileName();
+                var pngFileName = Path.ChangeExtension(randomFileName, ".png");
+                await using var fileStream = File.Create(path + pngFileName);
+                await avatar.CopyToAsync(fileStream);
+                await fileStream.FlushAsync();
+                const string localServerName = "https://localhost:44314/UsersImages/";
+                user.AvatarPath = localServerName + pngFileName;
+                await _userManager.UpdateAsync(user);
+                return user.AvatarPath;
+
             }
             catch
             {
@@ -206,5 +190,18 @@ namespace SmartTutorial.API.Services.Implementations
             }
         }
 
+        private static string GenerateRefreshTokenString()
+        {
+            var randomNumber = new byte[32];
+            using var randomNumberGenerator = RandomNumberGenerator.Create();
+            randomNumberGenerator.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
+
+        private User FindByRefreshToken(string refreshToken)
+        {
+            var userFound = _userManager.Users.FirstOrDefault(x => x.RefreshToken == refreshToken.Replace(@"""", ""));
+            return userFound;
+        }
     }
 }

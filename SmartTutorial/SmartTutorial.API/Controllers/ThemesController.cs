@@ -1,14 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartTutorial.API.Dtos.ThemeDtos;
 using SmartTutorial.API.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace SmartTutorial.API.Controllers
 {
@@ -16,15 +12,15 @@ namespace SmartTutorial.API.Controllers
     [ApiController]
     public class ThemesController : ControllerBase
     {
-        private readonly IThemeService _themeService;
         private readonly IMapper _mapper;
+        private readonly IThemeService _themeService;
 
         public ThemesController(IThemeService subjectService, IMapper mapper)
         {
             _themeService = subjectService;
             _mapper = mapper;
         }
-        // GET: api/<ThemesController>
+
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -35,7 +31,7 @@ namespace SmartTutorial.API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("{themeId}")]
+        [HttpGet("{themeId:int}")]
         public async Task<IActionResult> Get(int themeId)
         {
             var theme = await _themeService.GetWithInclude(themeId);
@@ -43,6 +39,7 @@ namespace SmartTutorial.API.Controllers
             {
                 return NotFound();
             }
+
             var themeDto = _mapper.Map<ThemeWithSubjectsDto>(theme);
             return Ok(themeDto);
         }

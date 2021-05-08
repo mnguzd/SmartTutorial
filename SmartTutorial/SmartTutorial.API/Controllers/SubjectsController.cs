@@ -1,12 +1,12 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Controllers
 {
@@ -15,8 +15,8 @@ namespace SmartTutorial.API.Controllers
     [ApiController]
     public class SubjectsController : ControllerBase
     {
-        private readonly ISubjectService _subjectService;
         private readonly IMapper _mapper;
+        private readonly ISubjectService _subjectService;
 
         public SubjectsController(ISubjectService subjectService, IMapper mapper)
         {
@@ -32,8 +32,8 @@ namespace SmartTutorial.API.Controllers
             return Ok(subjectDtoList);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id,bool includeTopics=false)
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> Get(int id, bool includeTopics = false)
         {
             Subject subject;
             if (!includeTopics)
@@ -43,60 +43,56 @@ namespace SmartTutorial.API.Controllers
                 {
                     return NotFound();
                 }
-                else
-                {
-                    SubjectDto subjectDto = _mapper.Map<SubjectDto>(subject);
-                    return Ok(subjectDto);
-                }
+
+                var subjectDto = _mapper.Map<SubjectDto>(subject);
+                return Ok(subjectDto);
             }
-            else
+
+            subject = await _subjectService.GetWithTopics(id);
+            if (subject == null)
             {
-                subject = await _subjectService.GetWithTopics(id);
-                if (subject == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    SubjectWithTopicsDto dto = _mapper.Map<SubjectWithTopicsDto>(subject);
-                    return Ok(dto);
-                }
+                return NotFound();
             }
+
+            var dto = _mapper.Map<SubjectWithTopicsDto>(subject);
+            return Ok(dto);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AddSubjectDto dto)
         {
-            Subject subject = await _subjectService.Add(dto);
-            SubjectDto subjectDto = _mapper.Map<SubjectDto>(subject);
+            var subject = await _subjectService.Add(dto);
+            var subjectDto = _mapper.Map<SubjectDto>(subject);
             return CreatedAtAction(nameof(Post), subjectDto);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         [ApiExceptionFilter]
-        public async Task<IActionResult> Put(int id,[FromBody] UpdateSubjectDto dto)
+        public async Task<IActionResult> Put(int id, [FromBody] UpdateSubjectDto dto)
         {
-            Subject subject = await _subjectService.Update(id,dto);
+            var subject = await _subjectService.Update(id, dto);
             if (subject == null)
             {
                 return NotFound();
             }
+
             return NoContent();
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{id:int}")]
         [ApiExceptionFilter]
         public async Task<IActionResult> Patch(int id, [FromBody] PatchSubjectDto dto)
         {
-            Subject subject = await _subjectService.UpdateWithDetails(id, dto);
+            var subject = await _subjectService.UpdateWithDetails(id, dto);
             if (subject == null)
             {
                 return NotFound();
             }
+
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
             await _subjectService.Delete(id);

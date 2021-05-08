@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Threading.Tasks;
+using SmartTutorial.Domain.Auth;
 
 namespace SmartTutorial.API.Infrastucture.Extensions
 {
@@ -11,21 +12,22 @@ namespace SmartTutorial.API.Infrastucture.Extensions
     {
         public static async Task SeedData(this IHost host)
         {
-            using (var scope = host.Services.CreateScope())
+            using var scope = host.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            try
             {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    var context = services.GetRequiredService<SmartTutorialDbContext>();
-                 //   context.Database.Migrate();
-                    await Seed.SeedSubjects(context);
-                    await Seed.SeedTopics(context);
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occured during migration");
-                }
+                var context = services.GetRequiredService<SmartTutorialDbContext>();
+                var userManager = services.GetRequiredService<UserManager<User>>();
+                var rolesManager = services.GetRequiredService<RoleManager<Role>>();
+
+                await Seed.SeedSubjects(context);
+                await Seed.SeedTopics(context);
+                await Seed.SeedAdmin(userManager, rolesManager);
+            }
+            catch (Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred while seeding the database");
             }
         }
     }

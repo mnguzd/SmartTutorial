@@ -7,20 +7,22 @@ using SmartTutorial.EFMapping.Schemas;
 
 namespace SmartTutorial.API
 {
-    public class SmartTutorialDbContext : IdentityDbContext<User,Role,int,UserClaim,UserRole,UserLogin,RoleClaim,UserToken>
+    public sealed class
+        SmartTutorialDbContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim,
+            UserToken>
     {
+        public SmartTutorialDbContext(DbContextOptions<SmartTutorialDbContext> options) : base(options)
+        {
+            Database.EnsureCreated();
+        }
+
         public DbSet<Theme> Themes { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Answer> Answers { get; set; }
 
-        public SmartTutorialDbContext(DbContextOptions<SmartTutorialDbContext> options):base(options)
-        {
-            Database.EnsureCreated();
-        }
-        
-        
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -28,6 +30,7 @@ namespace SmartTutorial.API
             builder.ApplyConfigurationsFromAssembly(assembly);
             ApplyIdentityMapConfiguration(builder);
         }
+
         private void ApplyIdentityMapConfiguration(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().ToTable("Users", SchemaConst.Auth);

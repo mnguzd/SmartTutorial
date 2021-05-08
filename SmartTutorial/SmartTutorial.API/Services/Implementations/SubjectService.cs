@@ -1,9 +1,9 @@
-﻿using SmartTutorial.API.Dtos.SubjectDtos;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Services.Implementations
 {
@@ -18,7 +18,7 @@ namespace SmartTutorial.API.Services.Implementations
 
         public async Task<Subject> Add(AddSubjectDto dto)
         {
-            Subject subject = new Subject() { Complexity = dto.Complexity, Name = dto.Name,ThemeId=dto.ThemeId };
+            var subject = new Subject {Complexity = dto.Complexity, Name = dto.Name, ThemeId = dto.ThemeId};
             await _repository.Add(subject);
             await _repository.SaveAll();
             return subject;
@@ -37,7 +37,7 @@ namespace SmartTutorial.API.Services.Implementations
 
         public async Task<Subject> GetById(int id)
         {
-            Subject subject = await _repository.GetById(id);
+            var subject = await _repository.GetById(id);
             return subject;
         }
 
@@ -49,34 +49,38 @@ namespace SmartTutorial.API.Services.Implementations
 
         public async Task<Subject> Update(int id, UpdateSubjectDto dto)
         {
-            Subject subject = await _repository.GetById(id);
+            var subject = await _repository.GetById(id);
             if (subject == null)
             {
                 return null;
             }
+
             subject.Name = dto.Name;
             subject.Complexity = dto.Complexity;
             await _repository.SaveAll();
             return subject;
         }
+
         public async Task<Subject> UpdateWithDetails(int id, PatchSubjectDto dto)
         {
-            Subject subject = await _repository.GetById(id);
+            var subject = await _repository.GetById(id);
             if (subject == null)
             {
                 return null;
             }
+
             if (!string.IsNullOrWhiteSpace(dto.Name))
             {
                 subject.Name = dto.Name;
             }
+
             if (dto.Complexity != null)
             {
-                subject.Complexity = (int)dto.Complexity;
+                subject.Complexity = (int) dto.Complexity;
             }
+
             await _repository.SaveAll();
             return subject;
         }
-
     }
 }

@@ -1,7 +1,7 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using SmartTutorial.API.Infrastucture.Extensions;
-using System.Threading.Tasks;
 
 namespace SmartTutorial.API
 {
@@ -9,16 +9,15 @@ namespace SmartTutorial.API
     {
         public static async Task Main(string[] args)
         {
-            IHost host = CreateHostBuilder(args).Build();
+            var host = CreateHostBuilder(args).Build();
             await host.SeedData();
             await host.RunAsync();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args )
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+        private static IHostBuilder CreateHostBuilder(string[] args)
+        {
+            return Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+        }
     }
 }
