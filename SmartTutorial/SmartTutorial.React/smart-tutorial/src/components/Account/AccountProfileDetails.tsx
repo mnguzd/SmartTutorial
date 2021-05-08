@@ -53,7 +53,7 @@ export interface IAccountEditInputs {
 }
 
 const AccountProfileDetails = (user: IUser) => {
-  const { token, updateUserInfo } = useAuth();
+  const { updateUserInfo } = useAuth();
   const classes = useStyles();
   const {
     register,
@@ -67,7 +67,7 @@ const AccountProfileDetails = (user: IUser) => {
     resolver: yupResolver(schema),
   });
   async function onSubmit(data: IAccountEditInputs) {
-    const result: IServerEditUserError | null = await editUser(data, token);
+    const result: IServerEditUserError | null = await editUser(data);
     if (result) {
       setError(result.name, { type: result.type, message: result.message });
     } else {

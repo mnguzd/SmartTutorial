@@ -51,24 +51,24 @@ namespace SmartTutorial.API.Services.Implementations
             return Convert.ToBase64String(randomNumber);
         }
 
-        public async Task RemoveRefreshTokenByUserName(string userName)
+        public async Task<IdentityResult> RemoveRefreshTokenByUserName(string userName)
         {
             var userFound = await FindByUserName(userName);
             userFound.RefreshToken = "";
-            await _userManager.UpdateAsync(userFound);
+            return await _userManager.UpdateAsync(userFound);
         }
 
         public async Task<JwtAuthResult> GenerateTokens(string username, Claim[] claims, DateTime now)
         {
             bool shouldAddAudienceClaim = string.IsNullOrWhiteSpace(claims?.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Aud)?.Value);
 
-            var signinCredentials = new SigningCredentials(_authenticationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256Signature);
+            var signinCredentials = new SigningCredentials(_authenticationOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256);
 
             var jwtToken = new JwtSecurityToken(
                  issuer: _authenticationOptions.Issuer,
                  shouldAddAudienceClaim ? _authenticationOptions.Audience : string.Empty,
                  claims,
-                 expires: now.AddMinutes(_authenticationOptions.AccessTokenExpiration),
+                 expires: now.AddHours(_authenticationOptions.AccessTokenExpiration),
                  signingCredentials: signinCredentials
             );
             var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
@@ -107,46 +107,16 @@ namespace SmartTutorial.API.Services.Implementations
             return claims;
         }
 
-        public async Task<JwtAuthResult> Refresh(string refreshToken, string accessToken, DateTime now)
+        public async Task<JwtAuthResult> Refresh(string refreshToken, DateTime now)
         {
-            var (principal, jwtToken) = DecodeJwtToken(accessToken);
-            if (jwtToken == null || !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256Signature))
+            var userFound = FindByRefreshToken(refreshToken);
+            if (userFound == null)
             {
-                throw new SecurityTokenException("Invalid token");
+                throw new SecurityTokenException("User with this refresh token doesn`t exists"+refreshToken);
             }
-            var userName = principal.Identity?.Name;
-            var userFound = await FindByUserName(userName);
-            //because principal.identity.claims returns old data
             var claims = GenerateClaims(userFound);
-            if (refreshToken != userFound.RefreshToken)
-            {
-                throw new SecurityTokenException(userFound.RefreshToken.ToString());
-            }
             var result = await GenerateTokens(userFound.UserName, claims, now);
             return result;
-        }
-
-        public (ClaimsPrincipal, JwtSecurityToken) DecodeJwtToken(string token)
-        {
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                throw new SecurityTokenException("Invalid token");
-            }
-            var principal = new JwtSecurityTokenHandler()
-                .ValidateToken(token,
-                    new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = _authenticationOptions.Issuer,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(_secret),
-                        ValidAudience = _authenticationOptions.Audience,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.FromMinutes(1)
-                    },
-                    out var validatedToken);
-            return (principal, validatedToken as JwtSecurityToken);
         }
 
         public async Task<User> FindByEmail(string email)
@@ -160,7 +130,18 @@ namespace SmartTutorial.API.Services.Implementations
             var userFound = await _userManager.FindByNameAsync(username);
             return userFound;
         }
-
+        private User FindByRefreshToken(string refreshToken)
+        {
+            var userFound = _userManager.Users.FirstOrDefault(x => x.RefreshToken == refreshToken.Replace(@"""", ""));
+            return userFound;
+        }
+        public async Task<IdentityResult> Logout(string refreshToken)
+        {
+            var userFound = FindByRefreshToken(refreshToken);
+            userFound.RefreshToken = "";
+            var result = await _userManager.UpdateAsync(userFound);
+            return result;
+        }
         public async Task<IdentityResult> CreateUser(UserForRegisterDto dto)
         {
             User user = new User()
@@ -197,9 +178,10 @@ namespace SmartTutorial.API.Services.Implementations
                     {
                         Directory.CreateDirectory(path);
                     }
-                    if (File.Exists(user.AvatarPath))
+                    string oldFilePath = path + Path.GetFileName(user.AvatarPath);
+                    if (File.Exists(oldFilePath))
                     {
-                        File.Delete(user.AvatarPath);
+                        File.Delete(oldFilePath);
                     }
                     var randomFileName = Path.GetRandomFileName();
                     var pngFileName = Path.ChangeExtension(randomFileName, ".png");

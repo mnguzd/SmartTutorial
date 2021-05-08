@@ -52,7 +52,7 @@ export interface IFormInputs {
 }
 
 export default function AccountProfile(user: IUser) {
-  const { token, updateUserInfo } = useAuth();
+  const { updateUserInfo } = useAuth();
   const classes = useStyles();
   const {
     register,
@@ -63,10 +63,7 @@ export default function AccountProfile(user: IUser) {
   } = useForm<IFormInputs>({ resolver: yupResolver(schema) });
 
   async function onSubmit(data: File): Promise<void> {
-    const result: IServerImageUploadError | null = await uploadImage(
-      data,
-      token
-    );
+    const result: IServerImageUploadError | null = await uploadImage(data);
     if (result) {
       setError(result.name, { type: result.type, message: result.message });
     } else {

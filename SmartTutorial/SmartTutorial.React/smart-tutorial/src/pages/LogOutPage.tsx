@@ -4,13 +4,14 @@ import { useHistory } from "react-router-dom";
 import Page from "./Page";
 
 export default function LogOut() {
-  const { isAuthenticated, logOut } = useAuth();
+  const { logOut } = useAuth();
   const history = useHistory();
   useEffect(() => {
-    if (isAuthenticated) {
-      logOut();
+    async function asyncLogOut() {
+      await logOut();
     }
-    history.push("/");
+    asyncLogOut();
+    history.push("/signin");
   });
   return <Page title="Logging out"></Page>;
 }

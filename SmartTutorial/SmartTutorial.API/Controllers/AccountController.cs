@@ -74,7 +74,7 @@ namespace SmartTutorial.API.Controllers
             return CreatedAtAction("Register", createdResult);
         }
 
-
+        [AllowAnonymous]
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto dto)
         {
@@ -84,8 +84,7 @@ namespace SmartTutorial.API.Controllers
                 {
                     return StatusCode(StatusCodes.Status401Unauthorized, new Response { Status = 401, Errors = new Error() { Message = "Empty refresh token is not allowed" } });
                 }
-                var accessToken = await HttpContext.GetTokenAsync("Bearer", "access_token");
-                var jwtResult = await _accountService.Refresh(dto.RefreshToken, accessToken, DateTime.Now);
+                var jwtResult = await _accountService.Refresh(dto.RefreshToken, DateTime.Now);
                 return Ok(jwtResult);
             }
             catch (Exception ex)
@@ -127,11 +126,11 @@ namespace SmartTutorial.API.Controllers
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout(RefreshTokenDto dto)
         {
-            var userName = User.Identity.Name;
-            _accountService.RemoveRefreshTokenByUserName(userName);
+            await _accountService.Logout(dto.RefreshToken);
             return Ok();
         }
     }

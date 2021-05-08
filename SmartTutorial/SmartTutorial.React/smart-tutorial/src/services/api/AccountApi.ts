@@ -1,6 +1,8 @@
 import { IAccountEditInputs } from "../../components/Account/AccountProfileDetails";
 import { webAPIUrl } from "../../AppSettings";
 import axios from "axios";
+import { axiosAuthorized } from "../axios/axios";
+import { TokenStorage } from "../localStorage/tokenStorage";
 
 export interface IServerImageUploadError {
   name: "image";
@@ -15,18 +17,15 @@ export interface IServerEditUserError {
 }
 
 export async function editUser(
-  data: IAccountEditInputs,
-  token: string
+  data: IAccountEditInputs
 ): Promise<IServerEditUserError | null> {
   let error: IServerEditUserError = {
     name: "country",
     type: "server",
     message: "",
   };
-  await axios
-    .patch(webAPIUrl + "/account/patch", data, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+  await axiosAuthorized
+    .patch(webAPIUrl + "/account/patch", data)
     .then(() => {})
     .catch((err) => {
       const dataError = err.response.data;
@@ -70,8 +69,7 @@ export async function editUser(
 }
 
 export async function uploadImage(
-  data: File,
-  token: string
+  data: File
 ): Promise<IServerImageUploadError | null> {
   let formData = new FormData();
   if (data) {
@@ -82,11 +80,10 @@ export async function uploadImage(
     type: "server",
     message: "",
   };
-  await axios
+  await axiosAuthorized
     .post(webAPIUrl + "/account/uploadImage", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`,
       },
     })
     .then(() => {})
@@ -107,4 +104,34 @@ export async function uploadImage(
   } else {
     return null;
   }
+}
+export interface IAuthToken {
+  accessToken: string;
+  refreshToken: IRefreshToken;
+}
+
+interface IRefreshToken {
+  username: string;
+  tokenString: string;
+  expireAt: string;
+}
+
+interface ISendRefreshToken {
+  refreshToken: string | null;
+}
+
+export async function refreshAcessToken(): Promise<IAuthToken | null> {
+  let sendRefreshToken: ISendRefreshToken = {
+    refreshToken: TokenStorage.getRefreshToken(),
+  };
+  let result: IAuthToken | null = null;
+  await axios
+    .post<IAuthToken>(webAPIUrl + "/account/refresh-token", sendRefreshToken)
+    .then((res) => {
+      result = res.data;
+    })
+    .catch((err) => {
+      console.log(err.response);
+    });
+  return result;
 }

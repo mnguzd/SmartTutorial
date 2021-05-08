@@ -3,6 +3,7 @@ import { webAPIUrl } from "../AppSettings";
 import axios from "axios";
 import { IUserForLogin, IUserForRegister } from "../data/UserData";
 import useLocalStorage from "../hooks/useLocalStorage";
+import { TokenStorage } from "../services/localStorage/tokenStorage";
 
 export interface IUser {
   username: string;
@@ -14,7 +15,7 @@ export interface IUser {
   avatar: string;
 }
 
-interface IAuthToken {
+export interface IAuthToken {
   accessToken: string;
   refreshToken: IRefreshToken;
 }
@@ -26,7 +27,7 @@ interface IRefreshToken {
 }
 
 interface ISendRefreshToken {
-  refreshToken: string;
+  refreshToken: string | null;
 }
 
 export interface IServerSignUpError {
@@ -45,11 +46,10 @@ interface IAuthContext {
   user?: IUser;
   storedUsername: string;
   loading: boolean;
-  token: string;
   loginSuccess: boolean;
   updateUserInfo: () => Promise<void>;
   logIn: (user: IUserForLogin) => Promise<IServerSignInError | null>;
-  logOut: () => void;
+  logOut: () => Promise<void>;
   signUp: (user: IUserForRegister) => Promise<IServerSignUpError | null>;
   calmSuccess: () => void;
 }
@@ -59,7 +59,6 @@ export const AuthContext = createContext<IAuthContext>({
   loading: true,
   loginSuccess: false,
   storedUsername: "",
-  token: "",
   updateUserInfo: async () => {},
   logIn: async () => null,
   logOut: async () => {},
@@ -94,11 +93,7 @@ export const AuthProvider: FC = ({ children }) => {
   const [user, setUser] = useState<IUser | undefined>(undefined);
   const [loginSuccess, setSuccess] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [token, setToken] = useLocalStorage<string>("token", "");
-  const [refreshToken, setRefreshToken] = useLocalStorage<string>(
-    "refreshToken",
-    ""
-  );
+
   const [storedUsername, setStoredUsername] = useLocalStorage<string>(
     "username",
     ""
@@ -108,26 +103,27 @@ export const AuthProvider: FC = ({ children }) => {
   }
   async function updateUserInfo(): Promise<void> {
     let sendRefreshToken: ISendRefreshToken = {
-      refreshToken: refreshToken,
+      refreshToken: TokenStorage.getRefreshToken(),
     };
     await axios
-      .post<IAuthToken>(
-        webAPIUrl + "/account/refresh-token",
-        sendRefreshToken,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
+      .post<IAuthToken>(webAPIUrl + "/account/refresh-token", sendRefreshToken)
       .then((res) => {
         const token = res.data.accessToken;
         const refreshToken = res.data.refreshToken.tokenString;
         if (token && refreshToken) {
-          setToken(token);
-          setRefreshToken(refreshToken);
+          TokenStorage.setToken(token);
+          TokenStorage.setRefreshToken(refreshToken);
           const parsedToken = parseJwt(token);
+          const date = new Date(0);
+          date.setUTCSeconds(parsedToken.exp);
+          TokenStorage.setTokenExpire(date);
+          TokenStorage.setRefreshTokenExpire(
+            new Date(res.data.refreshToken.expireAt)
+          );
           setUser(getUserFromToken(parsedToken));
         }
-      });
+      })
+      .catch((err) => console.log(err.response));
   }
   async function logIn(
     data: IUserForLogin
@@ -137,6 +133,7 @@ export const AuthProvider: FC = ({ children }) => {
       type: "server",
       message: "",
     };
+    setLoading(true);
     await axios
       .post<IAuthToken>(webAPIUrl + "/account/login", {
         username: data.username,
@@ -147,10 +144,16 @@ export const AuthProvider: FC = ({ children }) => {
         const token = res.data.accessToken;
         const refreshToken = res.data.refreshToken.tokenString;
         if (token && refreshToken) {
-          setToken(token);
-          setRefreshToken(refreshToken);
+          TokenStorage.setToken(token);
+          TokenStorage.setRefreshToken(refreshToken);
           const parsedToken = parseJwt(token);
           const userData = getUserFromToken(parsedToken);
+          const date = new Date(0);
+          date.setUTCSeconds(parsedToken.exp);
+          TokenStorage.setTokenExpire(date);
+          TokenStorage.setRefreshTokenExpire(
+            new Date(res.data.refreshToken.expireAt)
+          );
           setUser(userData);
           setIsAuthenticated(true);
           setSuccess(true);
@@ -159,7 +162,6 @@ export const AuthProvider: FC = ({ children }) => {
           } else {
             setStoredUsername("");
           }
-          setLoading(false);
         }
       })
       .catch((err) => {
@@ -188,13 +190,13 @@ export const AuthProvider: FC = ({ children }) => {
           }
         }
       });
+    setLoading(false);
     if (error.message) {
       return error;
     } else {
       return null;
     }
   }
-
   async function signUp(
     user: IUserForRegister
   ): Promise<IServerSignUpError | null> {
@@ -211,9 +213,7 @@ export const AuthProvider: FC = ({ children }) => {
         password: user.password,
         confirmPassword: user.passwordConfirm,
       })
-      .then((res) => {
-        setLoading(false);
-      })
+      .then()
       .catch((err) => {
         const dataError = err.response.data;
         if (dataError.errors) {
@@ -248,6 +248,7 @@ export const AuthProvider: FC = ({ children }) => {
           }
         }
       });
+    setLoading(false);
     if (error.message) {
       return error;
     } else {
@@ -257,15 +258,13 @@ export const AuthProvider: FC = ({ children }) => {
 
   async function logOut(): Promise<void> {
     setLoading(true);
+    let sendRefreshToken: ISendRefreshToken = {
+      refreshToken: TokenStorage.getRefreshToken(),
+    };
     await axios
-      .post(webAPIUrl + "/account/logout", null, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      .post(webAPIUrl + "/account/logout", sendRefreshToken)
       .then(() => {
-        if (token && refreshToken) {
-          setToken("");
-          setRefreshToken("");
-        }
+        TokenStorage.clearTokenStorage(true);
         setUser(undefined);
         setIsAuthenticated(false);
       })
@@ -275,16 +274,14 @@ export const AuthProvider: FC = ({ children }) => {
 
   useEffect(() => {
     setLoading(true);
-    if (isAuthenticated === false) {
-      if (token) {
-        const parsedToken = parseJwt(token);
-        setUser(getUserFromToken(parsedToken));
-        setIsAuthenticated(true);
-      }
+    const token: string | null = TokenStorage.getToken();
+    if (token) {
+      const parsedToken = parseJwt(token);
+      setUser(getUserFromToken(parsedToken));
+      setIsAuthenticated(true);
     }
     setLoading(false);
-  }, [isAuthenticated, token]);
-
+  }, []);
   return (
     <AuthContext.Provider
       value={{
@@ -293,7 +290,6 @@ export const AuthProvider: FC = ({ children }) => {
         storedUsername: storedUsername,
         loading,
         updateUserInfo: updateUserInfo,
-        token: token,
         loginSuccess,
         logIn: logIn,
         logOut: logOut,

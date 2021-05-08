@@ -16,6 +16,7 @@ import { useHistory, Link } from "react-router-dom";
 import { useAuth, IServerSignInError } from "../auth/Auth";
 import { useEffect } from "react";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
+import ProgressCircle from "../components/ProgressCircle";
 import StyledLink from "../components/StyledLink";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -64,7 +65,7 @@ interface IFormInputs {
 }
 
 export default function SignIn() {
-  const { logIn, isAuthenticated, storedUsername } = useAuth();
+  const { logIn, isAuthenticated, storedUsername, loading } = useAuth();
 
   const history = useHistory();
 
@@ -89,10 +90,10 @@ export default function SignIn() {
   }
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !loading) {
       history.push("/");
     }
-  }, [isAuthenticated, history]);
+  }, [isAuthenticated, history, loading]);
 
   return (
     <Page title="WebTutor | Sign In">
@@ -109,11 +110,15 @@ export default function SignIn() {
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <LockOpen
-            className={classes.avatar}
-            fontSize="large"
-            color="secondary"
-          />
+          {loading ? (
+            <ProgressCircle />
+          ) : (
+            <LockOpen
+              className={classes.avatar}
+              fontSize="large"
+              color="secondary"
+            />
+          )}
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
@@ -186,6 +191,7 @@ export default function SignIn() {
               variant="contained"
               color="primary"
               className={classes.submit}
+              disabled={loading}
             >
               Sign In
             </Button>
