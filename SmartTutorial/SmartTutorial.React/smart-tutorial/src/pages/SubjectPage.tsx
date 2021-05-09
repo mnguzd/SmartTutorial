@@ -1,5 +1,5 @@
-import { FC, useState, useEffect } from "react";
-import { RouteComponentProps, Link } from "react-router-dom";
+import { FC, useEffect, useState } from "react";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { ISubjectDataWithTopics } from "../services/api/dtos/SubjectData";
 import { getSubjectWithTopics } from "../services/api/SubjectsApi";
 import HomeIcon from "@material-ui/icons/Home";
@@ -31,6 +31,7 @@ const SubjectPage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
         setSubject(data);
       }
     }
+
     setLoading(true);
     getSubject();
     setLoading(false);
@@ -53,7 +54,7 @@ const SubjectPage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
         />
         <StyledBreadcrumb label={subject?.name} />
       </Breadcrumbs>
-      {loading ? <ProgressCircle /> : <div>hello</div>}
+      {loading ? <ProgressCircle color="primary" /> : <div>hello</div>}
     </Page>
   );
 };

@@ -134,8 +134,11 @@ namespace SmartTutorial.API.Services.Implementations
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = dto.Username
             };
-            await _userManager.AddToRoleAsync(user, "User");
             var createdResult = await _userManager.CreateAsync(user, dto.Password);
+            if (createdResult.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "User");
+            }
             return createdResult;
         }
 

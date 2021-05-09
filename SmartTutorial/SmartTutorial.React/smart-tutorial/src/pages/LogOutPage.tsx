@@ -13,5 +13,5 @@ export default function LogOut() {
     asyncLogOut();
     history.push("/signin");
   });
-  return <Page title="Logging out"></Page>;
+  return <Page title="Logging out" />;
 }

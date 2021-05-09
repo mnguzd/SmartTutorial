@@ -1,19 +1,19 @@
-import { FC, useState, useEffect } from "react";
-import { RouteComponentProps, Link } from "react-router-dom";
+import { FC, useEffect, useState } from "react";
+import { Link, RouteComponentProps } from "react-router-dom";
 import {
+  Breadcrumbs,
+  Chip,
+  Container,
+  Grid,
+  InputBase,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   Typography,
-  Breadcrumbs,
-  Grid,
-  Container,
-  InputBase,
-  Chip,
 } from "@material-ui/core";
 import { Home, Search } from "@material-ui/icons";
-import { makeStyles, fade } from "@material-ui/core/styles";
+import { fade, makeStyles } from "@material-ui/core/styles";
 import { getThemeWithSubjects } from "../services/api/ThemesApi";
 import { IThemeDataWithSubjects } from "../services/api/dtos/ThemeData";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
@@ -157,7 +157,7 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
           </Grid>
           <Grid item className={classes.root}>
             {loading ? (
-              <ProgressCircle />
+              <ProgressCircle color="primary" />
             ) : (
               <List dense={false}>
                 {theme?.subjects

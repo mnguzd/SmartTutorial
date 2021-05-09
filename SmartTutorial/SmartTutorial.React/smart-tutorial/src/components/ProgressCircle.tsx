@@ -1,7 +1,7 @@
-import { makeStyles, Theme, createStyles } from "@material-ui/core/styles";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       display: "flex",
@@ -9,12 +9,15 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
+interface Props{
+  color:"primary"|"secondary"|"inherit";
+}
 
-export default function ProgressCircle() {
+export default function ProgressCircle(props:Props) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <CircularProgress />
+      <CircularProgress color={props.color} />
     </div>
   );
 }

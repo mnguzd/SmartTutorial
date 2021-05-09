@@ -7,6 +7,7 @@ export interface ISubjectData {
   id: number;
   date: string;
 }
+
 export interface ISubjectDataWithTopics {
   name: string;
   complexity: number;

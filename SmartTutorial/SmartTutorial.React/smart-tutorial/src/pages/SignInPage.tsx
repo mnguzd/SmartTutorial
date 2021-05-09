@@ -1,19 +1,19 @@
 import {
-  Button,
-  CssBaseline,
-  TextField,
-  Grid,
-  Typography,
-  Container,
-  FormControlLabel,
-  Checkbox,
   Breadcrumbs,
+  Button,
+  Checkbox,
+  Container,
+  CssBaseline,
+  FormControlLabel,
+  Grid,
+  TextField,
+  Typography,
 } from "@material-ui/core";
-import { LockOpen, Home } from "@material-ui/icons";
+import { Home, LockOpen } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import { Controller, useForm } from "react-hook-form/";
-import { useHistory, Link } from "react-router-dom";
-import { useAuth, IServerSignInError } from "../auth/Auth";
+import { Link, useHistory } from "react-router-dom";
+import { IServerSignInError, useAuth } from "../auth/Auth";
 import { useEffect } from "react";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 import ProgressCircle from "../components/ProgressCircle";
@@ -90,10 +90,10 @@ export default function SignIn() {
   }
 
   useEffect(() => {
-    if (isAuthenticated && !loading) {
+    if (isAuthenticated&&!loading) {
       history.push("/");
     }
-  }, [isAuthenticated, history, loading]);
+  }, [isAuthenticated, history,loading]);
 
   return (
     <Page title="WebTutor | Sign In">
@@ -111,7 +111,7 @@ export default function SignIn() {
         <CssBaseline />
         <div className={classes.paper}>
           {loading ? (
-            <ProgressCircle />
+            <ProgressCircle color="primary" />
           ) : (
             <LockOpen
               className={classes.avatar}

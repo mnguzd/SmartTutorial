@@ -1,28 +1,29 @@
 import moment from "moment";
 import {
+  Avatar,
+  Badge,
   Box,
+  Button,
   Card,
+  CardActions,
   CardContent,
   Divider,
-  Typography,
-  Avatar,
-  CardActions,
-  Button,
   FormHelperText,
   Grid,
-  Badge,
+  Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  uploadImage,
   IServerImageUploadError,
+  uploadImage,
 } from "../../services/api/AccountApi";
 import { IUser, useAuth } from "../../auth/Auth";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import React from "react";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   box: {
     alignItems: "center",
     display: "flex",
@@ -52,7 +53,7 @@ export interface IFormInputs {
 }
 
 export default function AccountProfile(user: IUser) {
-  const { updateUserInfo } = useAuth();
+  const { updateUserInfo, accessToken, loading } = useAuth();
   const classes = useStyles();
   const {
     register,
@@ -63,13 +64,17 @@ export default function AccountProfile(user: IUser) {
   } = useForm<IFormInputs>({ resolver: yupResolver(schema) });
 
   async function onSubmit(data: File): Promise<void> {
-    const result: IServerImageUploadError | null = await uploadImage(data);
+    const result: IServerImageUploadError | null = await uploadImage(
+      data,
+      accessToken
+    );
     if (result) {
       setError(result.name, { type: result.type, message: result.message });
     } else {
       await updateUserInfo();
     }
   }
+
   async function onChange(
     event: React.ChangeEvent<HTMLInputElement>
   ): Promise<void> {
@@ -77,8 +82,9 @@ export default function AccountProfile(user: IUser) {
     if (!input.files?.length) {
       return;
     }
-    onSubmit(input.files[0]);
+    await onSubmit(input.files[0]);
   }
+
   return (
     <Card {...user}>
       <CardContent>
@@ -106,7 +112,13 @@ export default function AccountProfile(user: IUser) {
           onSubmit={handleSubmit(onSubmit)}
           className={classes.form}
         >
-          <Button color="primary" component="label" fullWidth variant="text">
+          <Button
+            color="primary"
+            component="label"
+            fullWidth
+            variant="text"
+            disabled={loading}
+          >
             Upload picture
             <Controller
               control={control}

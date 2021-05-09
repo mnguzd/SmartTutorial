@@ -1,25 +1,25 @@
 import React from "react";
 import {
+  Avatar,
   Button,
   ClickAwayListener,
-  Grow,
-  Paper,
+  Divider,
   Grid,
+  Grow,
+  ListItemIcon,
+  MenuItem,
+  MenuList,
+  Paper,
   Popper,
   Typography,
-  Divider,
-  MenuList,
-  Avatar,
-  MenuItem,
-  ListItemIcon,
 } from "@material-ui/core";
 import {
+  ExitToApp,
   KeyboardArrowDown,
   Person,
   Settings,
-  ExitToApp,
 } from "@material-ui/icons";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -79,7 +79,7 @@ export default function ButtonMenu(user: IUser) {
 
   const prevOpen = React.useRef(open);
   React.useEffect(() => {
-    if (prevOpen.current === true && open === false) {
+    if (prevOpen.current && !open) {
       anchorRef.current!.focus();
     }
 

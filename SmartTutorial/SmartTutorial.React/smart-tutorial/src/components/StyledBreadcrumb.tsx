@@ -1,4 +1,4 @@
-import { emphasize, withStyles, Theme } from "@material-ui/core/styles";
+import { emphasize, Theme, withStyles } from "@material-ui/core/styles";
 import Chip from "@material-ui/core/Chip";
 
 export const StyledBreadcrumb = withStyles((theme: Theme) => ({

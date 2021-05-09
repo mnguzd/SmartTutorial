@@ -53,7 +53,7 @@ export interface IAccountEditInputs {
 }
 
 const AccountProfileDetails = (user: IUser) => {
-  const { updateUserInfo } = useAuth();
+  const { updateUserInfo, accessToken, loading } = useAuth();
   const classes = useStyles();
   const {
     register,
@@ -66,14 +66,19 @@ const AccountProfileDetails = (user: IUser) => {
     mode: "onBlur",
     resolver: yupResolver(schema),
   });
+
   async function onSubmit(data: IAccountEditInputs) {
-    const result: IServerEditUserError | null = await editUser(data);
+    const result: IServerEditUserError | null = await editUser(
+      data,
+      accessToken
+    );
     if (result) {
       setError(result.name, { type: result.type, message: result.message });
     } else {
       await updateUserInfo();
     }
   }
+
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
       <Card>
@@ -166,7 +171,12 @@ const AccountProfileDetails = (user: IUser) => {
         </CardContent>
         <Divider />
         <Box className={classes.box}>
-          <Button color="primary" variant="contained" type="submit">
+          <Button
+            color="primary"
+            variant="contained"
+            type="submit"
+            disabled={loading}
+          >
             Save details
           </Button>
         </Box>

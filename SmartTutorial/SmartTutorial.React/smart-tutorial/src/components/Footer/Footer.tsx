@@ -1,16 +1,16 @@
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  Container,
-  IconButton,
-  Grid,
   Button,
+  Container,
   Divider,
+  Grid,
+  IconButton,
 } from "@material-ui/core";
 import {
   AlternateEmail,
-  LinkedIn,
-  Instagram,
   Facebook,
+  Instagram,
+  LinkedIn,
 } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({

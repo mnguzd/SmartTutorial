@@ -11,7 +11,6 @@ const Page: FC<Props> = ({ title, children }) => {
     <div>
       <Helmet>
         <title>{title}</title>
-        <style>{'body { background-color:#F8FFF4; }'}</style>
       </Helmet>
       <Header />
       {children}

@@ -1,9 +1,11 @@
-import { useState, useContext, createContext, FC, useEffect } from "react";
+import { createContext, FC, useContext, useEffect, useState } from "react";
 import { webAPIUrl } from "../AppSettings";
 import axios from "axios";
 import { IUserForLogin, IUserForRegister } from "../services/api/dtos/UserData";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { TokenStorage } from "../services/localStorage/tokenStorage";
+import { parseJwt } from "../services/jwt/parseJwt";
+import { refreshAcessToken } from "../services/api/AccountApi";
 
 export interface IUser {
   username: string;
@@ -35,6 +37,7 @@ export interface IServerSignUpError {
   type: string;
   message: string;
 }
+
 export interface IServerSignInError {
   name: "username" | "remember" | "password";
   type: string;
@@ -44,6 +47,7 @@ export interface IServerSignInError {
 interface IAuthContext {
   isAuthenticated: boolean;
   user?: IUser;
+  accessToken: string;
   storedUsername: string;
   loading: boolean;
   loginSuccess: boolean;
@@ -57,6 +61,7 @@ interface IAuthContext {
 export const AuthContext = createContext<IAuthContext>({
   isAuthenticated: false,
   loading: true,
+  accessToken: "",
   loginSuccess: false,
   storedUsername: "",
   updateUserInfo: async () => {},
@@ -67,7 +72,7 @@ export const AuthContext = createContext<IAuthContext>({
 });
 
 function getUserFromToken(token: any): IUser {
-  const userData: IUser = {
+  return {
     username:
       token["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
     lastname:
@@ -83,7 +88,6 @@ function getUserFromToken(token: any): IUser {
         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
       ],
   };
-  return userData;
 }
 
 export const useAuth = () => useContext(AuthContext);
@@ -94,13 +98,17 @@ export const AuthProvider: FC = ({ children }) => {
   const [loginSuccess, setSuccess] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [accessToken, setAccessToken] = useState<string>("");
+
   const [storedUsername, setStoredUsername] = useLocalStorage<string>(
     "username",
     ""
   );
+
   function calmSuccess() {
     setSuccess(false);
   }
+
   async function updateUserInfo(): Promise<void> {
     let sendRefreshToken: ISendRefreshToken = {
       refreshToken: TokenStorage.getRefreshToken(),
@@ -111,20 +119,18 @@ export const AuthProvider: FC = ({ children }) => {
         const token = res.data.accessToken;
         const refreshToken = res.data.refreshToken.tokenString;
         if (token && refreshToken) {
-          TokenStorage.setToken(token);
+          setAccessToken(token);
           TokenStorage.setRefreshToken(refreshToken);
-          const parsedToken = parseJwt(token);
-          const date = new Date(0);
-          date.setUTCSeconds(parsedToken.exp);
-          TokenStorage.setTokenExpire(date);
           TokenStorage.setRefreshTokenExpire(
             new Date(res.data.refreshToken.expireAt)
           );
+          const parsedToken = parseJwt(token);
           setUser(getUserFromToken(parsedToken));
         }
       })
       .catch((err) => console.log(err.response));
   }
+
   async function logIn(
     data: IUserForLogin
   ): Promise<IServerSignInError | null> {
@@ -144,16 +150,13 @@ export const AuthProvider: FC = ({ children }) => {
         const token = res.data.accessToken;
         const refreshToken = res.data.refreshToken.tokenString;
         if (token && refreshToken) {
-          TokenStorage.setToken(token);
+          setAccessToken(token);
           TokenStorage.setRefreshToken(refreshToken);
-          const parsedToken = parseJwt(token);
-          const userData = getUserFromToken(parsedToken);
-          const date = new Date(0);
-          date.setUTCSeconds(parsedToken.exp);
-          TokenStorage.setTokenExpire(date);
           TokenStorage.setRefreshTokenExpire(
             new Date(res.data.refreshToken.expireAt)
           );
+          const parsedToken = parseJwt(token);
+          const userData = getUserFromToken(parsedToken);
           setUser(userData);
           setIsAuthenticated(true);
           setSuccess(true);
@@ -197,6 +200,7 @@ export const AuthProvider: FC = ({ children }) => {
       return null;
     }
   }
+
   async function signUp(
     user: IUserForRegister
   ): Promise<IServerSignUpError | null> {
@@ -216,6 +220,7 @@ export const AuthProvider: FC = ({ children }) => {
       .then()
       .catch((err) => {
         const dataError = err.response.data;
+        console.log(err.response.data);
         if (dataError.errors) {
           const serverErrors: string[] = Object.getOwnPropertyNames(
             dataError.errors
@@ -264,7 +269,8 @@ export const AuthProvider: FC = ({ children }) => {
     await axios
       .post(webAPIUrl + "/account/logout", sendRefreshToken)
       .then(() => {
-        TokenStorage.clearTokenStorage(true);
+        TokenStorage.clearTokenStorage();
+        setAccessToken("");
         setUser(undefined);
         setIsAuthenticated(false);
       })
@@ -273,20 +279,28 @@ export const AuthProvider: FC = ({ children }) => {
   }
 
   useEffect(() => {
+    async function refreshToken() {
+      const token: IAuthToken | null = await refreshAcessToken();
+      if (token) {
+        setAccessToken(token.accessToken);
+      }
+    }
     setLoading(true);
-    const token: string | null = TokenStorage.getToken();
-    if (token) {
-      const parsedToken = parseJwt(token);
+    if (accessToken) {
+      const parsedToken = parseJwt(accessToken);
       setUser(getUserFromToken(parsedToken));
       setIsAuthenticated(true);
+      setLoading(false);
+    } else if (TokenStorage.getRefreshToken()) {
+      refreshToken();
     }
-    setLoading(false);
-  }, []);
+  }, [accessToken]);
   return (
     <AuthContext.Provider
       value={{
         isAuthenticated,
         user,
+        accessToken,
         storedUsername: storedUsername,
         loading,
         updateUserInfo: updateUserInfo,
@@ -301,17 +315,3 @@ export const AuthProvider: FC = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-function parseJwt(token: string): any {
-  var base64Url = token.split(".")[1];
-  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  var jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split("")
-      .map(function (c) {
-        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join("")
-  );
-  return JSON.parse(jsonPayload);
-}

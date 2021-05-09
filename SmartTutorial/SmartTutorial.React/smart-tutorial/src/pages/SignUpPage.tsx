@@ -1,26 +1,27 @@
 import {
-  Button,
-  CssBaseline,
-  TextField,
-  Grid,
-  Typography,
-  Container,
-  FormControlLabel,
   Breadcrumbs,
+  Button,
   Checkbox,
+  Container,
+  CssBaseline,
+  FormControlLabel,
   FormHelperText,
+  Grid,
+  TextField,
+  Typography,
 } from "@material-ui/core";
 import { useEffect } from "react";
-import { LockOutlined, Home } from "@material-ui/icons";
+import { Home, LockOutlined } from "@material-ui/icons";
 import StyledLink from "../components/StyledLink";
 import { makeStyles } from "@material-ui/core/styles";
-import { useHistory, Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 import { Controller, useForm } from "react-hook-form/";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useAuth, IServerSignUpError } from "../auth/Auth";
+import { IServerSignUpError, useAuth } from "../auth/Auth";
 import Page from "./Page";
+import ProgressCircle from "../components/ProgressCircle";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -64,6 +65,7 @@ const schema = yup.object().shape({
     .oneOf([yup.ref("password")], "Passwords must match"),
   terms: yup.boolean().oneOf([true], "You must read the Terms and Conditions"),
 });
+
 interface IFormInputs {
   username: string;
   email: string;
@@ -75,7 +77,7 @@ interface IFormInputs {
 export default function SignUp() {
   const classes = useStyles();
 
-  const { isAuthenticated, signUp } = useAuth();
+  const { isAuthenticated, signUp, loading } = useAuth();
 
   const history = useHistory();
 
@@ -89,10 +91,11 @@ export default function SignUp() {
   } = useForm<IFormInputs>({ mode: "onBlur", resolver: yupResolver(schema) });
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !loading) {
       history.push("/");
     }
-  }, [isAuthenticated, history]);
+  }, [isAuthenticated, history, loading]);
+
   async function onSubmit(data: IFormInputs) {
     const result: IServerSignUpError | null = await signUp(data);
     if (result) {
@@ -101,6 +104,7 @@ export default function SignUp() {
       history.push("/signin");
     }
   }
+
   return (
     <Page title="WebTutor | Sign-Up">
       <Breadcrumbs aria-label="breadcrumb" className={classes.bread}>
@@ -116,11 +120,16 @@ export default function SignUp() {
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div className={classes.paper}>
-          <LockOutlined
-            className={classes.avatar}
-            fontSize="large"
-            color="secondary"
-          />
+          {loading ? (
+            <ProgressCircle color="primary" />
+          ) : (
+            <LockOutlined
+              className={classes.avatar}
+              fontSize="large"
+              color="secondary"
+            />
+          )}
+
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
@@ -238,6 +247,7 @@ export default function SignUp() {
               variant="contained"
               color="primary"
               className={classes.submit}
+              disabled={loading}
             >
               Sign Up
             </Button>

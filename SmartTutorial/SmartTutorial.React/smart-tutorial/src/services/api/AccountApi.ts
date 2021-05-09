@@ -15,9 +15,24 @@ export interface IServerEditUserError {
   type: string;
   message: string;
 }
+export interface IAuthToken {
+  accessToken: string;
+  refreshToken: IRefreshToken;
+}
+
+interface IRefreshToken {
+  username: string;
+  tokenString: string;
+  expireAt: string;
+}
+
+interface ISendRefreshToken {
+  refreshToken: string | null;
+}
 
 export async function editUser(
-  data: IAccountEditInputs
+  data: IAccountEditInputs,
+  token: string
 ): Promise<IServerEditUserError | null> {
   let error: IServerEditUserError = {
     name: "country",
@@ -25,7 +40,9 @@ export async function editUser(
     message: "",
   };
   await axiosAuthorized
-    .patch(webAPIUrl + "/account/patch", data)
+    .patch(webAPIUrl + "/account/patch", data, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
     .then(() => {})
     .catch((err) => {
       const dataError = err.response.data;
@@ -69,7 +86,8 @@ export async function editUser(
 }
 
 export async function uploadImage(
-  data: File
+  data: File,
+  token: string
 ): Promise<IServerImageUploadError | null> {
   let formData = new FormData();
   if (data) {
@@ -84,6 +102,7 @@ export async function uploadImage(
     .post(webAPIUrl + "/account/uploadImage", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
       },
     })
     .then(() => {})
@@ -105,20 +124,6 @@ export async function uploadImage(
     return null;
   }
 }
-export interface IAuthToken {
-  accessToken: string;
-  refreshToken: IRefreshToken;
-}
-
-interface IRefreshToken {
-  username: string;
-  tokenString: string;
-  expireAt: string;
-}
-
-interface ISendRefreshToken {
-  refreshToken: string | null;
-}
 
 export async function refreshAcessToken(): Promise<IAuthToken | null> {
   let sendRefreshToken: ISendRefreshToken = {
@@ -129,6 +134,10 @@ export async function refreshAcessToken(): Promise<IAuthToken | null> {
     .post<IAuthToken>(webAPIUrl + "/account/refresh-token", sendRefreshToken)
     .then((res) => {
       result = res.data;
+      TokenStorage.setRefreshToken(result.refreshToken.tokenString);
+      TokenStorage.setRefreshTokenExpire(
+        new Date(result.refreshToken.expireAt)
+      );
     })
     .catch((err) => {
       console.log(err.response);

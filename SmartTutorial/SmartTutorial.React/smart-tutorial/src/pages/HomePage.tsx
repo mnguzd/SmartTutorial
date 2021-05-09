@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Typography,
-  Grid,
   Container,
-  Snackbar,
-  IconButton,
-  SnackbarContent,
-  Slide,
   Fade,
+  Grid,
+  IconButton,
+  Slide,
+  Snackbar,
+  SnackbarContent,
+  Typography,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { makeStyles } from "@material-ui/core/styles";
@@ -138,7 +138,7 @@ export default function HomePage() {
         </Container>
         <Container className={classes.cardGrid} maxWidth="md">
           {loading ? (
-            <ProgressCircle />
+            <ProgressCircle color="primary" />
           ) : (
             <Grid container spacing={4}>
               {data.map((theme) => (

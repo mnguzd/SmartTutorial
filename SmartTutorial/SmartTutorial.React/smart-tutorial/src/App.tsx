@@ -1,6 +1,5 @@
-import "./App.css";
 import { Route } from "react-router";
-import { BrowserRouter, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter, Redirect, Switch } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import SignIn from "./pages/SignInPage";
 import SignUp from "./pages/SignUpPage";

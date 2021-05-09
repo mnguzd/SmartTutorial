@@ -1,4 +1,4 @@
-import { ISubjectData } from "../dtos/SubjectData";
+import { ISubjectData } from "./SubjectData";
 
 export interface IThemeData {
   name: string;

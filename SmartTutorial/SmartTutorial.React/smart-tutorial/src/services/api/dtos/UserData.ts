@@ -3,6 +3,7 @@ export interface IUserForLogin {
   password: string;
   remember: boolean;
 }
+
 export interface IUserForRegister {
   username: string;
   email: string;
