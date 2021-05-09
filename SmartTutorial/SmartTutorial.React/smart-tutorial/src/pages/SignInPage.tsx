@@ -21,6 +21,7 @@ import StyledLink from "../components/StyledLink";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Page from "./Page";
+import { UserRole } from "../auth/UserRoles";
 
 const schema = yup.object().shape({
   username: yup
@@ -65,7 +66,7 @@ interface IFormInputs {
 }
 
 export default function SignIn() {
-  const { logIn, isAuthenticated, storedUsername, loading } = useAuth();
+  const { logIn, isAuthenticated, storedUsername, loading, user } = useAuth();
 
   const history = useHistory();
 
@@ -90,10 +91,14 @@ export default function SignIn() {
   }
 
   useEffect(() => {
-    if (isAuthenticated&&!loading) {
-      history.push("/");
+    if (isAuthenticated && !loading) {
+      if (user?.role === UserRole.Admin) {
+        history.push("/admin");
+      } else {
+        history.push("/");
+      }
     }
-  }, [isAuthenticated, history,loading]);
+  }, [isAuthenticated, history, loading, user]);
 
   return (
     <Page title="WebTutor | Sign In">

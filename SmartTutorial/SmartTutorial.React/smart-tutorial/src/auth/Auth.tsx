@@ -6,6 +6,7 @@ import useLocalStorage from "../hooks/useLocalStorage";
 import { TokenStorage } from "../services/localStorage/tokenStorage";
 import { parseJwt } from "../services/jwt/parseJwt";
 import { refreshAcessToken } from "../services/api/AccountApi";
+import { UserRole } from "./UserRoles";
 
 export interface IUser {
   username: string;
@@ -15,6 +16,7 @@ export interface IUser {
   lastname: string;
   rating: number;
   avatar: string;
+  role: UserRole;
 }
 
 export interface IAuthToken {
@@ -87,6 +89,7 @@ function getUserFromToken(token: any): IUser {
       token[
         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
       ],
+    role: token["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
   };
 }
 

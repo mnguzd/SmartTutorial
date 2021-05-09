@@ -16,7 +16,7 @@ namespace SmartTutorial.API.Services.Interfaces
         Task<JwtAuthResult> Refresh(string refreshToken, DateTime now);
         Task<User> FindByEmail(string email);
         Task<IdentityResult> Logout(string refreshToken);
-        Claim[] GenerateClaims(User user);
+        Task<Claim[]> GenerateClaims(User user);
         Task<User> FindByUserName(string username);
         Task<IdentityResult> EditUserInfo(User user, UserEditDto dto);
         Task<IdentityResult> CreateUser(UserForRegisterDto dto);

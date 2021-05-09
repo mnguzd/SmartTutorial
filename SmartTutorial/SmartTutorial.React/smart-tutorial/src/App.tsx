@@ -8,6 +8,8 @@ import SubjectPage from "./pages/SubjectPage";
 import LogOut from "./pages/LogOutPage";
 import NotFound from "./pages/NotFoundPage";
 import TopicPage from "./pages/TopicPage";
+import AdminDashboard from "./pages/AdminDashboard";
+import AdminThemesPage from "./pages/AdminThemesPage"; 
 import AccountPage from "./pages/AccountPage";
 import { ThemeProvider } from "@material-ui/core/styles";
 import MainTheme from "./themes/MainTheme";
@@ -23,6 +25,8 @@ function App() {
             <Route exact path="/" component={HomePage} />
             <Route path="/SignIn" component={SignIn} />
             <Route path="/SignUp" component={SignUp} />
+            <Route path="/Admin/Themes" component={AdminThemesPage}/>
+            <Route path="/Admin" component={AdminDashboard} />
             <Route
               path="Themes/:themeId/Subjects/:subjectId/Topic/:topicId"
               component={TopicPage}

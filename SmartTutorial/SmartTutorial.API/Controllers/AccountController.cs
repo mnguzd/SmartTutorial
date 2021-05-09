@@ -54,7 +54,7 @@ namespace SmartTutorial.API.Controllers
                     });
             }
 
-            var claims = _accountService.GenerateClaims(user);
+            var claims = await _accountService.GenerateClaims(user);
             var jwtResult = await _accountService.GenerateTokens(user.UserName, claims, DateTime.Now);
             return Ok(jwtResult);
         }

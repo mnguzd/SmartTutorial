@@ -78,8 +78,10 @@ namespace SmartTutorial.API.Services.Implementations
             };
         }
 
-        public Claim[] GenerateClaims(User user)
+        public async Task<Claim[]> GenerateClaims(User user)
         {
+            var result = await _userManager.GetRolesAsync(user);
+            var role = result.FirstOrDefault();
             var claims = new[]
             {
                 new Claim(ClaimTypes.Name, user.UserName),
@@ -88,7 +90,8 @@ namespace SmartTutorial.API.Services.Implementations
                 new Claim(ClaimTypes.GivenName, user.FirstName),
                 new Claim(ClaimTypes.Surname, user.LastName),
                 new Claim("rating", user.Rating.ToString()),
-                new Claim("avatar", user.AvatarPath ?? string.Empty)
+                new Claim("avatar", user.AvatarPath ?? string.Empty),
+                new Claim(ClaimTypes.Role, role ?? string.Empty)
             };
             return claims;
         }
@@ -101,7 +104,7 @@ namespace SmartTutorial.API.Services.Implementations
                 throw new SecurityTokenException("User with this refresh token do not exists" + refreshToken);
             }
 
-            var claims = GenerateClaims(userFound);
+            var claims = await GenerateClaims(userFound);
             var result = await GenerateTokens(userFound.UserName, claims, now);
             return result;
         }
@@ -139,6 +142,7 @@ namespace SmartTutorial.API.Services.Implementations
             {
                 await _userManager.AddToRoleAsync(user, "User");
             }
+
             return createdResult;
         }
 
@@ -164,6 +168,7 @@ namespace SmartTutorial.API.Services.Implementations
                 {
                     return "Avatar is empty";
                 }
+
                 var path = _environment.WebRootPath + "\\UsersImages\\";
                 if (!Directory.Exists(path))
                 {
@@ -185,7 +190,6 @@ namespace SmartTutorial.API.Services.Implementations
                 user.AvatarPath = localServerName + pngFileName;
                 await _userManager.UpdateAsync(user);
                 return user.AvatarPath;
-
             }
             catch
             {
