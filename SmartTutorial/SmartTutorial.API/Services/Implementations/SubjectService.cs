@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using SmartTutorial.API.Dtos.PaginationDtos.SubjectDtos;
 using SmartTutorial.API.Dtos.SubjectDtos;
+using SmartTutorial.API.Infrastucture;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
@@ -22,6 +25,12 @@ namespace SmartTutorial.API.Services.Implementations
             await _repository.Add(subject);
             await _repository.SaveAll();
             return subject;
+        }
+
+        public async Task<PagedList<Subject>> GetPaginated(SubjectParameters parameters)
+        {
+            var result = await _repository.GetAll();
+            return PagedList<Subject>.ToPagedList(result.ToList(),parameters.PageNumber, parameters.PageSize);
         }
 
         public async Task Delete(int id)

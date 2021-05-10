@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using SmartTutorial.API.Dtos.PaginationDtos.ThemesDtos;
 using SmartTutorial.Domain;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Services.Interfaces
 {
@@ -8,5 +9,6 @@ namespace SmartTutorial.API.Services.Interfaces
     {
         Task<IList<Theme>> GetAll();
         Task<Theme> GetWithInclude(int id);
+        Task<IList<Theme>> GetPaginated(ThemeParameters parameters);
     }
 }

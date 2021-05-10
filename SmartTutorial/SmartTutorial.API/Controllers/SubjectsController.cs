@@ -1,16 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SmartTutorial.API.Dtos.PaginationDtos.SubjectDtos;
 using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace SmartTutorial.API.Controllers
 {
-    [AllowAnonymous]
     [Route("api/[controller]")]
     [ApiController]
     public class SubjectsController : ControllerBase
@@ -24,6 +25,7 @@ namespace SmartTutorial.API.Controllers
             _mapper = mapper;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
@@ -32,6 +34,16 @@ namespace SmartTutorial.API.Controllers
             return Ok(subjectDtoList);
         }
 
+        [HttpGet("getPaginated")]
+        public async Task<IActionResult> Get([FromQuery] SubjectParameters parameters)
+        {
+            var subjectList = await _subjectService.GetPaginated(parameters);
+            var subjectDtoList = _mapper.Map<List<SubjectDto>>(subjectList);
+            Response.Headers.Add("X-Pagination", subjectList.TotalCount.ToString());
+            return Ok(subjectDtoList);
+        }
+
+        [AllowAnonymous]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id, bool includeTopics = false)
         {

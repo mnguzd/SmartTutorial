@@ -67,7 +67,7 @@ namespace SmartTutorial.API
 
             app.UseRouting();
 
-            app.UseCors(configurePolicy => configurePolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseCors(configurePolicy => configurePolicy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("X-Pagination"));
 
             app.UseAuthentication();
             app.UseAuthorization();

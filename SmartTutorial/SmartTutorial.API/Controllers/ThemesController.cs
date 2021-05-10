@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SmartTutorial.API.Dtos.PaginationDtos.ThemesDtos;
 using SmartTutorial.API.Dtos.ThemeDtos;
 using SmartTutorial.API.Services.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Controllers
 {
@@ -26,6 +27,15 @@ namespace SmartTutorial.API.Controllers
         public async Task<IActionResult> Get()
         {
             var themeList = await _themeService.GetAll();
+            var themeDtoList = _mapper.Map<List<ThemeDto>>(themeList);
+            return Ok(themeDtoList);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("getPaginated")]
+        public async Task<IActionResult> Get([FromQuery]ThemeParameters parameters)
+        {
+            var themeList = await _themeService.GetPaginated(parameters);
             var themeDtoList = _mapper.Map<List<ThemeDto>>(themeList);
             return Ok(themeDtoList);
         }

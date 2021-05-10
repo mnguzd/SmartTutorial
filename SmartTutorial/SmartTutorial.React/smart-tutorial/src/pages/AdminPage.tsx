@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     content: {
       flexGrow: 1,
-      padding: theme.spacing(3),
+      padding: theme.spacing(2),
     },
   })
 );
@@ -89,7 +89,7 @@ const AdminPage: FC<Props> = ({ title, children }) => {
                 </ListItemIcon>
                 <ListItemText primary="Themes" />
               </ListItem>
-              <ListItem button>
+              <ListItem button component={Link} to="/admin/subjects">
                 <ListItemIcon>
                   <FolderOpen />
                 </ListItemIcon>

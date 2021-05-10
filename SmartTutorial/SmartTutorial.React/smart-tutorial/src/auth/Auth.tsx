@@ -297,6 +297,7 @@ export const AuthProvider: FC = ({ children }) => {
     } else if (TokenStorage.getRefreshToken()) {
       refreshToken();
     }
+    setLoading(false);
   }, [accessToken]);
   return (
     <AuthContext.Provider
