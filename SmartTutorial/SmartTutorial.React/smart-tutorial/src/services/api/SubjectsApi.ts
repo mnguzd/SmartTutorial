@@ -27,6 +27,59 @@ export async function getSubjectWithTopics(
   return data;
 }
 
+interface ISubjectInputData {
+  name: string;
+  complexity: number;
+  themeId: number;
+}
+
+export interface IServerCreateSubjectError {
+  name: "name" | "complexity" | "themeId";
+  type: string;
+  message: string;
+}
+
+export async function createNewSubject(
+  data: ISubjectInputData,
+  token: string
+): Promise<IServerCreateSubjectError | null> {
+  let error: IServerCreateSubjectError = {
+    name: "themeId",
+    type: "server",
+    message: "",
+  };
+  await axiosAuthorized
+    .post(`${webAPIUrl}/subjects`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      console.log(response.data);
+    })
+    .catch((err) => {
+      const dataError = err.response.data;
+      error.message = dataError;
+    });
+  if (error.message) {
+    return error;
+  }
+  return null;
+}
+
+export async function deleteSubject(id: number, token: string): Promise<boolean> {
+  let result:boolean = false;
+  await axiosAuthorized
+    .delete(`${webAPIUrl}/subjects/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      result=true;
+    })
+    .catch((err) => {
+      console.log(err.response);
+    });
+  return result;
+}
+
 export interface ISubjectTableDataWithTotalCount {
   data: ISubjectTableData[];
   totalCount: number;

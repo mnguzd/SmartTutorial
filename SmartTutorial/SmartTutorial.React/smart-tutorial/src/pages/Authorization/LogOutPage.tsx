@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { useAuth } from "../auth/Auth";
+import { useAuth } from "../../auth/Auth";
 import { useHistory } from "react-router-dom";
-import Page from "./Page";
+import Page from "../Page";
 
 export default function LogOut() {
   const { logOut } = useAuth();

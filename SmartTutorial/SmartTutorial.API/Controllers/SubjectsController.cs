@@ -71,6 +71,7 @@ namespace SmartTutorial.API.Controllers
         }
 
         [HttpPost]
+        [ApiExceptionFilter]
         public async Task<IActionResult> Post([FromBody] AddSubjectDto dto)
         {
             var subject = await _subjectService.Add(dto);
@@ -104,10 +105,11 @@ namespace SmartTutorial.API.Controllers
             return NoContent();
         }
 
+        [AllowAnonymous]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _subjectService.Delete(id);
+             await _subjectService.Delete(id);
             return NoContent();
         }
     }

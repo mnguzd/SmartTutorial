@@ -13,15 +13,15 @@ import { Home, LockOpen } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import { Controller, useForm } from "react-hook-form/";
 import { Link, useHistory } from "react-router-dom";
-import { IServerSignInError, useAuth } from "../auth/Auth";
+import { IServerSignInError, useAuth } from "../../auth/Auth";
 import { useEffect } from "react";
-import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
-import ProgressCircle from "../components/ProgressCircle";
-import StyledLink from "../components/StyledLink";
+import { StyledBreadcrumb } from "../../components/StyledBreadcrumb";
+import ProgressCircle from "../../components/ProgressCircle";
+import StyledLink from "../../components/StyledLink";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import Page from "./Page";
-import { UserRole } from "../auth/UserRoles";
+import Page from "../Page";
+import { UserRole } from "../../auth/UserRoles";
 
 const schema = yup.object().shape({
   username: yup

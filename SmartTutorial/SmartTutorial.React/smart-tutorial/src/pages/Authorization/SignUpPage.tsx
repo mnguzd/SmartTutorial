@@ -12,16 +12,16 @@ import {
 } from "@material-ui/core";
 import { useEffect } from "react";
 import { Home, LockOutlined } from "@material-ui/icons";
-import StyledLink from "../components/StyledLink";
+import StyledLink from "../../components/StyledLink";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link, useHistory } from "react-router-dom";
-import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
+import { StyledBreadcrumb } from "../../components/StyledBreadcrumb";
 import { Controller, useForm } from "react-hook-form/";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { IServerSignUpError, useAuth } from "../auth/Auth";
-import Page from "./Page";
-import ProgressCircle from "../components/ProgressCircle";
+import { IServerSignUpError, useAuth } from "../../auth/Auth";
+import Page from "../Page";
+import ProgressCircle from "../../components/ProgressCircle";
 
 const useStyles = makeStyles((theme) => ({
   paper: {

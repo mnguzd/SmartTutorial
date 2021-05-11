@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using SmartTutorial.API.Dtos.PaginationDtos.SubjectDtos;
 using SmartTutorial.API.Dtos.SubjectDtos;
+using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Infrastucture;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
@@ -22,8 +25,15 @@ namespace SmartTutorial.API.Services.Implementations
         public async Task<Subject> Add(AddSubjectDto dto)
         {
             var subject = new Subject {Complexity = dto.Complexity, Name = dto.Name, ThemeId = dto.ThemeId};
-            await _repository.Add(subject);
-            await _repository.SaveAll();
+            try
+            {
+                await _repository.Add(subject);
+                await _repository.SaveAll();
+            }
+            catch
+            {
+                throw new ApiException(HttpStatusCode.BadRequest, "Theme with id "+dto.ThemeId+" is not found!");
+            }
             return subject;
         }
 
@@ -35,7 +45,8 @@ namespace SmartTutorial.API.Services.Implementations
 
         public async Task Delete(int id)
         {
-            await _repository.Delete(id);
+            var result = await _repository.GetById(id);
+            await _repository.Delete(result);
             await _repository.SaveAll();
         }
 

@@ -1,8 +1,8 @@
-import AdminPage from "./AdminPage";
+import AdminPage from "../AdminPage";
 import { Avatar } from "@material-ui/core";
 import { useEffect, useState } from "react";
-import { getThemes } from "../services/api/ThemesApi";
-import { IThemeData } from "../services/api/dtos/ThemeData";
+import { getThemes } from "../../../services/api/ThemesApi";
+import { IThemeData } from "../../../services/api/dtos/ThemeData";
 import { DataGrid, GridCellParams, GridColDef } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
 

@@ -26,16 +26,13 @@ namespace SmartTutorial.API.Repositories.Implementations
             return entity;
         }
 
-        public async Task<TEntity> Delete(int id)
+        public async Task Delete(TEntity entity)
         {
-            var entity = await _dbSet.FindAsync(id);
-            if (entity == null)
+            var ent = await _dbSet.FindAsync(entity.Id);
+            if (ent != null)
             {
-                return null;
+                _dbSet.Remove(entity);
             }
-
-            _dbSet.Remove(entity);
-            return entity;
         }
 
         public async Task<List<TEntity>> GetAll()

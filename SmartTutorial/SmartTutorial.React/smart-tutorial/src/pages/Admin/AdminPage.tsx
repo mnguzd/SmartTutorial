@@ -2,7 +2,7 @@ import { FC, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
-import Header from "../components/Header/Header";
+import Header from "../../components/Header/Header";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import {
   Drawer,
@@ -21,8 +21,8 @@ import {
   People,
   Fingerprint,
 } from "@material-ui/icons";
-import { useAuth } from "../auth/Auth";
-import { UserRole } from "../auth/UserRoles";
+import { useAuth } from "../../auth/Auth";
+import { UserRole } from "../../auth/UserRoles";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
