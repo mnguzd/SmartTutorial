@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using SmartTutorial.API.Dtos.PaginationDtos.SubjectDtos;
+﻿using SmartTutorial.API.Dtos.PaginationDtos.SubjectDtos;
 using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Infrastucture;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Services.Implementations
 {
@@ -24,7 +23,7 @@ namespace SmartTutorial.API.Services.Implementations
 
         public async Task<Subject> Add(AddSubjectDto dto)
         {
-            var subject = new Subject {Complexity = dto.Complexity, Name = dto.Name, ThemeId = dto.ThemeId};
+            var subject = new Subject { Complexity = dto.Complexity, Name = dto.Name, ThemeId = dto.ThemeId };
             try
             {
                 await _repository.Add(subject);
@@ -32,7 +31,7 @@ namespace SmartTutorial.API.Services.Implementations
             }
             catch
             {
-                throw new ApiException(HttpStatusCode.BadRequest, "Theme with id "+dto.ThemeId+" is not found!");
+                throw new ApiException(HttpStatusCode.BadRequest, "Theme with id " + dto.ThemeId + " is not found!");
             }
             return subject;
         }
@@ -40,7 +39,7 @@ namespace SmartTutorial.API.Services.Implementations
         public async Task<PagedList<Subject>> GetPaginated(SubjectParameters parameters)
         {
             var result = await _repository.GetAll();
-            return PagedList<Subject>.ToPagedList(result.ToList(),parameters.PageNumber, parameters.PageSize);
+            return PagedList<Subject>.ToPagedList(result.ToList(), parameters.PageNumber, parameters.PageSize);
         }
 
         public async Task Delete(int id)
@@ -72,9 +71,8 @@ namespace SmartTutorial.API.Services.Implementations
             var subject = await _repository.GetById(id);
             if (subject == null)
             {
-                return null;
+                throw new ApiException(HttpStatusCode.Conflict, "User not found");
             }
-
             subject.Name = dto.Name;
             subject.Complexity = dto.Complexity;
             await _repository.SaveAll();
@@ -85,8 +83,8 @@ namespace SmartTutorial.API.Services.Implementations
         {
             var subject = await _repository.GetById(id);
             if (subject == null)
-            {
-                return null;
+            { 
+                throw new ApiException(HttpStatusCode.Conflict, "User not found");
             }
 
             if (!string.IsNullOrWhiteSpace(dto.Name))
@@ -96,7 +94,7 @@ namespace SmartTutorial.API.Services.Implementations
 
             if (dto.Complexity != null)
             {
-                subject.Complexity = (int) dto.Complexity;
+                subject.Complexity = (int)dto.Complexity;
             }
 
             await _repository.SaveAll();

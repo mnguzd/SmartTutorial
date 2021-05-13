@@ -5,7 +5,7 @@ import { IUserForLogin, IUserForRegister } from "../services/api/dtos/UserData";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { TokenStorage } from "../services/localStorage/tokenStorage";
 import { parseJwt } from "../services/jwt/parseJwt";
-import { refreshAcessToken } from "../services/api/AccountApi";
+import { refreshAccessToken } from "../services/api/AccountApi";
 import { UserRole } from "./UserRoles";
 
 export interface IUser {
@@ -283,7 +283,7 @@ export const AuthProvider: FC = ({ children }) => {
 
   useEffect(() => {
     async function refreshToken() {
-      const token: IAuthToken | null = await refreshAcessToken();
+      const token: IAuthToken | null = await refreshAccessToken();
       if (token) {
         setAccessToken(token.accessToken);
       }

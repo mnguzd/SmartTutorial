@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SmartTutorial.API.Dtos.Auth;
 using SmartTutorial.API.Dtos.UserDtos;
+using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Infrastucture.Configurations;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain.Auth;
@@ -34,13 +36,115 @@ namespace SmartTutorial.API.Services.Implementations
             _environment = environment;
         }
 
-        public async Task<SignInResult> SignInAsync(string userName, string password)
+        public async Task<JwtAuthResult> SignInAsync(string userName, string password)
         {
             var signInResult = await _signInManager.PasswordSignInAsync(userName, password, false, false);
-            return signInResult;
+            if (signInResult.Succeeded)
+            {
+                return await GenerateTokens(userName, await GenerateClaims(userName),
+                    DateTime.Now);
+            }
+
+            throw new ApiException(HttpStatusCode.NotFound, "User not found");
         }
 
-        public async Task<JwtAuthResult> GenerateTokens(string username, Claim[] claims, DateTime now)
+        public async Task<JwtAuthResult> Refresh(string refreshToken, DateTime now)
+        {
+            var userFound = FindByRefreshToken(refreshToken);
+            if (userFound == null)
+            {
+                throw new ApiException(HttpStatusCode.BadRequest, "User with this refresh token does not exists");
+            }
+
+            var claims = await GenerateClaims(userFound.UserName);
+            var result = await GenerateTokens(userFound.UserName, claims, now);
+            return result;
+        }
+
+        public async Task<IdentityResult> Logout(string refreshToken)
+        {
+            var userFound = FindByRefreshToken(refreshToken);
+            userFound.RefreshToken = "";
+            var result = await _userManager.UpdateAsync(userFound);
+            return result;
+        }
+
+        public async Task<IdentityResult> CreateUser(UserForRegisterDto dto)
+        {
+            var user = new User
+            {
+                Email = dto.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = dto.Username
+            };
+            var createdResult = await _userManager.CreateAsync(user, dto.Password);
+            if (!createdResult.Succeeded)
+            {
+                throw new ApiException(HttpStatusCode.Conflict, "User already exists");
+            }
+
+            await _userManager.AddToRoleAsync(user, "User");
+            return createdResult;
+        }
+
+        public async Task<IdentityResult> EditUserInfo(string userName, UserEditDto dto)
+        {
+            var userFound = await _userManager.FindByNameAsync(userName);
+            var theSameUser = await _userManager.FindByEmailAsync(dto.Email);
+            if (theSameUser != null && userFound.Email != theSameUser.Email)
+            {
+                throw new ApiException(HttpStatusCode.Conflict, "User with this Email already exists");
+            }
+
+            userFound.FirstName = dto.Firstname;
+            userFound.LastName = dto.Lastname;
+            userFound.Email = dto.Email;
+            if (!string.IsNullOrWhiteSpace(dto.Country))
+            {
+                userFound.Country = dto.Country;
+            }
+
+            var result = await _userManager.UpdateAsync(userFound);
+            return result;
+        }
+
+        public async Task<string> UploadImage(IFormFile avatar, string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                throw new ApiException(HttpStatusCode.Conflict, "User not found");
+            }
+
+            if (avatar.Length <= 0)
+            {
+                return "Avatar is empty";
+            }
+
+            var path = _environment.WebRootPath + "\\UsersImages\\";
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+
+            var oldFilePath = path + Path.GetFileName(user.AvatarPath);
+            if (File.Exists(oldFilePath))
+            {
+                File.Delete(oldFilePath);
+            }
+
+            var randomFileName = Path.GetRandomFileName();
+            var pngFileName = Path.ChangeExtension(randomFileName, ".png");
+            await using var fileStream = File.Create(path + pngFileName);
+            await avatar.CopyToAsync(fileStream);
+            await fileStream.FlushAsync();
+            const string localServerName = "https://localhost:44314/UsersImages/";
+            user.AvatarPath = localServerName + pngFileName;
+            await _userManager.UpdateAsync(user);
+            return user.AvatarPath;
+        }
+
+        private async Task<JwtAuthResult> GenerateTokens(string username, Claim[] claims, DateTime now)
         {
             var shouldAddAudienceClaim =
                 string.IsNullOrWhiteSpace(claims?.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Aud)?.Value);
@@ -63,7 +167,7 @@ namespace SmartTutorial.API.Services.Implementations
                 TokenString = GenerateRefreshTokenString(),
                 ExpireAt = now.AddDays(_authenticationOptions.RefreshTokenExpiration)
             };
-            var userFound = await FindByUserName(username);
+            var userFound = await _userManager.FindByNameAsync(username);
             if (userFound == null)
             {
                 throw new SecurityTokenException("User with such username not found");
@@ -78,8 +182,9 @@ namespace SmartTutorial.API.Services.Implementations
             };
         }
 
-        public async Task<Claim[]> GenerateClaims(User user)
+        private async Task<Claim[]> GenerateClaims(string userName)
         {
+            var user = await _userManager.FindByNameAsync(userName);
             var result = await _userManager.GetRolesAsync(user);
             var role = result.FirstOrDefault();
             var claims = new[]
@@ -94,107 +199,6 @@ namespace SmartTutorial.API.Services.Implementations
                 new Claim(ClaimTypes.Role, role ?? string.Empty)
             };
             return claims;
-        }
-
-        public async Task<JwtAuthResult> Refresh(string refreshToken, DateTime now)
-        {
-            var userFound = FindByRefreshToken(refreshToken);
-            if (userFound == null)
-            {
-                throw new SecurityTokenException("User with this refresh token do not exists" + refreshToken);
-            }
-
-            var claims = await GenerateClaims(userFound);
-            var result = await GenerateTokens(userFound.UserName, claims, now);
-            return result;
-        }
-
-        public async Task<User> FindByEmail(string email)
-        {
-            var userFound = await _userManager.FindByEmailAsync(email);
-            return userFound;
-        }
-
-        public async Task<User> FindByUserName(string username)
-        {
-            var userFound = await _userManager.FindByNameAsync(username);
-            return userFound;
-        }
-
-        public async Task<IdentityResult> Logout(string refreshToken)
-        {
-            var userFound = FindByRefreshToken(refreshToken);
-            userFound.RefreshToken = "";
-            var result = await _userManager.UpdateAsync(userFound);
-            return result;
-        }
-
-        public async Task<IdentityResult> CreateUser(UserForRegisterDto dto)
-        {
-            var user = new User
-            {
-                Email = dto.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = dto.Username
-            };
-            var createdResult = await _userManager.CreateAsync(user, dto.Password);
-            if (createdResult.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(user, "User");
-            }
-
-            return createdResult;
-        }
-
-        public async Task<IdentityResult> EditUserInfo(User user, UserEditDto dto)
-        {
-            user.FirstName = dto.Firstname;
-            user.LastName = dto.Lastname;
-            user.Email = dto.Email;
-            if (!string.IsNullOrWhiteSpace(dto.Country))
-            {
-                user.Country = dto.Country;
-            }
-
-            var result = await _userManager.UpdateAsync(user);
-            return result;
-        }
-
-        public async Task<string> UploadImage(IFormFile avatar, User user)
-        {
-            try
-            {
-                if (avatar.Length <= 0)
-                {
-                    return "Avatar is empty";
-                }
-
-                var path = _environment.WebRootPath + "\\UsersImages\\";
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                var oldFilePath = path + Path.GetFileName(user.AvatarPath);
-                if (File.Exists(oldFilePath))
-                {
-                    File.Delete(oldFilePath);
-                }
-
-                var randomFileName = Path.GetRandomFileName();
-                var pngFileName = Path.ChangeExtension(randomFileName, ".png");
-                await using var fileStream = File.Create(path + pngFileName);
-                await avatar.CopyToAsync(fileStream);
-                await fileStream.FlushAsync();
-                const string localServerName = "https://localhost:44314/UsersImages/";
-                user.AvatarPath = localServerName + pngFileName;
-                await _userManager.UpdateAsync(user);
-                return user.AvatarPath;
-            }
-            catch
-            {
-                return "Internal server error";
-            }
         }
 
         private static string GenerateRefreshTokenString()

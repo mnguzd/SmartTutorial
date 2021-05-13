@@ -1,7 +1,9 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using AutoMapper;
 using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Dtos.ThemeDtos;
 using SmartTutorial.API.Dtos.TopicDtos;
+using SmartTutorial.API.Infrastucture;
 using SmartTutorial.Domain;
 
 namespace SmartTutorial.API.Mapping
@@ -21,6 +23,7 @@ namespace SmartTutorial.API.Mapping
             CreateMap<TopicDto, Topic>();
             CreateMap<Theme, ThemeWithSubjectsDto>();
             CreateMap<Subject, SubjectWithTopicsDto>();
+            CreateMap<PagedList<Subject>, PagedList<SubjectDto>>();
         }
     }
 }

@@ -46,13 +46,12 @@ export default function AdminSubjectsPage() {
   const callBackSubjects = useCallback(
     async function GetSubjects(): Promise<void> {
       setLoading(true);
-      console.log("refreshing");
       const result: ISubjectTableDataWithTotalCount = await getSubjectsPaginated(
         pageNumber + 1,
         pageSize,
         accessToken
       );
-      setSubjects(result.data);
+      setSubjects(result.items);
       if (result.totalCount !== totalCount) {
         setTotalCount(result.totalCount);
       }
@@ -102,7 +101,7 @@ export default function AdminSubjectsPage() {
           rowCount={totalCount}
           pageSize={pageSize}
           page={pageNumber}
-          rowsPerPageOptions={[10, 15, 20, 30, 40, 40]}
+          rowsPerPageOptions={[10, 15, 20, 30, 40]}
           onPageChange={(params) => {
             setPageNumber(params.page);
           }}

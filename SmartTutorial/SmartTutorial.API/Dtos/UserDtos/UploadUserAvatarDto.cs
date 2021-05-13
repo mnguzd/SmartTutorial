@@ -9,7 +9,7 @@ namespace SmartTutorial.API.Dtos.UserDtos
         [Required]
         [DataType(DataType.Upload)]
         [MaxFileSize(2 * 1024 * 1024)]
-        [AllowedExtensions(new string[] { ".jpg", ".png",".jpeg" })]
+        [AllowedExtensions(new[] { ".jpg", ".png",".jpeg" })]
         public IFormFile Avatar { get; set; }
     }
 }

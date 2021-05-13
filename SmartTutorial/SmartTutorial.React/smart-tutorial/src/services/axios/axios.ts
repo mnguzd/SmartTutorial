@@ -1,6 +1,6 @@
 import axios from "axios";
 import { IAuthToken } from "../../auth/Auth";
-import { refreshAcessToken } from "../api/AccountApi";
+import { refreshAccessToken } from "../api/AccountApi";
 import { TokenStorage } from "../localStorage/tokenStorage";
 
 export const axiosAuthorized = axios.create();
@@ -17,7 +17,7 @@ axiosAuthorized.interceptors.response.use(
         TokenStorage.clearTokenStorage();
         window.location.href = "/logout";
       } else {
-        const accessToken: IAuthToken | null = await refreshAcessToken();
+        const accessToken: IAuthToken | null = await refreshAccessToken();
         if (accessToken) {
           originalRequest.headers.Authorization =
             "Bearer " + accessToken.accessToken;

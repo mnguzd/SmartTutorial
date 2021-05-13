@@ -12,14 +12,11 @@ export async function getSubjectWithTopics(
 ): Promise<ISubjectDataWithTopics | null> {
   let data: ISubjectDataWithTopics | null = null;
   await axios
-    .get<ISubjectDataWithTopics>(
-      `${webAPIUrl}/subjects/${id}?includeTopics=true`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
+    .get<ISubjectDataWithTopics>(`${webAPIUrl}/subjects/withTopics/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
     .then((response) => {
       data = response.data;
     })
@@ -65,14 +62,17 @@ export async function createNewSubject(
   return null;
 }
 
-export async function deleteSubject(id: number, token: string): Promise<boolean> {
-  let result:boolean = false;
+export async function deleteSubject(
+  id: number,
+  token: string
+): Promise<boolean> {
+  let result: boolean = false;
   await axiosAuthorized
     .delete(`${webAPIUrl}/subjects/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
-      result=true;
+      result = true;
     })
     .catch((err) => {
       console.log(err.response);
@@ -81,32 +81,37 @@ export async function deleteSubject(id: number, token: string): Promise<boolean>
 }
 
 export interface ISubjectTableDataWithTotalCount {
-  data: ISubjectTableData[];
+  items: ISubjectTableData[];
   totalCount: number;
 }
+
+export interface ISubjectDataWithTotalCount {
+  items: ISubjectData[];
+  totalCount: number;
+}
+
 
 export async function getSubjectsPaginated(
   pageNumber: number,
   pageSize: number,
   token: string
 ): Promise<ISubjectTableDataWithTotalCount> {
-  let subjects: ISubjectTableData[] = [];
-  let count: number = 0;
+  let result: ISubjectTableDataWithTotalCount = { items: [], totalCount: 0 };
   await axiosAuthorized
-    .get<ISubjectData[]>(
+    .get<ISubjectDataWithTotalCount>(
       `${webAPIUrl}/subjects/getPaginated?PageNumber=${pageNumber}&PageSize=${pageSize}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     )
     .then((response) => {
-      count = Number(response.headers["x-pagination"]);
-      return response.data.forEach((element: ISubjectData) =>
-        subjects.push(mapSubjectFromServer(element))
+      result.totalCount = response.data.totalCount;
+      response.data.items.forEach((element: ISubjectData) =>
+        result.items.push(mapSubjectFromServer(element))
       );
     })
     .catch((err) => console.log(err.response));
-  return { data: subjects, totalCount: count };
+  return result;
 }
 export const mapSubjectFromServer = (
   subject: ISubjectData

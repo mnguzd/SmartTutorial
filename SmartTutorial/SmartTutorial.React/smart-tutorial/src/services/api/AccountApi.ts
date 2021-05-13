@@ -125,7 +125,7 @@ export async function uploadImage(
   }
 }
 
-export async function refreshAcessToken(): Promise<IAuthToken | null> {
+export async function refreshAccessToken(): Promise<IAuthToken | null> {
   let sendRefreshToken: ISendRefreshToken = {
     refreshToken: TokenStorage.getRefreshToken(),
   };
