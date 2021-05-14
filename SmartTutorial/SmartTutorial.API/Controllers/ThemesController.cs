@@ -1,10 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SmartTutorial.API.Dtos.PaginationDtos.ThemesDtos;
-using SmartTutorial.API.Dtos.ThemeDtos;
+using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Services.Interfaces;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Controllers
@@ -13,13 +10,11 @@ namespace SmartTutorial.API.Controllers
     [ApiController]
     public class ThemesController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly IThemeService _themeService;
 
-        public ThemesController(IThemeService subjectService, IMapper mapper)
+        public ThemesController(IThemeService subjectService)
         {
             _themeService = subjectService;
-            _mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -27,17 +22,15 @@ namespace SmartTutorial.API.Controllers
         public async Task<IActionResult> Get()
         {
             var themeList = await _themeService.GetAll();
-            var themeDtoList = _mapper.Map<List<ThemeDto>>(themeList);
-            return Ok(themeDtoList);
+            return Ok(themeList);
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("getPaginated")]
-        public async Task<IActionResult> Get([FromQuery]ThemeParameters parameters)
+        [HttpPost("getPaginated")]
+        public async Task<IActionResult> Get(PagedRequest request)
         {
-            var themeList = await _themeService.GetPaginated(parameters);
-            var themeDtoList = _mapper.Map<List<ThemeDto>>(themeList);
-            return Ok(themeDtoList);
+            var themeList = await _themeService.GetPaginated(request);
+            return Ok(themeList);
         }
 
         [AllowAnonymous]
@@ -45,13 +38,7 @@ namespace SmartTutorial.API.Controllers
         public async Task<IActionResult> Get(int themeId)
         {
             var theme = await _themeService.GetWithInclude(themeId);
-            if (theme == null)
-            {
-                return NotFound();
-            }
-
-            var themeDto = _mapper.Map<ThemeWithSubjectsDto>(theme);
-            return Ok(themeDto);
+            return Ok(theme);
         }
     }
 }

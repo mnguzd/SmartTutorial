@@ -1,7 +1,13 @@
 import AdminPage from "../AdminPage";
 import { useCallback, useEffect, useState } from "react";
 import CustomLoadingOverlay from "../../../components/CustomLoadingOverlay";
-import { DataGrid, GridColDef, GridRowId } from "@material-ui/data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridFilterModelParams,
+  GridRowId,
+  GridToolbar,
+} from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
 import { ISubjectTableData } from "../../../services/api/dtos/SubjectData";
 import {
@@ -33,6 +39,7 @@ export default function AdminSubjectsPage() {
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
+  const [filterValue, setFilterValue] = useState<string | undefined>();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [openPopup, setOpenPopup] = useState<boolean>(false);
@@ -43,14 +50,19 @@ export default function AdminSubjectsPage() {
 
   const classes = useStyles();
 
+  const onFilterChange = useCallback(
+    (params: GridFilterModelParams) => {
+      setFilterValue(params.filterModel.items[0].value);
+      console.log(params.filterModel.items[0].operatorValue?.toString());
+    },
+    []
+  );
+
   const callBackSubjects = useCallback(
     async function GetSubjects(): Promise<void> {
       setLoading(true);
-      const result: ISubjectTableDataWithTotalCount = await getSubjectsPaginated(
-        pageNumber + 1,
-        pageSize,
-        accessToken
-      );
+      const result: ISubjectTableDataWithTotalCount =
+        await getSubjectsPaginated(pageNumber + 1, pageSize, accessToken);
       setSubjects(result.items);
       if (result.totalCount !== totalCount) {
         setTotalCount(result.totalCount);
@@ -96,8 +108,11 @@ export default function AdminSubjectsPage() {
           showCellRightBorder
           components={{
             LoadingOverlay: CustomLoadingOverlay,
+            Toolbar: GridToolbar,
           }}
           paginationMode="server"
+          filterMode="server"
+          onFilterModelChange={onFilterChange}
           rowCount={totalCount}
           pageSize={pageSize}
           page={pageNumber}

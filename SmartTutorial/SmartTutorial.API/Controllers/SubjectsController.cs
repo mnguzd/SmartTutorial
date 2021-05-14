@@ -1,13 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SmartTutorial.API.Dtos.PaginationDtos.SubjectDtos;
 using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Exceptions;
+using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Services.Interfaces;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Controllers
 {
@@ -16,13 +13,11 @@ namespace SmartTutorial.API.Controllers
     [ApiExceptionFilter]
     public class SubjectsController : ControllerBase
     {
-        private readonly IMapper _mapper;
         private readonly ISubjectService _subjectService;
 
-        public SubjectsController(ISubjectService subjectService, IMapper mapper)
+        public SubjectsController(ISubjectService subjectService)
         {
             _subjectService = subjectService;
-            _mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -30,18 +25,15 @@ namespace SmartTutorial.API.Controllers
         public async Task<IActionResult> Get()
         {
             var subjectList = await _subjectService.GetAll();
-            var subjectDtoList = _mapper.Map<List<SubjectDto>>(subjectList);
-            return Ok(subjectDtoList);
+            return Ok(subjectList);
         }
 
         [AllowAnonymous]
-        [HttpGet("getPaginated")]
-        public async Task<IActionResult> Get([FromQuery] SubjectParameters parameters)
+        [HttpPost("getPaginated")]
+        public async Task<IActionResult> Post(PagedRequest request)
         {
-            var subjectList = await _subjectService.GetPaginated(parameters);
-            var subjectListDto = _mapper.Map<List<SubjectDto>>(subjectList.ToList());
-            var pagedList = new PagedSubjectDtoList { Items = subjectListDto, TotalCount = subjectList.TotalCount };
-            return Ok(pagedList);
+            var subjectList = await _subjectService.GetPaginated(request);
+            return Ok(subjectList);
         }
 
         [AllowAnonymous]
@@ -49,8 +41,7 @@ namespace SmartTutorial.API.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var subject = await _subjectService.GetById(id);
-            var subjectDto = _mapper.Map<SubjectDto>(subject);
-            return Ok(subjectDto);
+            return Ok(subject);
         }
 
         [AllowAnonymous]
@@ -58,16 +49,14 @@ namespace SmartTutorial.API.Controllers
         public async Task<IActionResult> GetWithTopics(int id)
         {
             var subject = await _subjectService.GetWithTopics(id);
-            var dto = _mapper.Map<SubjectWithTopicsDto>(subject);
-            return Ok(dto);
+            return Ok(subject);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AddSubjectDto dto)
         {
             var subject = await _subjectService.Add(dto);
-            var subjectDto = _mapper.Map<SubjectDto>(subject);
-            return Created(nameof(Post), subjectDto);
+            return Created(nameof(Post), subject);
         }
 
         [HttpPut("{id:int}")]

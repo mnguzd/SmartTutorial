@@ -41,7 +41,7 @@ namespace SmartTutorial.API
 
             var authOptions = services.ConfigureAuthOptions(Configuration);
             services.AddJwtAuthentication(authOptions);
-            services.AddScoped(typeof(IGenericRepository<>), typeof(EfCoreRepository<>));
+            services.AddScoped(typeof(IRepository), typeof(EfCoreRepository));
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IThemeService, ThemeService>();

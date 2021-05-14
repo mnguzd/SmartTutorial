@@ -1,29 +1,30 @@
-﻿using SmartTutorial.API.Dtos.PaginationDtos.SubjectDtos;
+﻿using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using AutoMapper;
 using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Exceptions;
-using SmartTutorial.API.Infrastucture;
+using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Services.Implementations
 {
     public class SubjectService : ISubjectService
     {
-        private readonly IGenericRepository<Subject> _repository;
+        private readonly IMapper _mapper;
+        private readonly IRepository _repository;
 
-        public SubjectService(IGenericRepository<Subject> repository)
+        public SubjectService(IRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
-        public async Task<Subject> Add(AddSubjectDto dto)
+        public async Task<SubjectDto> Add(AddSubjectDto dto)
         {
-            var subject = new Subject { Complexity = dto.Complexity, Name = dto.Name, ThemeId = dto.ThemeId };
+            var subject = new Subject {Complexity = dto.Complexity, Name = dto.Name, ThemeId = dto.ThemeId};
             try
             {
                 await _repository.Add(subject);
@@ -33,57 +34,64 @@ namespace SmartTutorial.API.Services.Implementations
             {
                 throw new ApiException(HttpStatusCode.BadRequest, "Theme with id " + dto.ThemeId + " is not found!");
             }
-            return subject;
+
+            var subjectDto = _mapper.Map<SubjectDto>(subject);
+            return subjectDto;
         }
 
-        public async Task<PagedList<Subject>> GetPaginated(SubjectParameters parameters)
+        public async Task<PaginatedResult<SubjectDto>> GetPaginated(PagedRequest request)
         {
-            var result = await _repository.GetAll();
-            return PagedList<Subject>.ToPagedList(result.ToList(), parameters.PageNumber, parameters.PageSize);
+            var result = await _repository.GetPagedData<Subject, SubjectDto>(request);
+            return result;
         }
 
         public async Task Delete(int id)
         {
-            var result = await _repository.GetById(id);
-            await _repository.Delete(result);
+            await _repository.Delete<Subject>(id);
             await _repository.SaveAll();
         }
 
-        public async Task<IList<Subject>> GetAll()
+        public async Task<IList<SubjectDto>> GetAll()
         {
-            return await _repository.GetAll();
+            var subjects = await _repository.GetAll<Subject>();
+            var subjectsDto = _mapper.Map<List<SubjectDto>>(subjects);
+            return subjectsDto;
         }
 
-        public async Task<Subject> GetById(int id)
+        public async Task<SubjectDto> GetById(int id)
         {
-            var subject = await _repository.GetById(id);
-            return subject;
+            var subject = await _repository.GetById<Subject>(id);
+            var subjectDto = _mapper.Map<SubjectDto>(subject);
+            return subjectDto;
         }
 
-        public Task<Subject> GetWithTopics(int id)
+        public async Task<SubjectWithTopicsDto> GetWithTopics(int id)
         {
-            var result = _repository.GetByIdWithInclude(id, x => x.Topics);
-            return result;
+            var subject = await _repository.GetByIdWithInclude<Subject>(id, x => x.Topics);
+            var subjectDto = _mapper.Map<SubjectWithTopicsDto>(subject);
+            return subjectDto;
         }
 
-        public async Task<Subject> Update(int id, UpdateSubjectDto dto)
+        public async Task<SubjectDto> Update(int id, UpdateSubjectDto dto)
         {
-            var subject = await _repository.GetById(id);
+            var subject = await _repository.GetById<Subject>(id);
             if (subject == null)
             {
                 throw new ApiException(HttpStatusCode.Conflict, "User not found");
             }
+
             subject.Name = dto.Name;
             subject.Complexity = dto.Complexity;
             await _repository.SaveAll();
-            return subject;
+            var subjectDto = _mapper.Map<SubjectDto>(subject);
+            return subjectDto;
         }
 
-        public async Task<Subject> UpdateWithDetails(int id, PatchSubjectDto dto)
+        public async Task<SubjectDto> UpdateWithDetails(int id, PatchSubjectDto dto)
         {
-            var subject = await _repository.GetById(id);
+            var subject = await _repository.GetById<Subject>(id);
             if (subject == null)
-            { 
+            {
                 throw new ApiException(HttpStatusCode.Conflict, "User not found");
             }
 
@@ -94,11 +102,12 @@ namespace SmartTutorial.API.Services.Implementations
 
             if (dto.Complexity != null)
             {
-                subject.Complexity = (int)dto.Complexity;
+                subject.Complexity = (int) dto.Complexity;
             }
 
             await _repository.SaveAll();
-            return subject;
+            var subjectDto = _mapper.Map<SubjectDto>(subject);
+            return subjectDto;
         }
     }
 }

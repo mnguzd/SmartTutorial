@@ -29,7 +29,7 @@ namespace SmartTutorial.Test
             var configuration = new MapperConfiguration(cfg => cfg.AddProfile(myProfile));
             IMapper mapper = new Mapper(configuration);
 
-            _controller = new SubjectsController(_service.Object, mapper);
+            _controller = new SubjectsController(_service.Object);
         }
         [Fact]
         public async Task GetReturnsOkResult()
@@ -50,7 +50,7 @@ namespace SmartTutorial.Test
         public async Task GetByIdReturnsOkResult(int subjectId)
         {
             //Arrange
-            _service.Setup(x => x.GetById(subjectId)).ReturnsAsync(new Subject() { Name = "fewfwe", Complexity = 2, ThemeId = 2 });
+            _service.Setup(x => x.GetById<Subject>(subjectId)).ReturnsAsync(new Subject() { Name = "fewfwe", Complexity = 2, ThemeId = 2 });
 
             //Act
             var data = await _controller.Get(subjectId);

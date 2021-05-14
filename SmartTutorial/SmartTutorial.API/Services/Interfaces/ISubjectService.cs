@@ -1,21 +1,19 @@
-﻿using SmartTutorial.API.Dtos.PaginationDtos.SubjectDtos;
-using SmartTutorial.API.Dtos.SubjectDtos;
-using SmartTutorial.Domain;
+﻿using SmartTutorial.API.Dtos.SubjectDtos;
+using SmartTutorial.API.Infrastucture.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using SmartTutorial.API.Infrastucture;
 
 namespace SmartTutorial.API.Services.Interfaces
 {
     public interface ISubjectService
     {
-        Task<Subject> GetById(int id);
-        Task<IList<Subject>> GetAll();
-        Task<Subject> Add(AddSubjectDto dto);
-        Task<Subject> Update(int id, UpdateSubjectDto dto);
-        Task<Subject> UpdateWithDetails(int id, PatchSubjectDto dto);
-        Task<Subject> GetWithTopics(int id);
-        Task<PagedList<Subject>> GetPaginated(SubjectParameters parameters);
+        Task<SubjectDto> GetById(int id);
+        Task<IList<SubjectDto>> GetAll();
+        Task<SubjectDto> Add(AddSubjectDto dto);
+        Task<SubjectDto> Update(int id, UpdateSubjectDto dto);
+        Task<SubjectDto> UpdateWithDetails(int id, PatchSubjectDto dto);
+        Task<SubjectWithTopicsDto> GetWithTopics(int id);
+        Task<PaginatedResult<SubjectDto>> GetPaginated(PagedRequest request);
         Task Delete(int id);
     }
 }

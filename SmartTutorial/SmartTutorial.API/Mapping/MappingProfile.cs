@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using AutoMapper;
+﻿using AutoMapper;
 using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Dtos.ThemeDtos;
 using SmartTutorial.API.Dtos.TopicDtos;

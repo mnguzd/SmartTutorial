@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartTutorial.EFMapping", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartTutorial.API", "SmartTutorial.API\SmartTutorial.API.csproj", "{D571665B-8768-4985-93BA-A03F63B9C17C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartTutorial.Test", "SmartTutorial.Test\SmartTutorial.Test.csproj", "{34716370-9AC1-4BEF-81FD-6CE92E04BA22}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,10 +29,6 @@ Global
 		{D571665B-8768-4985-93BA-A03F63B9C17C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D571665B-8768-4985-93BA-A03F63B9C17C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D571665B-8768-4985-93BA-A03F63B9C17C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{34716370-9AC1-4BEF-81FD-6CE92E04BA22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{34716370-9AC1-4BEF-81FD-6CE92E04BA22}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{34716370-9AC1-4BEF-81FD-6CE92E04BA22}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{34716370-9AC1-4BEF-81FD-6CE92E04BA22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,7 +37,6 @@ Global
 		{E7166A6A-CD0F-43E5-A2F3-21F4349FB7C4} = {28B0DC6A-DD03-40F2-A782-B78CF713DA6F}
 		{C6DA1F9D-5089-4774-B48B-75B835072B0B} = {28B0DC6A-DD03-40F2-A782-B78CF713DA6F}
 		{D571665B-8768-4985-93BA-A03F63B9C17C} = {28B0DC6A-DD03-40F2-A782-B78CF713DA6F}
-		{34716370-9AC1-4BEF-81FD-6CE92E04BA22} = {28B0DC6A-DD03-40F2-A782-B78CF713DA6F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F92FC35C-E774-4D67-B90C-BF747FE2EBC0}
