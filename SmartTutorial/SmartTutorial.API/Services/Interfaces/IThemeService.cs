@@ -8,7 +8,9 @@ namespace SmartTutorial.API.Services.Interfaces
     public interface IThemeService
     {
         Task<IList<ThemeDto>> GetAll();
-        Task<ThemeDto> GetWithInclude(int id);
+        Task<ThemeWithSubjectsDto> GetWithSubjects(int id);
         Task<PaginatedResult<ThemeDto>> GetPaginated(PagedRequest request);
+        Task<ThemeDto> Add(AddThemeDto dto); 
+        Task Delete(int id);
     }
 }

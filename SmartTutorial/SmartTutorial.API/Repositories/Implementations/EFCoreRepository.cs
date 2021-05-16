@@ -1,14 +1,14 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using SmartTutorial.API.Infrastucture.Extensions;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Repositories.Implementations
 {
@@ -33,7 +33,8 @@ namespace SmartTutorial.API.Repositories.Implementations
             return await _dbContext.FindAsync<TEntity>(id);
         }
 
-        public async Task<TEntity> GetByIdWithInclude<TEntity>(int id, params Expression<Func<TEntity, object>>[] includeProperties) where TEntity : BaseEntity
+        public async Task<TEntity> GetByIdWithInclude<TEntity>(int id,
+            params Expression<Func<TEntity, object>>[] includeProperties) where TEntity : BaseEntity
         {
             var query = IncludeProperties(includeProperties);
             return await query.FirstOrDefaultAsync(entity => entity.Id == id);
@@ -50,7 +51,7 @@ namespace SmartTutorial.API.Repositories.Implementations
             return entity;
         }
 
-        public  TEntity Update<TEntity>(TEntity entity) where TEntity : BaseEntity
+        public TEntity Update<TEntity>(TEntity entity) where TEntity : BaseEntity
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
             return entity;
@@ -61,26 +62,29 @@ namespace SmartTutorial.API.Repositories.Implementations
             var entity = await _dbContext.Set<TEntity>().FindAsync(id);
             if (entity == null)
             {
-                throw new Exception($"Object of type {typeof(TEntity)} with id { id } not found");
+                throw new Exception($"Object of type {typeof(TEntity)} with id {id} not found");
             }
 
             _dbContext.Set<TEntity>().Remove(entity);
             return entity;
         }
 
-        public async Task<PaginatedResult<TDto>> GetPagedData<TEntity, TDto>(PagedRequest pagedRequest) where TEntity : BaseEntity
-                                                                                                    where TDto : class
+        public async Task<PaginatedResult<TDto>> GetPagedData<TEntity, TDto>(PagedRequest pagedRequest)
+            where TEntity : BaseEntity
+            where TDto : class
         {
             return await _dbContext.Set<TEntity>().CreatePaginatedResultAsync<TEntity, TDto>(pagedRequest, _mapper);
         }
 
-        private IQueryable<TEntity> IncludeProperties<TEntity>(params Expression<Func<TEntity, object>>[] includeProperties) where TEntity : BaseEntity
+        private IQueryable<TEntity> IncludeProperties<TEntity>(
+            params Expression<Func<TEntity, object>>[] includeProperties) where TEntity : BaseEntity
         {
             IQueryable<TEntity> entities = _dbContext.Set<TEntity>();
             foreach (var includeProperty in includeProperties)
             {
                 entities = entities.Include(includeProperty);
             }
+
             return entities;
         }
     }

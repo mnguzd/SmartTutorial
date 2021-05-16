@@ -1,5 +1,4 @@
-﻿using SmartTutorial.API.Dtos.Auth;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace SmartTutorial.API.Dtos.Auth
 {

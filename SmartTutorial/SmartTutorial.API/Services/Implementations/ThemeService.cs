@@ -5,7 +5,9 @@ using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
+using SmartTutorial.API.Exceptions;
 
 namespace SmartTutorial.API.Services.Implementations
 {
@@ -27,16 +29,39 @@ namespace SmartTutorial.API.Services.Implementations
             return subjectsDto;
         }
 
+        public async Task<ThemeDto> Add(AddThemeDto dto)
+        {
+            var theme = new Theme() {Name = dto.Name, Description = dto.Description, ImageUrl = dto.ImageUrl};
+            try
+            {
+                await _repository.Add(theme);
+                await _repository.SaveAll();
+            }
+            catch
+            {
+                throw new ApiException(HttpStatusCode.BadRequest, "Error with adding this theme");
+            }
+
+            var themeDto = _mapper.Map<ThemeDto>(theme);
+            return themeDto;
+        }
+
+        public async Task Delete(int id)
+        {
+            await _repository.Delete<Theme>(id);
+            await _repository.SaveAll();
+        }
+
         public async Task<PaginatedResult<ThemeDto>> GetPaginated(PagedRequest request)
         {
             var result = await _repository.GetPagedData<Theme, ThemeDto>(request);
             return result;
         }
 
-        public async Task<ThemeDto> GetWithInclude(int id)
+        public async Task<ThemeWithSubjectsDto> GetWithSubjects(int id)
         {
             var theme = await _repository.GetByIdWithInclude<Theme>(id, x => x.Subjects);
-            var themeDto = _mapper.Map<ThemeDto>(theme);
+            var themeDto = _mapper.Map<ThemeWithSubjectsDto>(theme);
             return themeDto;
         }
     }

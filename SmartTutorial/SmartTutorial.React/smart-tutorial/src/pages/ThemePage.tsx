@@ -95,7 +95,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
   const [theme, setTheme] = useState<IThemeDataWithSubjects | null>(null);
-  const [searchTerm, setSeatchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const classes = useStyles();
   useEffect(() => {
@@ -150,7 +150,7 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
                 }}
                 inputProps={{ "aria-label": "search" }}
                 onChange={(e) => {
-                  setSeatchTerm(e.target.value);
+                  setSearchTerm(e.target.value);
                 }}
               />
             </div>

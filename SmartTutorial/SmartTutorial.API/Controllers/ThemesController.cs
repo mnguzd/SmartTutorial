@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Services.Interfaces;
 using System.Threading.Tasks;
+using SmartTutorial.API.Dtos.ThemeDtos;
 
 namespace SmartTutorial.API.Controllers
 {
@@ -37,8 +38,22 @@ namespace SmartTutorial.API.Controllers
         [HttpGet("{themeId:int}")]
         public async Task<IActionResult> Get(int themeId)
         {
-            var theme = await _themeService.GetWithInclude(themeId);
+            var theme = await _themeService.GetWithSubjects(themeId);
             return Ok(theme);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] AddThemeDto dto)
+        {
+            var theme = await _themeService.Add(dto);
+            return Created(nameof(Post), theme);
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _themeService.Delete(id);
+            return NoContent();
         }
     }
 }

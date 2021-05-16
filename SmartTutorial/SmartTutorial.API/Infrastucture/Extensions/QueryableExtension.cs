@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading.Tasks;
@@ -100,12 +99,12 @@ namespace SmartTutorial.API.Infrastucture.Extensions
                 "<" => $" < (@{i})",
                 "<=" => $" <= (@{i})",
                 "is" => $" == (@{i})",
-                "not" =>$" != (@{i})",
-                "after" =>$" > (@{i})",
-                "onOrAfter"=>$" >= (@{i})",
-                "before"=>$" < (@{i})",
-                "onOrBefore"=>$" <= (@{i})",
-                _ => "==",
+                "not" => $" != (@{i})",
+                "after" => $" > (@{i})",
+                "onOrAfter" => $" >= (@{i})",
+                "before" => $" < (@{i})",
+                "onOrBefore" => $" <= (@{i})",
+                _ => "=="
             };
         }
     }
