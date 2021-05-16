@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,7 +66,11 @@ namespace SmartTutorial.API.Infrastucture.Extensions
                     predicate.Append($" {requestFilters.LogicalOperator} ");
                 }
 
-                predicate.Append(requestFilters.Filters[i].Path + $".{nameof(string.Contains)}(@{i})");
+
+                var path = requestFilters.Filters[i].Path;
+                var operation = requestFilters.Filters[i].Operation;
+
+                predicate.Append(path + $" {ParseOperation(operation, i)}");
             }
 
             if (!requestFilters.Filters.Any())
@@ -78,6 +83,30 @@ namespace SmartTutorial.API.Infrastucture.Extensions
             query = query.Where(predicate.ToString(), propertyValues);
 
             return query;
+        }
+
+        private static string ParseOperation(string operation, int i)
+        {
+            return operation switch
+            {
+                "equals" => $" == (@{i})",
+                "contains" => $".Contains (@{i})",
+                "startsWith" => $".StartsWith (@{i})",
+                "endsWith" => $".EndsWith (@{i})",
+                "=" => $" == (@{i})",
+                "!=" => $" != (@{i})",
+                ">" => $" > (@{i})",
+                ">=" => $" >= (@{i})",
+                "<" => $" < (@{i})",
+                "<=" => $" <= (@{i})",
+                "is" => $" == (@{i})",
+                "not" =>$" != (@{i})",
+                "after" =>$" > (@{i})",
+                "onOrAfter"=>$" >= (@{i})",
+                "before"=>$" < (@{i})",
+                "onOrBefore"=>$" <= (@{i})",
+                _ => "==",
+            };
         }
     }
 }

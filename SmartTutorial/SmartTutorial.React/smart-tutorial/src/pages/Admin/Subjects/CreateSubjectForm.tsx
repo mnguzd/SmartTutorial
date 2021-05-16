@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form/";
-import React, { FC } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -16,6 +16,9 @@ import {
   createNewSubject,
   IServerCreateSubjectError,
 } from "../../../services/api/SubjectsApi";
+import { Autocomplete } from "@material-ui/lab";
+import { IThemeData } from "../../../services/api/dtos/ThemeData";
+import { getThemes } from "../../../services/api/ThemesApi";
 
 const useStyles = makeStyles((theme) => ({
   buttons: {
@@ -51,10 +54,10 @@ interface Props {
   accessToken: string;
   setOpenPopup: React.Dispatch<React.SetStateAction<any>>;
   loading: boolean;
-  callBack:ICallback
+  callBack: ICallback;
 }
-interface ICallback{
-    ():void;
+interface ICallback {
+  (): void;
 }
 
 export const CreateSubjectForm: FC<Props> = ({
@@ -64,6 +67,10 @@ export const CreateSubjectForm: FC<Props> = ({
   callBack,
 }) => {
   const classes = useStyles();
+
+  const [themes, setThemes] = useState<IThemeData[]>([]);
+  const [themesLoading, setThemesLoading] = useState<boolean>(true);
+
   const {
     register,
     control,
@@ -88,6 +95,22 @@ export const CreateSubjectForm: FC<Props> = ({
       setOpenPopup(false);
     }
   }
+
+  function setThemeId(newValue: IThemeData | null): void {
+    if (newValue) {
+      setValue("themeId", newValue.id);
+    }
+  }
+
+  const setThemesAsync = useCallback(async function SetThemes() {
+    setThemesLoading(true);
+    const result: IThemeData[] = await getThemes();
+    setThemes(result);
+    setThemesLoading(false);
+  }, []);
+  useEffect(() => {
+    setThemesAsync();
+  });
 
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -140,17 +163,26 @@ export const CreateSubjectForm: FC<Props> = ({
                 control={control}
                 name="themeId"
                 render={() => (
-                  <TextField
-                    variant="outlined"
-                    fullWidth
-                    id="themeId"
-                    label="Theme ID"
-                    {...register("themeId", { required: true })}
-                    error={!!errors.themeId}
-                    helperText={errors?.themeId?.message}
-                    onChange={(e) =>
-                      setValue("themeId", Number(e.target.value))
+                  <Autocomplete
+                    id="themesAutocomplete"
+                    options={themes}
+                    getOptionLabel={(option) => option.name}
+                    loading={themesLoading}
+                    onChange={(_e, newValue: IThemeData | null) =>
+                      setThemeId(newValue)
                     }
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        fullWidth
+                        id="themeId"
+                        label="Theme"
+                        {...register("themeId", { required: true })}
+                        error={!!errors.themeId}
+                        helperText={errors?.themeId?.message}
+                      />
+                    )}
                   />
                 )}
               />

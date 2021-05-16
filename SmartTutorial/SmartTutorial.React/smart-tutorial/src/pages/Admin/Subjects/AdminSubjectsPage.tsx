@@ -4,8 +4,11 @@ import CustomLoadingOverlay from "../../../components/CustomLoadingOverlay";
 import {
   DataGrid,
   GridColDef,
+  GridFilterModel,
   GridFilterModelParams,
   GridRowId,
+  GridSortModel,
+  GridSortModelParams,
   GridToolbar,
 } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
@@ -13,7 +16,8 @@ import { ISubjectTableData } from "../../../services/api/dtos/SubjectData";
 import {
   deleteSubject,
   getSubjectsPaginated,
-  ISubjectTableDataWithTotalCount,
+  IPaginatedResult,
+  IPaginatedRequest,
 } from "../../../services/api/SubjectsApi";
 import { useAuth } from "../../../auth/Auth";
 import { Grid } from "@material-ui/core";
@@ -39,7 +43,10 @@ export default function AdminSubjectsPage() {
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
-  const [filterValue, setFilterValue] = useState<string | undefined>();
+  const [filterModel, setFilterModel] = useState<GridFilterModel>();
+  const [sortModel, setSortModel] = useState<GridSortModel>([
+    { field: "id", sort: "asc" },
+  ]);
 
   const [loading, setLoading] = useState<boolean>(true);
   const [openPopup, setOpenPopup] = useState<boolean>(false);
@@ -50,26 +57,55 @@ export default function AdminSubjectsPage() {
 
   const classes = useStyles();
 
-  const onFilterChange = useCallback(
-    (params: GridFilterModelParams) => {
-      setFilterValue(params.filterModel.items[0].value);
-      console.log(params.filterModel.items[0].operatorValue?.toString());
-    },
-    []
-  );
+  const onFilterChange = useCallback((params: GridFilterModelParams) => {
+    setFilterModel(params.filterModel);
+  }, []);
+
+  const handleSortModelChange = useCallback((params: GridSortModelParams) => {
+    setSortModel(params.sortModel);
+  }, []);
 
   const callBackSubjects = useCallback(
     async function GetSubjects(): Promise<void> {
       setLoading(true);
-      const result: ISubjectTableDataWithTotalCount =
-        await getSubjectsPaginated(pageNumber + 1, pageSize, accessToken);
+      const request: IPaginatedRequest = {
+        pageIndex: pageNumber,
+        pageSize: pageSize,
+      };
+      if (sortModel && sortModel[0]) {
+        request.sortDirection = sortModel[0].sort === "asc" ? "Asc" : "Desc";
+        request.columnNameForSorting =
+          sortModel[0].field === "theme" ? "theme.name" : sortModel[0].field;
+      }
+      if (
+        filterModel &&
+        filterModel.items[0].value &&
+        filterModel.items[0].operatorValue&&
+        filterModel.items[0].columnField
+      ) {
+        request.requestFilters = {
+          logicalOperator: 0,
+          filters: [
+            {
+              path:
+                filterModel.items[0].columnField === "theme"
+                  ? "theme.name"
+                  : filterModel.items[0].columnField,
+              value: filterModel.items[0].value,
+              operation: filterModel.items[0].operatorValue,
+            },
+          ],
+        };
+      }
+      const result: IPaginatedResult<ISubjectTableData> =
+        await getSubjectsPaginated(request, accessToken);
       setSubjects(result.items);
-      if (result.totalCount !== totalCount) {
-        setTotalCount(result.totalCount);
+      if (result.total !== totalCount) {
+        setTotalCount(result.total);
       }
       setLoading(false);
     },
-    [accessToken, pageNumber, pageSize, totalCount]
+    [accessToken, pageNumber, pageSize, totalCount, sortModel, filterModel]
   );
   async function deleteAndUpdateSubject(id: GridRowId, token: string) {
     const success = await deleteSubject(Number(id), token);
@@ -112,6 +148,9 @@ export default function AdminSubjectsPage() {
           }}
           paginationMode="server"
           filterMode="server"
+          sortingMode="server"
+          sortModel={sortModel}
+          onSortModelChange={handleSortModelChange}
           onFilterModelChange={onFilterChange}
           rowCount={totalCount}
           pageSize={pageSize}
@@ -189,6 +228,6 @@ var columns: GridColDef[] = [
     headerName: "Theme",
     headerAlign: "center",
     field: "theme",
-    flex: 1,
+    width: 500,
   },
 ];

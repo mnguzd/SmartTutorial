@@ -89,23 +89,51 @@ export interface ISubjectDataWithTotalCount {
   items: ISubjectData[];
   totalCount: number;
 }
-
+interface IFilter {
+  path: string;
+  value: string;
+  operation: string;
+}
+interface IRequestFilter {
+  logicalOperator: 0 | 1;
+  filters: IFilter[];
+}
+export interface IPaginatedRequest {
+  pageIndex: number;
+  pageSize: number;
+  columnNameForSorting?: string;
+  sortDirection?: "Asc" | "Desc";
+  requestFilters?: IRequestFilter;
+}
+export interface IPaginatedResult<TEntity> {
+  pageIndex: number;
+  pageSize: number;
+  total: number;
+  items: TEntity[];
+}
 
 export async function getSubjectsPaginated(
-  pageNumber: number,
-  pageSize: number,
+  request: IPaginatedRequest,
   token: string
-): Promise<ISubjectTableDataWithTotalCount> {
-  let result: ISubjectTableDataWithTotalCount = { items: [], totalCount: 0 };
+): Promise<IPaginatedResult<ISubjectTableData>> {
+  let result: IPaginatedResult<ISubjectTableData> = {
+    pageIndex: 0,
+    pageSize: 0,
+    total: 0,
+    items: [],
+  };
   await axiosAuthorized
-    .get<ISubjectDataWithTotalCount>(
-      `${webAPIUrl}/subjects/getPaginated?PageNumber=${pageNumber}&PageSize=${pageSize}`,
+    .post<IPaginatedResult<ISubjectData>>(
+      `${webAPIUrl}/subjects/getPaginated`,
+      request,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     )
     .then((response) => {
-      result.totalCount = response.data.totalCount;
+      result.pageIndex = response.data.pageIndex;
+      result.pageSize = response.data.pageSize;
+      result.total = response.data.total;
       response.data.items.forEach((element: ISubjectData) =>
         result.items.push(mapSubjectFromServer(element))
       );
