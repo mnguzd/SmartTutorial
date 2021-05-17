@@ -1,8 +1,9 @@
-import { IThemeData, IThemeDataWithSubjects } from "./dtos/ThemeData";
-import { webAPIUrl } from "../../AppSettings";
+import {webAPIUrl} from "../../AppSettings";
 import axios from "axios";
-import { axiosAuthorized } from "../axios/axios";
-import { IPaginatedRequest, IPaginatedResult } from "./SubjectsApi";
+import {axiosAuthorized} from "../axios/axios";
+import {IThemeData, IThemeDataWithSubjects, IThemeInputData} from "./models/IThemeData";
+import {IServerCreateThemeError} from "./models/errors/themes/IThemeErrors";
+import {IPaginatedRequest, IPaginatedResult} from "./models/pagination/IPagination";
 
 export async function getThemes(): Promise<IThemeData[]> {
   let data: IThemeData[] = [];
@@ -34,16 +35,6 @@ export async function getThemeWithSubjects(
     });
   return data;
 }
-interface IThemeInputData {
-  name: string;
-  description: string;
-  imageUrl: string;
-}
-export interface IServerCreateThemeError {
-  name: "name" | "description" | "imageUrl";
-  type: string;
-  message: string;
-}
 
 export async function createNewTheme(
   data: IThemeInputData,
@@ -62,8 +53,7 @@ export async function createNewTheme(
       console.log(response.data);
     })
     .catch((err) => {
-      const dataError = err.response.data;
-      error.message = dataError;
+      error.message = err.response.data;
     });
   if (error.message) {
     return error;
@@ -102,7 +92,7 @@ export async function deleteTheme(id: number, token: string): Promise<boolean> {
     .delete(`${webAPIUrl}/themes/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((response) => {
+    .then(() => {
       result = true;
     })
     .catch((err) => {

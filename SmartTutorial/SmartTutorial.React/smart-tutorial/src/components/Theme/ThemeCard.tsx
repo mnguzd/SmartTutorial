@@ -7,8 +7,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { IThemeData } from "../../services/api/dtos/ThemeData";
 import { Link } from "react-router-dom";
+import {IThemeData} from "../../services/api/models/IThemeData";
 
 const useStyles = makeStyles({
   card: {

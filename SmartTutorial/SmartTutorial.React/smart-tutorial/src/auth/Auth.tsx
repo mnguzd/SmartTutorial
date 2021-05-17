@@ -1,64 +1,15 @@
 import { createContext, FC, useContext, useEffect, useState } from "react";
 import { webAPIUrl } from "../AppSettings";
 import axios from "axios";
-import { IUserForLogin, IUserForRegister } from "../services/api/dtos/UserData";
 import useLocalStorage from "../hooks/useLocalStorage";
 import { TokenStorage } from "../services/localStorage/tokenStorage";
 import { parseJwt } from "../services/jwt/parseJwt";
 import { refreshAccessToken } from "../services/api/AccountApi";
-import { UserRole } from "./UserRoles";
-
-export interface IUser {
-  username: string;
-  email: string;
-  country: string;
-  firstname: string;
-  lastname: string;
-  rating: number;
-  avatar: string;
-  role: UserRole;
-}
-
-export interface IAuthToken {
-  accessToken: string;
-  refreshToken: IRefreshToken;
-}
-
-interface IRefreshToken {
-  username: string;
-  tokenString: string;
-  expireAt: string;
-}
-
-interface ISendRefreshToken {
-  refreshToken: string | null;
-}
-
-export interface IServerSignUpError {
-  name: "password" | "username" | "email" | "passwordConfirm";
-  type: string;
-  message: string;
-}
-
-export interface IServerSignInError {
-  name: "username" | "remember" | "password";
-  type: string;
-  message: string;
-}
-
-interface IAuthContext {
-  isAuthenticated: boolean;
-  user?: IUser;
-  accessToken: string;
-  storedUsername: string;
-  loading: boolean;
-  loginSuccess: boolean;
-  updateUserInfo: () => Promise<void>;
-  logIn: (user: IUserForLogin) => Promise<IServerSignInError | null>;
-  logOut: () => Promise<void>;
-  signUp: (user: IUserForRegister) => Promise<IServerSignUpError | null>;
-  calmSuccess: () => void;
-}
+import {IUser} from "./models/user/IUser";
+import {IAuthToken, ISendRefreshToken} from "./models/authToken/IAuthToken";
+import {IAuthContext} from "./models/context/IAuthContext";
+import {IServerSignInError, IServerSignUpError} from "./models/errors/IAuthorizationErrors";
+import {IUserForLogin, IUserForRegister} from "../services/api/models/user/IUserData";
 
 export const AuthContext = createContext<IAuthContext>({
   isAuthenticated: false,

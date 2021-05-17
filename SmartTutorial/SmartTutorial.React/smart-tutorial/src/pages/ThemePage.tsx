@@ -15,10 +15,10 @@ import {
 import { Home, Search } from "@material-ui/icons";
 import { fade, makeStyles } from "@material-ui/core/styles";
 import { getThemeWithSubjects } from "../services/api/ThemesApi";
-import { IThemeDataWithSubjects } from "../services/api/dtos/ThemeData";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";
+import {IThemeDataWithSubjects} from "../services/api/models/IThemeData";
 
 interface IRouteParams {
   themeId: string;

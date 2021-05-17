@@ -19,9 +19,10 @@ import { StyledBreadcrumb } from "../../components/StyledBreadcrumb";
 import { Controller, useForm } from "react-hook-form/";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { IServerSignUpError, useAuth } from "../../auth/Auth";
+import { useAuth } from "../../auth/Auth";
 import Page from "../Page";
 import ProgressCircle from "../../components/ProgressCircle";
+import {IServerSignUpError} from "../../auth/models/errors/IAuthorizationErrors";
 
 const useStyles = makeStyles((theme) => ({
   paper: {

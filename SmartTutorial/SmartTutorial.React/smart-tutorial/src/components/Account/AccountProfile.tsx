@@ -13,15 +13,14 @@ import {
   Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  IServerImageUploadError,
-  uploadImage,
-} from "../../services/api/AccountApi";
-import { IUser, useAuth } from "../../auth/Auth";
+import { useAuth } from "../../auth/Auth";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import React from "react";
+import {IUser} from "../../auth/models/user/IUser";
+import {IServerImageUploadError} from "../../services/api/models/errors/user/IUserErrors";
+import {uploadImage} from "../../services/api/AccountApi";
 
 const useStyles = makeStyles(() => ({
   box: {
@@ -129,7 +128,7 @@ export default function AccountProfile(user: IUser) {
                   id="image"
                   {...register("image", { required: true })}
                   onChange={(e) => {
-                    onChange(e);
+                     onChange(e);
                   }}
                   hidden
                 />

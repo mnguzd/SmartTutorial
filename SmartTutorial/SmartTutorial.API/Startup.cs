@@ -45,6 +45,7 @@ namespace SmartTutorial.API
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IThemeService, ThemeService>();
+            services.AddScoped<ITopicService, TopicService>();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddAuthSwagger();
         }

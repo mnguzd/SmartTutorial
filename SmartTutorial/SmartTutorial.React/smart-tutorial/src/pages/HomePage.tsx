@@ -12,13 +12,13 @@ import {
 import CloseIcon from "@material-ui/icons/Close";
 import { makeStyles } from "@material-ui/core/styles";
 import ThemeCard from "../components/Theme/ThemeCard";
-import { IThemeData } from "../services/api/dtos/ThemeData";
 import Footer from "../components/Footer/Footer";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";
 import { useAuth } from "../auth/Auth";
 import { getThemes } from "../services/api/ThemesApi";
 import { TransitionProps } from "@material-ui/core/transitions";
+import {IThemeData} from "../services/api/models/IThemeData";
 
 function SlideTransition(props: TransitionProps) {
   return <Slide {...props} direction="up" />;

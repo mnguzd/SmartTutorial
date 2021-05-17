@@ -12,12 +12,9 @@ import {
   GridToolbar,
 } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
-import { ISubjectTableData } from "../../../services/api/dtos/SubjectData";
 import {
   deleteSubject,
   getSubjectsPaginated,
-  IPaginatedResult,
-  IPaginatedRequest,
 } from "../../../services/api/SubjectsApi";
 import { useAuth } from "../../../auth/Auth";
 import { Grid } from "@material-ui/core";
@@ -25,6 +22,8 @@ import { Button } from "@material-ui/core";
 import { DialogForm } from "../../../components/DialogForm/DialogForm";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { CreateSubjectForm } from "./CreateSubjectForm";
+import {ISubjectTableData} from "../../../services/api/models/ISubjectData";
+import {IPaginatedRequest, IPaginatedResult} from "../../../services/api/models/pagination/IPagination";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -116,7 +115,7 @@ export default function AdminSubjectsPage() {
   async function onDeleteSubmit() {
     selectionModel.map((val) => deleteAndUpdateSubject(val, accessToken));
     setSelectionModel([]);
-    callBackSubjects();
+    await callBackSubjects();
   }
   useEffect(() => {
     callBackSubjects();
@@ -192,11 +191,11 @@ export default function AdminSubjectsPage() {
           callBack={callBackSubjects}
         />
       </DialogForm>
-      <Button onClick={() => setOpenPopup(true)}></Button>
+      <Button onClick={() => setOpenPopup(true)}/>
     </AdminPage>
   );
 }
-var columns: GridColDef[] = [
+const columns: GridColDef[] = [
   {
     headerName: "Id",
     headerAlign: "center",

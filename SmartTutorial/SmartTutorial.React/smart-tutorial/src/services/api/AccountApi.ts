@@ -3,32 +3,8 @@ import { webAPIUrl } from "../../AppSettings";
 import axios from "axios";
 import { axiosAuthorized } from "../axios/axios";
 import { TokenStorage } from "../localStorage/tokenStorage";
-
-export interface IServerImageUploadError {
-  name: "image";
-  type: string;
-  message: string;
-}
-
-export interface IServerEditUserError {
-  name: "firstname" | "lastname" | "email" | "country";
-  type: string;
-  message: string;
-}
-export interface IAuthToken {
-  accessToken: string;
-  refreshToken: IRefreshToken;
-}
-
-interface IRefreshToken {
-  username: string;
-  tokenString: string;
-  expireAt: string;
-}
-
-interface ISendRefreshToken {
-  refreshToken: string | null;
-}
+import {IServerEditUserError, IServerImageUploadError} from "./models/errors/user/IUserErrors";
+import {IAuthToken, ISendRefreshToken} from "../../auth/models/authToken/IAuthToken";
 
 export async function editUser(
   data: IAccountEditInputs,

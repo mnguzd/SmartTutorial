@@ -14,10 +14,6 @@ import {
 } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  IPaginatedResult,
-  IPaginatedRequest,
-} from "../../../services/api/SubjectsApi";
-import {
   deleteTheme,
   getThemesPaginated,
 } from "../../../services/api/ThemesApi";
@@ -27,7 +23,8 @@ import { Button } from "@material-ui/core";
 import { DialogForm } from "../../../components/DialogForm/DialogForm";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { CreateThemeForm } from "./CreateThemeForm";
-import { IThemeData } from "../../../services/api/dtos/ThemeData";
+import {IThemeData} from "../../../services/api/models/IThemeData";
+import {IPaginatedRequest, IPaginatedResult} from "../../../services/api/models/pagination/IPagination";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -121,7 +118,7 @@ export default function AdminSubjectsPage() {
   async function onDeleteSubmit() {
     selectionModel.map((val) => deleteAndUpdateTheme(val, accessToken));
     setSelectionModel([]);
-    callBackThemes();
+    await callBackThemes();
   }
   useEffect(() => {
     callBackThemes();
@@ -197,11 +194,11 @@ export default function AdminSubjectsPage() {
           callBack={callBackThemes}
         />
       </DialogForm>
-      <Button onClick={() => setOpenPopup(true)}></Button>
+      <Button onClick={() => setOpenPopup(true)}/>
     </AdminPage>
   );
 }
-var columns: GridColDef[] = [
+const columns: GridColDef[] = [
   {
     headerName: "Id",
     headerAlign: "center",

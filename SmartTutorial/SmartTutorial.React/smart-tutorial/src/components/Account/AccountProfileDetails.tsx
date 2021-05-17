@@ -10,10 +10,12 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Controller, useForm } from "react-hook-form/";
-import { IUser, useAuth } from "../../auth/Auth";
+import { useAuth } from "../../auth/Auth";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { editUser, IServerEditUserError } from "../../services/api/AccountApi";
+import { editUser } from "../../services/api/AccountApi";
+import {IUser} from "../../auth/models/user/IUser";
+import {IServerEditUserError} from "../../services/api/models/errors/user/IUserErrors";
 
 const useStyles = makeStyles((theme) => ({
   box: {

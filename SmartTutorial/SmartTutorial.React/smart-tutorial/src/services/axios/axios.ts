@@ -1,7 +1,7 @@
 import axios from "axios";
-import { IAuthToken } from "../../auth/Auth";
 import { refreshAccessToken } from "../api/AccountApi";
 import { TokenStorage } from "../localStorage/tokenStorage";
+import {IAuthToken} from "../../auth/models/authToken/IAuthToken";
 
 export const axiosAuthorized = axios.create();
 

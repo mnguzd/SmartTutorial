@@ -21,6 +21,10 @@ namespace SmartTutorial.API.Mapping
             CreateMap<TopicDto, Topic>();
             CreateMap<Theme, ThemeWithSubjectsDto>();
             CreateMap<Subject, SubjectWithTopicsDto>();
+            CreateMap<Topic, TopicDto>();
+            CreateMap<TopicDto, Topic>();
+            CreateMap<Topic, TopicWithQuestionsDto>();
+            CreateMap<TopicWithQuestionsDto, Topic>();
         }
     }
 }

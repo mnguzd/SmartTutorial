@@ -14,11 +14,11 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import {
   createNewSubject,
-  IServerCreateSubjectError,
 } from "../../../services/api/SubjectsApi";
 import { Autocomplete } from "@material-ui/lab";
-import { IThemeData } from "../../../services/api/dtos/ThemeData";
 import { getThemes } from "../../../services/api/ThemesApi";
+import {IThemeData} from "../../../services/api/models/IThemeData";
+import {IServerCreateSubjectError} from "../../../services/api/models/errors/subjects/ISubjectErrors";
 
 const useStyles = makeStyles((theme) => ({
   buttons: {
