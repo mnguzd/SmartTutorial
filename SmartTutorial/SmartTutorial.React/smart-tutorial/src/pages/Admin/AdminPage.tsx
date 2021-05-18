@@ -95,7 +95,7 @@ const AdminPage: FC<Props> = ({ title, children }) => {
                 </ListItemIcon>
                 <ListItemText primary="Subjects" />
               </ListItem>
-              <ListItem button>
+              <ListItem button component={Link} to="/admin/topics">
                 <ListItemIcon>
                   <Description />
                 </ListItemIcon>

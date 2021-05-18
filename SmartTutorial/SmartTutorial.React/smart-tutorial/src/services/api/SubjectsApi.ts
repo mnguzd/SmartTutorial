@@ -1,14 +1,17 @@
-import {webAPIUrl} from "../../AppSettings";
+import { webAPIUrl } from "../../AppSettings";
 import axios from "axios";
-import {axiosAuthorized} from "../axios/axios";
+import { axiosAuthorized } from "../axios/axios";
 import {
   ISubjectData,
   ISubjectDataWithTopics,
   ISubjectInputData,
-  ISubjectTableData
+  ISubjectTableData,
 } from "./models/ISubjectData";
-import {IServerCreateSubjectError} from "./models/errors/subjects/ISubjectErrors";
-import {IPaginatedRequest, IPaginatedResult} from "./models/pagination/IPagination";
+import { IServerCreateSubjectError } from "./models/errors/subjects/ISubjectErrors";
+import {
+  IPaginatedRequest,
+  IPaginatedResult,
+} from "./models/pagination/IPagination";
 
 export async function getSubjectWithTopics(
   id: number
@@ -16,6 +19,21 @@ export async function getSubjectWithTopics(
   let data: ISubjectDataWithTopics | null = null;
   await axios
     .get<ISubjectDataWithTopics>(`${webAPIUrl}/subjects/withTopics/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      data = response.data;
+    })
+    .catch((err) => console.log(err.response));
+  return data;
+}
+
+export async function getSubjects(): Promise<ISubjectData[]> {
+  let data: ISubjectData[] = [];
+  await axios
+    .get<ISubjectData[]>(`${webAPIUrl}/subjects`, {
       headers: {
         "Content-Type": "application/json",
       },

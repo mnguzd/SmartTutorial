@@ -12,10 +12,6 @@ namespace SmartTutorial.EFMapping
                 .IsRequired()
                 .HasMaxLength(20);
 
-            builder.Property(e => e.Text)
-                .IsRequired()
-                .HasMaxLength(1000);
-
             builder.Property(e => e.Order).IsRequired();
 
             builder.Property(e => e.Content)

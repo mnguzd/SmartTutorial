@@ -8,11 +8,7 @@ namespace SmartTutorial.API.Dtos.TopicDtos
         [Required]
         public string Name { get; set; }
 
-        [StringLength(20, MinimumLength = 2)]
-        [Required]
-        public string Text { get; set; }
-
-        [StringLength(100000, MinimumLength = 500)]
+        [StringLength(100000)]
         [Required]
         public string Content { get; set; }
 

@@ -28,7 +28,6 @@ namespace SmartTutorial.API.Services.Implementations
             {
                 Content = dto.Content,
                 Name = dto.Name,
-                Text = dto.Text,
                 Order = dto.Order,
                 SubjectId = dto.SubjectId
             };

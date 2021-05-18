@@ -94,25 +94,25 @@ namespace SmartTutorial.API
             {
                 var aspTopics = new List<Topic>
                 {
-                    new Topic {Name = "StartUp class", Text = "Sample", Content = "Content"},
-                    new Topic {Name = "Map and MapWhen", Text = "Sample", Content = "Content"},
-                    new Topic {Name = "Middleware", Text = "Sample", Content = "Content"}
+                    new Topic {Name = "StartUp class", Content = "Content"},
+                    new Topic {Name = "Map and MapWhen", Content = "Content"},
+                    new Topic {Name = "Middleware", Content = "Content"}
                 };
                 (await context.Subjects.FindAsync(8)).Topics = aspTopics;
 
                 var vueTopics = new List<Topic>
                 {
-                    new Topic {Name = "Basics vue", Text = "Sample", Content = "Content"},
-                    new Topic {Name = "Refs and html", Text = "Sample", Content = "Content"},
-                    new Topic {Name = "Lifesycle", Text = "Sample", Content = "Content"}
+                    new Topic {Name = "Basics vue", Content = "Content"},
+                    new Topic {Name = "Refs and html", Content = "Content"},
+                    new Topic {Name = "Lifesycle", Content = "Content"}
                 };
                 (await context.Subjects.FindAsync(7)).Topics = vueTopics;
 
                 var sqlTopics = new List<Topic>
                 {
-                    new Topic {Name = "Basics sql", Text = "Sample", Content = "Content"},
-                    new Topic {Name = "Select and Where", Text = "Sample", Content = "Content"},
-                    new Topic {Name = "Joins", Text = "Sample", Content = "Content"}
+                    new Topic {Name = "Basics sql", Content = "Content"},
+                    new Topic {Name = "Select and Where", Content = "Content"},
+                    new Topic {Name = "Joins", Content = "Content"}
                 };
                 (await context.Subjects.FindAsync(10)).Topics = sqlTopics;
 
