@@ -17,7 +17,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   createNewTheme,
 } from "../../../services/api/ThemesApi";
-import {IServerCreateThemeError} from "../../../services/api/models/errors/themes/IThemeErrors";
+import {IServerCreateThemeError} from "../../../services/api/models/errors/IThemeErrors";
 
 const useStyles = makeStyles((theme) => ({
   buttons: {

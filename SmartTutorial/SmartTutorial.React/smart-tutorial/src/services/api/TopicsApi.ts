@@ -5,7 +5,7 @@ import {
   ITopicInputData,
   ITopicTableData,
 } from "./models/ITopicData";
-import { IServerCreateTopicError } from "./models/errors/topics/ITopicsErrors";
+import { IServerCreateTopicError } from "./models/errors/ITopicErrors";
 import {
   IPaginatedRequest,
   IPaginatedResult,
@@ -73,9 +73,6 @@ export async function createNewTopic(
   await axiosAuthorized
     .post(`${webAPIUrl}/topics`, data, {
       headers: { Authorization: `Bearer ${token}` },
-    })
-    .then((response) => {
-      console.log(response.data);
     })
     .catch((err) => {
       error.message = err.response.data;

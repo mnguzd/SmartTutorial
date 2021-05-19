@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
@@ -56,7 +56,14 @@ interface Props {
 const AdminPage: FC<Props> = ({ title, children }) => {
   const classes = useStyles();
   const { user, loading } = useAuth();
+  const [selectedIndex, setSelectedIndex] = useState<Number>(0);
   const history = useHistory();
+  const handleListItemClick = (
+    index: number
+  ) => {
+    console.log("Set index to "+index);
+    setSelectedIndex(index);
+  };
   useEffect(() => {
     if (!loading && user) {
       if (user.role === UserRole.User) {
@@ -83,25 +90,47 @@ const AdminPage: FC<Props> = ({ title, children }) => {
           <Toolbar />
           <div className={classes.drawerContainer}>
             <List>
-              <ListItem button component={Link} to="/admin/themes">
+              <ListItem
+                selected={selectedIndex === 1}
+                onClick={()=>handleListItemClick(1)}
+                button
+                component={Link}
+                to="/admin/themes"
+              >
                 <ListItemIcon>
                   <PermMedia />
                 </ListItemIcon>
                 <ListItemText primary="Themes" />
               </ListItem>
-              <ListItem button component={Link} to="/admin/subjects">
+              <ListItem
+                selected={selectedIndex === 2}
+                onClick={()=>handleListItemClick(2)}
+                button
+                component={Link}
+                to="/admin/subjects"
+              >
                 <ListItemIcon>
                   <FolderOpen />
                 </ListItemIcon>
                 <ListItemText primary="Subjects" />
               </ListItem>
-              <ListItem button component={Link} to="/admin/topics">
+              <ListItem
+                selected={selectedIndex === 3}
+                onClick={()=>handleListItemClick(3)}
+                button
+                component={Link}
+                to="/admin/topics"
+              >
                 <ListItemIcon>
                   <Description />
                 </ListItemIcon>
                 <ListItemText primary="Topics" />
               </ListItem>
-              <ListItem button>
+              <ListItem
+                selected={selectedIndex === 4}
+                onClick={()=> handleListItemClick(4)}
+                button
+              >
                 <ListItemIcon>
                   <QuestionAnswer />
                 </ListItemIcon>
@@ -110,13 +139,21 @@ const AdminPage: FC<Props> = ({ title, children }) => {
             </List>
             <Divider />
             <List>
-              <ListItem button>
+              <ListItem
+                selected={selectedIndex === 5}
+                onClick={()=>handleListItemClick( 5)}
+                button
+              >
                 <ListItemIcon>
                   <People />
                 </ListItemIcon>
                 <ListItemText primary="Users" />
               </ListItem>
-              <ListItem button>
+              <ListItem
+                selected={selectedIndex === 6}
+                onClick={()=>handleListItemClick(6)}
+                button
+              >
                 <ListItemIcon>
                   <Fingerprint />
                 </ListItemIcon>

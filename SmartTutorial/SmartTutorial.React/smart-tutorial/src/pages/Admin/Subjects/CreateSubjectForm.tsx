@@ -18,7 +18,7 @@ import {
 import { Autocomplete } from "@material-ui/lab";
 import { getThemes } from "../../../services/api/ThemesApi";
 import {IThemeData} from "../../../services/api/models/IThemeData";
-import {IServerCreateSubjectError} from "../../../services/api/models/errors/subjects/ISubjectErrors";
+import {IServerCreateSubjectError} from "../../../services/api/models/errors/ISubjectErrors";
 
 const useStyles = makeStyles((theme) => ({
   buttons: {
@@ -110,7 +110,7 @@ export const CreateSubjectForm: FC<Props> = ({
   }, []);
   useEffect(() => {
     setThemesAsync();
-  });
+  },[setThemesAsync]);
 
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -167,6 +167,7 @@ export const CreateSubjectForm: FC<Props> = ({
                     id="themesAutocomplete"
                     options={themes}
                     getOptionLabel={(option) => option.name}
+                    getOptionSelected={(option, value) => option.id === value.id}
                     loading={themesLoading}
                     onChange={(_e, newValue: IThemeData | null) =>
                       setThemeId(newValue)

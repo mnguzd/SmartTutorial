@@ -2,7 +2,7 @@ import {webAPIUrl} from "../../AppSettings";
 import axios from "axios";
 import {axiosAuthorized} from "../axios/axios";
 import {IThemeData, IThemeDataWithSubjects, IThemeInputData} from "./models/IThemeData";
-import {IServerCreateThemeError} from "./models/errors/themes/IThemeErrors";
+import {IServerCreateThemeError} from "./models/errors/IThemeErrors";
 import {IPaginatedRequest, IPaginatedResult} from "./models/pagination/IPagination";
 
 export async function getThemes(): Promise<IThemeData[]> {

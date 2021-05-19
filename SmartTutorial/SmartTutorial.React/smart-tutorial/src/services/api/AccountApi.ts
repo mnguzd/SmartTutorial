@@ -3,7 +3,7 @@ import { webAPIUrl } from "../../AppSettings";
 import axios from "axios";
 import { axiosAuthorized } from "../axios/axios";
 import { TokenStorage } from "../localStorage/tokenStorage";
-import {IServerEditUserError, IServerImageUploadError} from "./models/errors/user/IUserErrors";
+import {IServerEditUserError, IServerImageUploadError} from "./models/errors/IUserErrors";
 import {IAuthToken, ISendRefreshToken} from "../../auth/models/authToken/IAuthToken";
 
 export async function editUser(

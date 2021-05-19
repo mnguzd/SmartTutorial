@@ -7,7 +7,7 @@ import {
   ISubjectInputData,
   ISubjectTableData,
 } from "./models/ISubjectData";
-import { IServerCreateSubjectError } from "./models/errors/subjects/ISubjectErrors";
+import { IServerCreateSubjectError } from "./models/errors/ISubjectErrors";
 import {
   IPaginatedRequest,
   IPaginatedResult,

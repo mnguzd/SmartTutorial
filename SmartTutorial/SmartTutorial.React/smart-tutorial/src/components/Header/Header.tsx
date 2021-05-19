@@ -5,7 +5,6 @@ import {
   Button,
   CssBaseline,
   Fab,
-  Slide,
   Toolbar,
   Typography,
   useScrollTrigger,
@@ -35,16 +34,6 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
 }));
-
-function HideOnScroll(props: Props) {
-  const { children } = props;
-  const trigger = useScrollTrigger();
-  return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
-}
 
 function ScrollTop(props: Props) {
   const { children } = props;
@@ -76,7 +65,6 @@ const Header = (props: Props) => {
   return (
     <React.Fragment>
       <CssBaseline />
-      <HideOnScroll {...props}>
         <AppBar>
           <Toolbar>
             <Box
@@ -116,7 +104,6 @@ const Header = (props: Props) => {
             )}
           </Toolbar>
         </AppBar>
-      </HideOnScroll>
       <Toolbar id="back-to-top-anchor" />
       <ScrollTop {...props}>
         <Fab color="secondary" size="small" aria-label="scroll back to top">

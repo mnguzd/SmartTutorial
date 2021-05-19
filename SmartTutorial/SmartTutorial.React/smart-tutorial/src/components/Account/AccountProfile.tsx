@@ -19,7 +19,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import React from "react";
 import {IUser} from "../../auth/models/user/IUser";
-import {IServerImageUploadError} from "../../services/api/models/errors/user/IUserErrors";
+import {IServerImageUploadError} from "../../services/api/models/errors/IUserErrors";
 import {uploadImage} from "../../services/api/AccountApi";
 
 const useStyles = makeStyles(() => ({
