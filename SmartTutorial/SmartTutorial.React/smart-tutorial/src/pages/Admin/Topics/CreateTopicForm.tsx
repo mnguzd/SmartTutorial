@@ -28,13 +28,14 @@ const useStyles = makeStyles((theme) => ({
 const schema = yup.object().shape({
   name: yup
     .string()
-    .max(20, "Name is longer than 100 characters")
+    .max(30, "Name is longer than 30 characters")
     .min(2, "Name is shorter than 2 characters")
     .required("Enter the name"),
   content: yup
     .string()
     .max(100000, "Content is more than 100000 characters")
-    .required("Enter the description"),
+    .min(20,"Content is less than 20 characters")
+    .required("Provide any content"),
   order: yup
     .number()
     .positive("Order should be positive")
@@ -115,30 +116,28 @@ export const CreateTopicForm: FC<Props> = ({
           control={control}
           name="content"
           render={() => (
-            <div>
-              <Editor
-                initialValue="<p>New topic content</p>"
-                apiKey="xbc0e10hc6qsmznr1r3ez6bnw3ozol916ykuebp3u5gqzggw"
-                onEditorChange={(a) => setValue("content", a)}
-                init={{
-                  height: 300,
-                  menubar: false,
-                  plugins: [
-                    "advlist autolink lists link image",
-                    "charmap print preview anchor help",
-                    "searchreplace visualblocks code",
-                    "insertdatetime media table paste wordcount",
-                  ],
-                  toolbar:
-                    "undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link codesample | ltr rtl",
-                }}
-              />
-              <FormHelperText error={!!errors.content}>
-                {errors && errors.content && errors?.content.message}
-              </FormHelperText>
-            </div>
+            <Editor
+              apiKey="xbc0e10hc6qsmznr1r3ez6bnw3ozol916ykuebp3u5gqzggw"
+              onEditorChange={(a) => setValue("content", a)}
+              id="content"
+              init={{
+                height: 300,
+                menubar: false,
+                plugins: [
+                  "advlist autolink lists link image",
+                  "charmap print preview anchor help",
+                  "searchreplace visualblocks code",
+                  "insertdatetime media table paste wordcount",
+                ],
+                toolbar:
+                  "undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link codesample | ltr rtl",
+              }}
+            />
           )}
         />
+        <FormHelperText error={!!errors.content}>
+          {errors && errors.content && errors?.content.message}
+        </FormHelperText>
         <Grid
           container
           direction="column"

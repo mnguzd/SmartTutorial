@@ -32,7 +32,7 @@ function App() {
             <Route path="/Admin/Topics" component={AdminTopicsPage}/>
             <Route path="/Admin" component={AdminDashboard} />
             <Route
-              path="Courses/:courseId/Subjects/:subjectId/Topic/:topicId"
+              path="/Courses/:courseId/Subjects/:subjectId/Topics/:topicId"
               component={TopicPage}
             />
             <Route

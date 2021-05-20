@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header/Header";
-import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import {
   Drawer,
   Toolbar,
@@ -24,7 +24,7 @@ import {
 import { useAuth } from "../../auth/Auth";
 import { UserRole } from "../../auth/UserRoles";
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       display: "flex",

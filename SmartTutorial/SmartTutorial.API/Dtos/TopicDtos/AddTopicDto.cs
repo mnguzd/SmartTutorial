@@ -4,7 +4,7 @@ namespace SmartTutorial.API.Dtos.TopicDtos
 {
     public class AddTopicDto
     {
-        [StringLength(20, MinimumLength = 2)]
+        [StringLength(30, MinimumLength = 2)]
         [Required]
         public string Name { get; set; }
 

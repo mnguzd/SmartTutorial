@@ -10,6 +10,24 @@ import {
   IPaginatedRequest,
   IPaginatedResult,
 } from "./models/pagination/IPagination";
+import axios from "axios";
+
+export async function getTopic(
+  id: number
+): Promise<ITopicData | null> {
+  let data: ITopicData | null = null;
+  await axios
+    .get<ITopicData>(`${webAPIUrl}/topics/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((response) => {
+      data = response.data;
+    })
+    .catch((err) => console.log(err.response));
+  return data;
+}
 
 export async function getTopicsPaginated(
   request: IPaginatedRequest,
@@ -75,6 +93,7 @@ export async function createNewTopic(
       headers: { Authorization: `Bearer ${token}` },
     })
     .catch((err) => {
+      console.log(err.response.data);
       error.message = err.response.data;
     });
   if (error.message) {

@@ -10,7 +10,7 @@ namespace SmartTutorial.EFMapping
         {
             builder.Property(e => e.Name)
                 .IsRequired()
-                .HasMaxLength(20);
+                .HasMaxLength(30);
 
             builder.Property(e => e.Order).IsRequired();
 

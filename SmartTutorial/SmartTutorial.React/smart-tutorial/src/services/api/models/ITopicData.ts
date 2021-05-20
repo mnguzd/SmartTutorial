@@ -1,14 +1,14 @@
 import { ISubjectData } from "./ISubjectData";
 
 export interface ITopicData {
-  id: string;
+  id: number;
   name: string;
   content: string;
   order: number;
   subject: ISubjectData;
 }
 export interface ITopicTableData {
-  id: string;
+  id: number;
   name: string;
   content: string;
   order: number;
