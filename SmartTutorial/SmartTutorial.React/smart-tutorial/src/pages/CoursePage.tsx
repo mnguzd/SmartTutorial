@@ -14,11 +14,11 @@ import {
 } from "@material-ui/core";
 import { Home, Search } from "@material-ui/icons";
 import { fade, makeStyles } from "@material-ui/core/styles";
-import { getThemeWithSubjects } from "../services/api/ThemesApi";
+import { getCourseWithSubjects } from "../services/api/CoursesApi";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";
-import {IThemeDataWithSubjects} from "../services/api/models/IThemeData";
+import {ICourseDataWithSubjects} from "../services/api/models/ICourseData";
 
 interface IRouteParams {
   themeId: string;
@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
-  const [theme, setTheme] = useState<IThemeDataWithSubjects | null>(null);
+  const [theme, setTheme] = useState<ICourseDataWithSubjects | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const classes = useStyles();
@@ -103,7 +103,7 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
       setLoading(true);
       if (match.params.themeId) {
         const ID: number = Number(match.params.themeId);
-        const theme = await getThemeWithSubjects(ID);
+        const theme = await getCourseWithSubjects(ID);
         setTheme(theme);
       }
       setLoading(false);

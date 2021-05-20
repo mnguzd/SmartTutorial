@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
-import {IThemeData} from "../../services/api/models/IThemeData";
+import {ICourseData} from "../../services/api/models/ICourseData";
 
 const useStyles = makeStyles({
   card: {
@@ -18,7 +18,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ThemeCard(theme: IThemeData) {
+export default function ThemeCard(theme: ICourseData) {
   const classes = useStyles();
   return (
     <Card className={classes.card}>

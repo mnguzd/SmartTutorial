@@ -15,9 +15,9 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  createNewTheme,
-} from "../../../services/api/ThemesApi";
-import {IServerCreateThemeError} from "../../../services/api/models/errors/IThemeErrors";
+  createNewCourse,
+} from "../../../services/api/CoursesApi";
+import {IServerCreateCourseError} from "../../../services/api/models/errors/ICourseErrors";
 
 const useStyles = makeStyles((theme) => ({
   buttons: {
@@ -83,7 +83,7 @@ export const CreateThemeForm: FC<Props> = ({
   });
 
   async function onSubmit(data: IFormInputs) {
-    const result: IServerCreateThemeError | null = await createNewTheme(
+    const result: IServerCreateCourseError | null = await createNewCourse(
       data,
       accessToken
     );

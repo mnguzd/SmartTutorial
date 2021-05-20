@@ -14,16 +14,16 @@ import {
 } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  deleteTheme,
-  getThemesPaginated,
-} from "../../../services/api/ThemesApi";
+  deleteCourse,
+  getCoursesPaginated,
+} from "../../../services/api/CoursesApi";
 import { useAuth } from "../../../auth/Auth";
 import { Avatar, Grid } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import { DialogForm } from "../../../components/DialogForm/DialogForm";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { CreateThemeForm } from "./CreateThemeForm";
-import {IThemeData} from "../../../services/api/models/IThemeData";
+import {ICourseData} from "../../../services/api/models/ICourseData";
 import {IPaginatedRequest, IPaginatedResult} from "../../../services/api/models/pagination/IPagination";
 
 const useStyles = makeStyles((theme) => ({
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AdminSubjectsPage() {
-  const [themes, setThemes] = useState<IThemeData[]>([]);
+  const [themes, setThemes] = useState<ICourseData[]>([]);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -97,7 +97,7 @@ export default function AdminSubjectsPage() {
           ],
         };
       }
-      const result: IPaginatedResult<IThemeData> = await getThemesPaginated(
+      const result: IPaginatedResult<ICourseData> = await getCoursesPaginated(
         request,
         accessToken
       );
@@ -110,7 +110,7 @@ export default function AdminSubjectsPage() {
     [accessToken, pageNumber, pageSize, totalCount, sortModel, filterModel]
   );
   async function deleteAndUpdateTheme(id: GridRowId, token: string) {
-    const success = await deleteTheme(Number(id), token);
+    const success = await deleteCourse(Number(id), token);
     if (success) {
       setTotalCount((x) => x - 1);
     }
