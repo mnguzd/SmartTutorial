@@ -16,8 +16,8 @@ import {
   createNewSubject,
 } from "../../../services/api/SubjectsApi";
 import { Autocomplete } from "@material-ui/lab";
-import { getThemes } from "../../../services/api/ThemesApi";
-import {IThemeData} from "../../../services/api/models/IThemeData";
+import { getCourses } from "../../../services/api/CoursesApi";
+import {ICourseData} from "../../../services/api/models/ICourseData";
 import {IServerCreateSubjectError} from "../../../services/api/models/errors/ISubjectErrors";
 
 const useStyles = makeStyles((theme) => ({
@@ -42,13 +42,13 @@ const schema = yup.object().shape({
     .max(5, "Complexity is more than 5 points")
     .min(0, "Complexity is less than 5 points")
     .required("Enter the complexity"),
-  themeId: yup.number().required("Enter themeId"),
+  courseId: yup.number().required("Enter courseId"),
 });
 
 interface IFormInputs {
   name: string;
   complexity: number;
-  themeId: number;
+  courseId: number;
 }
 interface Props {
   accessToken: string;
@@ -68,8 +68,8 @@ export const CreateSubjectForm: FC<Props> = ({
 }) => {
   const classes = useStyles();
 
-  const [themes, setThemes] = useState<IThemeData[]>([]);
-  const [themesLoading, setThemesLoading] = useState<boolean>(true);
+  const [courses, setCourses] = useState<ICourseData[]>([]);
+  const [coursesLoading, setCoursesLoading] = useState<boolean>(true);
 
   const {
     register,
@@ -96,21 +96,21 @@ export const CreateSubjectForm: FC<Props> = ({
     }
   }
 
-  function setThemeId(newValue: IThemeData | null): void {
+  function setCourseId(newValue: ICourseData | null): void {
     if (newValue) {
-      setValue("themeId", newValue.id);
+      setValue("courseId", newValue.id);
     }
   }
 
-  const setThemesAsync = useCallback(async function SetThemes() {
-    setThemesLoading(true);
-    const result: IThemeData[] = await getThemes();
-    setThemes(result);
-    setThemesLoading(false);
+  const setCoursesAsync = useCallback(async function SetCourses() {
+    setCoursesLoading(true);
+    const result: ICourseData[] = await getCourses();
+    setCourses(result);
+    setCoursesLoading(false);
   }, []);
   useEffect(() => {
-    setThemesAsync();
-  },[setThemesAsync]);
+    setCoursesAsync();
+  },[setCoursesAsync]);
 
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -161,27 +161,27 @@ export const CreateSubjectForm: FC<Props> = ({
             <Grid item md={6} xs={12}>
               <Controller
                 control={control}
-                name="themeId"
+                name="courseId"
                 render={() => (
                   <Autocomplete
-                    id="themesAutocomplete"
-                    options={themes}
+                    id="coursesAutocomplete"
+                    options={courses}
                     getOptionLabel={(option) => option.name}
                     getOptionSelected={(option, value) => option.id === value.id}
-                    loading={themesLoading}
-                    onChange={(_e, newValue: IThemeData | null) =>
-                      setThemeId(newValue)
+                    loading={coursesLoading}
+                    onChange={(_e, newValue: ICourseData | null) =>
+                      setCourseId(newValue)
                     }
                     renderInput={(params) => (
                       <TextField
                         {...params}
                         variant="outlined"
                         fullWidth
-                        id="themeId"
-                        label="Theme"
-                        {...register("themeId", { required: true })}
-                        error={!!errors.themeId}
-                        helperText={errors?.themeId?.message}
+                        id="courseId"
+                        label="Course"
+                        {...register("courseId", { required: true })}
+                        error={!!errors.courseId}
+                        helperText={errors?.courseId?.message}
                       />
                     )}
                   />

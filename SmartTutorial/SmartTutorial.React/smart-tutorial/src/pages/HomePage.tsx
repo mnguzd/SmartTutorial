@@ -11,14 +11,14 @@ import {
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import { makeStyles } from "@material-ui/core/styles";
-import ThemeCard from "../components/Theme/ThemeCard";
+import CourseCard from "../components/Course/CourseCard";
 import Footer from "../components/Footer/Footer";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";
 import { useAuth } from "../auth/Auth";
-import { getThemes } from "../services/api/ThemesApi";
+import { getCourses } from "../services/api/CoursesApi";
 import { TransitionProps } from "@material-ui/core/transitions";
-import {IThemeData} from "../services/api/models/IThemeData";
+import {ICourseData} from "../services/api/models/ICourseData";
 
 function SlideTransition(props: TransitionProps) {
   return <Slide {...props} direction="up" />;
@@ -53,7 +53,7 @@ export default function HomePage() {
 
   const { loginSuccess, user, calmSuccess } = useAuth();
 
-  const [data, setData] = useState<IThemeData[]>([]);
+  const [data, setData] = useState<ICourseData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const handleClick = (
@@ -75,13 +75,13 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    const getThemesAsync = async () => {
+    const getCoursesAsync = async () => {
       setLoading(true);
-      const themes = await getThemes();
-      setData(themes);
+      const courses = await getCourses();
+      setData(courses);
       setLoading(false);
     };
-    getThemesAsync();
+    getCoursesAsync();
     if (loginSuccess) {
       handleClick(SlideTransition);
       calmSuccess();
@@ -141,9 +141,9 @@ export default function HomePage() {
             <ProgressCircle color="primary" />
           ) : (
             <Grid container spacing={4}>
-              {data.map((theme) => (
-                <Grid item key={theme.id} xs={12} sm={6} md={4}>
-                  <ThemeCard {...theme} />
+              {data.map((course) => (
+                <Grid item key={course.id} xs={12} sm={6} md={4}>
+                  <CourseCard {...course} />
                 </Grid>
               ))}
             </Grid>

@@ -22,7 +22,7 @@ import { Avatar, Grid } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import { DialogForm } from "../../../components/DialogForm/DialogForm";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { CreateThemeForm } from "./CreateThemeForm";
+import { CreateCourseForm } from "./CreateCourseForm";
 import {ICourseData} from "../../../services/api/models/ICourseData";
 import {IPaginatedRequest, IPaginatedResult} from "../../../services/api/models/pagination/IPagination";
 
@@ -42,8 +42,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AdminSubjectsPage() {
-  const [themes, setThemes] = useState<ICourseData[]>([]);
+export default function AdminCoursesPage() {
+  const [courses, setCourses] = useState<ICourseData[]>([]);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -69,8 +69,8 @@ export default function AdminSubjectsPage() {
     setSortModel(params.sortModel);
   }, []);
 
-  const callBackThemes = useCallback(
-    async function GetThemes(): Promise<void> {
+  const callBackCourses = useCallback(
+    async function getCourses(): Promise<void> {
       setLoading(true);
       const request: IPaginatedRequest = {
         pageIndex: pageNumber,
@@ -101,7 +101,7 @@ export default function AdminSubjectsPage() {
         request,
         accessToken
       );
-      setThemes(result.items);
+      setCourses(result.items);
       if (result.total !== totalCount) {
         setTotalCount(result.total);
       }
@@ -109,22 +109,22 @@ export default function AdminSubjectsPage() {
     },
     [accessToken, pageNumber, pageSize, totalCount, sortModel, filterModel]
   );
-  async function deleteAndUpdateTheme(id: GridRowId, token: string) {
+  async function deleteAndUpdateCourse(id: GridRowId, token: string) {
     const success = await deleteCourse(Number(id), token);
     if (success) {
       setTotalCount((x) => x - 1);
     }
   }
   async function onDeleteSubmit() {
-    selectionModel.map((val) => deleteAndUpdateTheme(val, accessToken));
+    selectionModel.map((val) => deleteAndUpdateCourse(val, accessToken));
     setSelectionModel([]);
-    await callBackThemes();
+    await callBackCourses();
   }
   useEffect(() => {
-    callBackThemes();
-  }, [callBackThemes]);
+    callBackCourses();
+  }, [callBackCourses]);
   return (
-    <AdminPage title="Admin | Themes">
+    <AdminPage title="Admin | Courses">
       <div className={classes.root}>
         <Grid container direction="column" alignItems="flex-end">
           <Button
@@ -139,7 +139,7 @@ export default function AdminSubjectsPage() {
         <DataGrid
           rowHeight={40}
           columns={columns}
-          rows={themes}
+          rows={courses}
           autoHeight
           pagination
           checkboxSelection
@@ -187,11 +187,11 @@ export default function AdminSubjectsPage() {
         </Grid>
       </div>
       <DialogForm openPopup={openPopup} setOpenPopup={setOpenPopup}>
-        <CreateThemeForm
+        <CreateCourseForm
           accessToken={accessToken}
           setOpenPopup={setOpenPopup}
           loading={loading}
-          callBack={callBackThemes}
+          callBack={callBackCourses}
         />
       </DialogForm>
       <Button onClick={() => setOpenPopup(true)}/>

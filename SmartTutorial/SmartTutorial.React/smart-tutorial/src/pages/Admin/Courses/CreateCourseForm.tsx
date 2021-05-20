@@ -62,7 +62,7 @@ interface ICallback {
   (): void;
 }
 
-export const CreateThemeForm: FC<Props> = ({
+export const CreateCourseForm: FC<Props> = ({
   accessToken,
   setOpenPopup,
   loading,

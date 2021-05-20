@@ -18,23 +18,23 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ThemeCard(theme: ICourseData) {
+export default function CourseCard(course: ICourseData) {
   const classes = useStyles();
   return (
     <Card className={classes.card}>
       <CardMedia
         component="img"
-        alt={theme.name}
+        alt={course.name}
         height="180"
-        image={theme.imageUrl}
-        title={theme.name}
+        image={course.imageUrl}
+        title={course.name}
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="h2">
-          {theme.name}
+          {course.name}
         </Typography>
         <Typography variant="body2" color="textSecondary" component="p">
-          {theme.description.slice(0, 100) + "..."}
+          {course.description.slice(0, 100) + "..."}
         </Typography>
       </CardContent>
       <CardActions>
@@ -42,7 +42,7 @@ export default function ThemeCard(theme: ICourseData) {
           size="small"
           color="primary"
           component={Link}
-          to={`/themes/${theme.id.toString()}`}
+          to={`/courses/${course.id.toString()}`}
         >
           Learn More
         </Button>

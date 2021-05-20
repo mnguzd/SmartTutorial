@@ -16,9 +16,9 @@ namespace SmartTutorial.EFMapping
                 .IsRequired()
                 .HasMaxLength(100);
 
-            builder.HasOne(e => e.Theme)
+            builder.HasOne(e => e.Course)
                 .WithMany(d => d.Subjects)
-                .HasForeignKey(e => e.ThemeId);
+                .HasForeignKey(e => e.CourseId);
         }
     }
 }

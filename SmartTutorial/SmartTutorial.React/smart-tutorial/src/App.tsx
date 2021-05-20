@@ -3,13 +3,13 @@ import { BrowserRouter, Redirect, Switch } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import SignIn from "./pages/Authorization/SignInPage";
 import SignUp from "./pages/Authorization/SignUpPage";
-import ThemePage from "./pages/ThemePage";
+import CoursePage from "./pages/CoursePage";
 import SubjectPage from "./pages/SubjectPage";
 import LogOut from "./pages/Authorization/LogOutPage";
 import NotFound from "./pages/NotFoundPage";
 import TopicPage from "./pages/TopicPage";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
-import AdminThemesPage from "./pages/Admin/Themes/AdminThemesPage";
+import AdminCoursesPage from "./pages/Admin/Courses/AdminCoursesPage";
 import AdminSubjectsPage from "./pages/Admin/Subjects/AdminSubjectsPage";
 import AdminTopicsPage from "./pages/Admin/Topics/AdminTopicsPage";
 import AccountPage from "./pages/AccountPage";
@@ -27,19 +27,19 @@ function App() {
             <Route exact path="/" component={HomePage} />
             <Route path="/SignIn" component={SignIn} />
             <Route path="/SignUp" component={SignUp} />
-            <Route path="/Admin/Themes" component={AdminThemesPage} />
+            <Route path="/Admin/Courses" component={AdminCoursesPage} />
             <Route path="/Admin/Subjects" component={AdminSubjectsPage} />
             <Route path="/Admin/Topics" component={AdminTopicsPage}/>
             <Route path="/Admin" component={AdminDashboard} />
             <Route
-              path="Themes/:themeId/Subjects/:subjectId/Topic/:topicId"
+              path="Courses/:courseId/Subjects/:subjectId/Topic/:topicId"
               component={TopicPage}
             />
             <Route
-              path="/Themes/:themeId/Subjects/:subjectId"
+              path="/Courses/:courseId/Subjects/:subjectId"
               component={SubjectPage}
             />
-            <Route path="/Themes/:themeId" component={ThemePage} />
+            <Route path="/Courses/:courseId" component={CoursePage} />
             <Route path="/Profile" component={AccountPage} />
             <Route path="/LogOut" component={LogOut} />
             <Route component={NotFound} />

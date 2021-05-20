@@ -4,11 +4,11 @@ using SmartTutorial.Domain;
 
 namespace SmartTutorial.EFMapping
 {
-    public class ThemeConfig : IEntityTypeConfiguration<Theme>
+    public class CourseConfig : IEntityTypeConfiguration<Course>
     {
-        public void Configure(EntityTypeBuilder<Theme> builder)
+        public void Configure(EntityTypeBuilder<Course> builder)
         {
-            builder.ToTable("Themes");
+            builder.ToTable("Courses");
             builder.Property(e => e.Name)
                 .IsRequired()
                 .HasMaxLength(20);

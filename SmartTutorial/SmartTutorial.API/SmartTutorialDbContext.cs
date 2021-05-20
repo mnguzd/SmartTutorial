@@ -16,7 +16,7 @@ namespace SmartTutorial.API
             Database.EnsureCreated();
         }
 
-        public DbSet<Theme> Themes { get; set; }
+        public DbSet<Course> Courses { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Question> Questions { get; set; }

@@ -74,7 +74,7 @@ export default function AdminSubjectsPage() {
       if (sortModel && sortModel[0]) {
         request.sortDirection = sortModel[0].sort === "asc" ? "Asc" : "Desc";
         request.columnNameForSorting =
-          sortModel[0].field === "theme" ? "theme.name" : sortModel[0].field;
+          sortModel[0].field === "course" ? "course.name" : sortModel[0].field;
       }
       if (
         filterModel &&
@@ -87,8 +87,8 @@ export default function AdminSubjectsPage() {
           filters: [
             {
               path:
-                filterModel.items[0].columnField === "theme"
-                  ? "theme.name"
+                filterModel.items[0].columnField === "course"
+                  ? "course.name"
                   : filterModel.items[0].columnField,
               value: filterModel.items[0].value,
               operation: filterModel.items[0].operatorValue,
@@ -224,9 +224,9 @@ const columns: GridColDef[] = [
     width: 130,
   },
   {
-    headerName: "Theme",
+    headerName: "Course",
     headerAlign: "center",
-    field: "theme",
+    field: "course",
     width: 500,
   },
 ];

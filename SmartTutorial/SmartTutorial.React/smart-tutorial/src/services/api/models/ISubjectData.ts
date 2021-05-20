@@ -1,4 +1,4 @@
-import {IThemeData} from "./IThemeData";
+import {ICourseData} from "./ICourseData";
 import {ITopicData} from "./ITopicData";
 
 
@@ -7,7 +7,7 @@ export interface ISubjectData {
     complexity: number;
     id: number;
     date: Date;
-    theme:IThemeData;
+    course:ICourseData;
 }
 
 export interface ISubjectTableData{
@@ -15,7 +15,7 @@ export interface ISubjectTableData{
     complexity:number;
     id:number;
     date:Date;
-    theme:string;
+    course:string;
 }
 
 export interface ISubjectDataWithTopics {
@@ -23,11 +23,11 @@ export interface ISubjectDataWithTopics {
     complexity: number;
     id: number;
     topics: ITopicData[];
-    theme: IThemeData;
+    course: ICourseData;
 }
 
 export interface ISubjectInputData {
     name: string;
     complexity: number;
-    themeId: number;
+    courseId: number;
 }

@@ -9,50 +9,50 @@ namespace SmartTutorial.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ThemesController : ControllerBase
+    public class CoursesController : ControllerBase
     {
-        private readonly IThemeService _themeService;
+        private readonly ICourseService _courseService;
 
-        public ThemesController(IThemeService subjectService)
+        public CoursesController(ICourseService subjectService)
         {
-            _themeService = subjectService;
+            _courseService = subjectService;
         }
 
         [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var themeList = await _themeService.GetAll();
-            return Ok(themeList);
+            var courseList = await _courseService.GetAll();
+            return Ok(courseList);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost("getPaginated")]
         public async Task<IActionResult> Get(PagedRequest request)
         {
-            var themeList = await _themeService.GetPaginated(request);
-            return Ok(themeList);
+            var courseList = await _courseService.GetPaginated(request);
+            return Ok(courseList);
         }
 
         [AllowAnonymous]
-        [HttpGet("{themeId:int}")]
-        public async Task<IActionResult> Get(int themeId)
+        [HttpGet("{courseId:int}")]
+        public async Task<IActionResult> Get(int courseId)
         {
-            var theme = await _themeService.GetWithSubjects(themeId);
-            return Ok(theme);
+            var course = await _courseService.GetWithSubjects(courseId);
+            return Ok(course);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] AddThemeDto dto)
+        public async Task<IActionResult> Post([FromBody] AddCourseDto dto)
         {
-            var theme = await _themeService.Add(dto);
-            return Created(nameof(Post), theme);
+            var course = await _courseService.Add(dto);
+            return Created(nameof(Post), course);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _themeService.Delete(id);
+            await _courseService.Delete(id);
             return NoContent();
         }
     }

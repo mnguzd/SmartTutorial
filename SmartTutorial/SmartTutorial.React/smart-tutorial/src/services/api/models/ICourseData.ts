@@ -1,18 +1,18 @@
 import {ISubjectData} from "./ISubjectData";
 
-export interface IThemeData {
+export interface ICourseData {
     name: string;
     id: number;
     imageUrl: string;
     description: string;
 }
-export interface IThemeDataWithSubjects {
+export interface ICourseDataWithSubjects {
     name: string;
     id: number;
     description: string;
     subjects: ISubjectData[];
 }
-export interface IThemeInputData {
+export interface ICourseInputData {
     name: string;
     description: string;
     imageUrl: string;

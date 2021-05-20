@@ -24,17 +24,10 @@ namespace SmartTutorial.API.Services.Implementations
 
         public async Task<SubjectDto> Add(AddSubjectDto dto)
         {
-            var subject = new Subject {Complexity = dto.Complexity, Name = dto.Name, ThemeId = dto.ThemeId};
-            try
-            {
-                await _repository.Add(subject);
-                await _repository.SaveAll();
-            }
-            catch
-            {
-                throw new ApiException(HttpStatusCode.BadRequest, "Theme with id " + dto.ThemeId + " is not found!");
-            }
-
+            var subject = new Subject {Complexity = dto.Complexity, Name = dto.Name, CourseId = dto.ThemeId};
+            //add with Save
+            await _repository.Add(subject);
+            await _repository.SaveAll();
             var subjectDto = _mapper.Map<SubjectDto>(subject);
             return subjectDto;
         }

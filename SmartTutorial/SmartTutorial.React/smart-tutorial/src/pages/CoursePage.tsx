@@ -21,7 +21,7 @@ import Page from "./Page";
 import {ICourseDataWithSubjects} from "../services/api/models/ICourseData";
 
 interface IRouteParams {
-  themeId: string;
+  courseId: string;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -93,25 +93,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
-  const [theme, setTheme] = useState<ICourseDataWithSubjects | null>(null);
+const CoursePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
+  const [course, setCourse] = useState<ICourseDataWithSubjects | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const classes = useStyles();
   useEffect(() => {
-    const getThemeAsync = async () => {
+    const getCourseAsync = async () => {
       setLoading(true);
-      if (match.params.themeId) {
-        const ID: number = Number(match.params.themeId);
-        const theme = await getCourseWithSubjects(ID);
-        setTheme(theme);
+      if (match.params.courseId) {
+        const ID: number = Number(match.params.courseId);
+        const course = await getCourseWithSubjects(ID);
+        setCourse(course);
       }
       setLoading(false);
     };
-    getThemeAsync();
-  }, [match.params.themeId]);
+    getCourseAsync();
+  }, [match.params.courseId]);
   return (
-    <Page title={"Theme | " + theme?.name}>
+    <Page title={"Course | " + course?.name}>
       <Breadcrumbs aria-label="breadcrumb" className={classes.bread}>
         <StyledBreadcrumb
           component={Link}
@@ -120,7 +120,7 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
           clickable
           icon={<Home />}
         />
-        <StyledBreadcrumb label={theme?.name} />
+        <StyledBreadcrumb label={course?.name} />
       </Breadcrumbs>
       <Container maxWidth="md">
         <Grid
@@ -131,10 +131,10 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
         >
           <Grid item className={classes.mainText}>
             <Typography variant="h5" align="center" paragraph>
-              {theme?.name}
+              {course?.name}
             </Typography>
             <Typography variant="body1" align="center">
-              {theme?.description}
+              {course?.description}
             </Typography>
           </Grid>
           <Grid item className={classes.searchGrid}>
@@ -160,7 +160,7 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
               <ProgressCircle color="primary" />
             ) : (
               <List dense={false}>
-                {theme?.subjects
+                {course?.subjects
                   .filter((val) =>
                     val.name.toLowerCase().includes(searchTerm.toLowerCase())
                   )
@@ -168,9 +168,9 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
                     <ListItem
                       button
                       component={Link}
-                      to={`/themes/${theme.id}/subjects/${subject.id}`}
+                      to={`/courses/${course.id}/subjects/${subject.id}`}
                       key={subject.id.toString()}
-                      divider={index < theme.subjects.length - 1}
+                      divider={index < course.subjects.length - 1}
                     >
                       <ListItemIcon>
                         <Chip
@@ -196,4 +196,4 @@ const ThemePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
     </Page>
   );
 };
-export default ThemePage;
+export default CoursePage;

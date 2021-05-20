@@ -14,12 +14,12 @@ namespace SmartTutorial.API.Mapping
             CreateMap<SubjectDto, Subject>();
             CreateMap<UpdateSubjectDto, Subject>();
             CreateMap<AddSubjectDto, Subject>();
-            CreateMap<ThemeDto, Theme>();
-            CreateMap<Theme, ThemeDto>();
-            CreateMap<ThemeWithSubjectsDto, Theme>();
+            CreateMap<CourseDto, Course>();
+            CreateMap<Course, CourseDto>();
+            CreateMap<CourseWithSubjectsDto, Course>();
             CreateMap<Topic, TopicDto>();
             CreateMap<TopicDto, Topic>();
-            CreateMap<Theme, ThemeWithSubjectsDto>();
+            CreateMap<Course, CourseWithSubjectsDto>();
             CreateMap<Subject, SubjectWithTopicsDto>();
             CreateMap<Topic, TopicDto>();
             CreateMap<TopicDto, Topic>();

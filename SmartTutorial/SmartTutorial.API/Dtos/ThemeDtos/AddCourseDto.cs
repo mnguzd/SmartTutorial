@@ -2,7 +2,7 @@
 
 namespace SmartTutorial.API.Dtos.ThemeDtos
 {
-    public class AddThemeDto
+    public class AddCourseDto
     {
         [Required]
         [StringLength(20, MinimumLength = 2)]

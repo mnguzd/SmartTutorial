@@ -12,36 +12,36 @@ namespace SmartTutorial.API
     {
         public static async Task SeedSubjects(SmartTutorialDbContext context)
         {
-            if (!context.Themes.Any())
+            if (!context.Courses.Any())
             {
-                context.Themes.Add(new Theme
+                context.Courses.Add(new Course
                 {
                     Name = "WEB",
                     ImageUrl = "https://www.motocms.com/blog/wp-content/uploads/2018/01/web-desi-main.jpg",
                     Description =
                         "Go from no-code to an in-demand junior web developer, at a fraction of the cost of a bootcamp"
                 });
-                context.Themes.Add(new Theme
+                context.Courses.Add(new Course
                 {
                     Name = "Programming", ImageUrl = "https://theaceresearch.com/images/Survey_Program.jpg",
                     Description =
                         "The purpose of programming is to find a sequence of instructions that will automate the performance of a task"
                 });
-                context.Themes.Add(new Theme
+                context.Courses.Add(new Course
                 {
                     Name = "Computer science",
                     ImageUrl = "https://www.eschoolnews.com/files/2016/12/computer-science-education.jpg",
                     Description =
                         "Computer science applies the principles of mathematics, engineering, and logic to a plethora of functions"
                 });
-                context.Themes.Add(new Theme
+                context.Courses.Add(new Course
                 {
                     Name = "Databases",
                     ImageUrl = "https://nordicapis.com/wp-content/uploads/5-Great-Open-Source-Database-Solutions.png",
                     Description =
                         "A database is an organized collection of data, generally stored and accessed electronically from a computer system"
                 });
-                context.Themes.Add(new Theme
+                context.Courses.Add(new Course
                 {
                     Name = "Machine learning",
                     ImageUrl =
@@ -49,7 +49,7 @@ namespace SmartTutorial.API
                     Description =
                         "Machine learning involves computers discovering how they can perform tasks without being explicitly programmed to do so"
                 });
-                context.Themes.Add(new Theme
+                context.Courses.Add(new Course
                 {
                     Name = "Mobile development",
                     ImageUrl = "https://miro.medium.com/max/7875/1*JUSbO0xkXPf2jtYLMSAZ8w.jpeg",
@@ -81,9 +81,9 @@ namespace SmartTutorial.API
                     new Subject {Complexity = 4, Name = "Javascript"},
                     new Subject {Complexity = 5, Name = "React"}
                 };
-                (await context.Themes.FindAsync(1)).Subjects = list;
-                (await context.Themes.FindAsync(4)).Subjects = an;
-                (await context.Themes.FindAsync(2)).Subjects = ano;
+                (await context.Courses.FindAsync(1)).Subjects = list;
+                (await context.Courses.FindAsync(4)).Subjects = an;
+                (await context.Courses.FindAsync(2)).Subjects = ano;
                 await context.SaveChangesAsync();
             }
         }

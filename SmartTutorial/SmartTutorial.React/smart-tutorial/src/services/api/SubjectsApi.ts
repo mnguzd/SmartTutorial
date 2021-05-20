@@ -50,7 +50,7 @@ export async function createNewSubject(
   token: string
 ): Promise<IServerCreateSubjectError | null> {
   let error: IServerCreateSubjectError = {
-    name: "themeId",
+    name: "courseId",
     type: "server",
     message: "",
   };
@@ -122,5 +122,5 @@ export const mapSubjectFromServer = (
 ): ISubjectTableData => ({
   ...subject,
   date: new Date(subject.date),
-  theme: subject.theme.name,
+  course: subject.course.name,
 });

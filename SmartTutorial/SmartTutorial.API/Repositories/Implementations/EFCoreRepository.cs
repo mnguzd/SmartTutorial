@@ -45,6 +45,7 @@ namespace SmartTutorial.API.Repositories.Implementations
             return await _dbContext.SaveChangesAsync() >= 0;
         }
 
+        //add Save
         public async Task<TEntity> Add<TEntity>(TEntity entity) where TEntity : BaseEntity
         {
             await _dbContext.Set<TEntity>().AddAsync(entity);

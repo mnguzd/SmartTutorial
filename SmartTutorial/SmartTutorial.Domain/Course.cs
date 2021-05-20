@@ -2,9 +2,9 @@
 
 namespace SmartTutorial.Domain
 {
-    public class Theme : BaseEntity
+    public class Course : BaseEntity
     {
-        public Theme()
+        public Course()
         {
             Subjects = new List<Subject>();
         }

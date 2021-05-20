@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SmartTutorial.API.Dtos.ThemeDtos
 {
-    public class ThemeWithSubjectsDto
+    public class CourseWithSubjectsDto
     {
         public string Name { get; set; }
         public int Id { get; set; }

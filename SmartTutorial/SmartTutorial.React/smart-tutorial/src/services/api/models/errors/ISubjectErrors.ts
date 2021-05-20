@@ -1,5 +1,5 @@
 export interface IServerCreateSubjectError {
-    name: "name" | "complexity" | "themeId";
+    name: "name" | "complexity" | "courseId";
     type: string;
     message: string;
 }

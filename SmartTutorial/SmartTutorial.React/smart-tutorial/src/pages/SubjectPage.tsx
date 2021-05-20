@@ -48,8 +48,8 @@ const SubjectPage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
         />
         <StyledBreadcrumb
           component={Link}
-          to={`/themes/${subject?.theme.id}`}
-          label={`${subject?.theme.name}`}
+          to={`/courses/${subject?.course.id}`}
+          label={`${subject?.course.name}`}
           clickable
         />
         <StyledBreadcrumb label={subject?.name} />

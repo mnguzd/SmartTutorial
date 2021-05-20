@@ -56,20 +56,15 @@ interface Props {
 const AdminPage: FC<Props> = ({ title, children }) => {
   const classes = useStyles();
   const { user, loading } = useAuth();
-  const [selectedIndex, setSelectedIndex] = useState<Number>(0);
+  const [selectedPath,setSelectedPath] = useState<string>("");
   const history = useHistory();
-  const handleListItemClick = (
-    index: number
-  ) => {
-    console.log("Set index to "+index);
-    setSelectedIndex(index);
-  };
   useEffect(() => {
     if (!loading && user) {
       if (user.role === UserRole.User) {
         history.push("/");
       }
     }
+    setSelectedPath(history.location.pathname);
   }, [history, loading, user]);
   return (
     <div>
@@ -91,20 +86,18 @@ const AdminPage: FC<Props> = ({ title, children }) => {
           <div className={classes.drawerContainer}>
             <List>
               <ListItem
-                selected={selectedIndex === 1}
-                onClick={()=>handleListItemClick(1)}
+                selected={selectedPath === "/admin/courses"}
                 button
                 component={Link}
-                to="/admin/themes"
+                to="/admin/courses"
               >
                 <ListItemIcon>
                   <PermMedia />
                 </ListItemIcon>
-                <ListItemText primary="Themes" />
+                <ListItemText primary="Courses" />
               </ListItem>
               <ListItem
-                selected={selectedIndex === 2}
-                onClick={()=>handleListItemClick(2)}
+                selected={selectedPath === "/admin/subjects"}
                 button
                 component={Link}
                 to="/admin/subjects"
@@ -115,8 +108,7 @@ const AdminPage: FC<Props> = ({ title, children }) => {
                 <ListItemText primary="Subjects" />
               </ListItem>
               <ListItem
-                selected={selectedIndex === 3}
-                onClick={()=>handleListItemClick(3)}
+                selected={selectedPath === "/admin/topics"}
                 button
                 component={Link}
                 to="/admin/topics"
@@ -127,8 +119,7 @@ const AdminPage: FC<Props> = ({ title, children }) => {
                 <ListItemText primary="Topics" />
               </ListItem>
               <ListItem
-                selected={selectedIndex === 4}
-                onClick={()=> handleListItemClick(4)}
+                selected={selectedPath === "/admin/questions"}
                 button
               >
                 <ListItemIcon>
@@ -140,8 +131,7 @@ const AdminPage: FC<Props> = ({ title, children }) => {
             <Divider />
             <List>
               <ListItem
-                selected={selectedIndex === 5}
-                onClick={()=>handleListItemClick( 5)}
+                selected={selectedPath === "/admin/users"}
                 button
               >
                 <ListItemIcon>
@@ -150,8 +140,7 @@ const AdminPage: FC<Props> = ({ title, children }) => {
                 <ListItemText primary="Users" />
               </ListItem>
               <ListItem
-                selected={selectedIndex === 6}
-                onClick={()=>handleListItemClick(6)}
+                selected={selectedPath === "/admin/roles"}
                 button
               >
                 <ListItemIcon>

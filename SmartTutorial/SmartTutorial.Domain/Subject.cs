@@ -14,7 +14,7 @@ namespace SmartTutorial.Domain
         public DateTime Date { get; set; }
         public virtual List<Topic> Topics { get; set; }
 
-        public virtual int ThemeId { get; set; }
-        public virtual Theme Theme { get; set; }
+        public virtual int CourseId { get; set; }
+        public virtual Course Course { get; set; }
     }
 }

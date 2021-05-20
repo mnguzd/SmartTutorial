@@ -1,14 +1,14 @@
 import {webAPIUrl} from "../../AppSettings";
 import axios from "axios";
 import {axiosAuthorized} from "../axios/axios";
-import {IThemeData, IThemeDataWithSubjects, IThemeInputData} from "./models/IThemeData";
-import {IServerCreateThemeError} from "./models/errors/IThemeErrors";
+import {ICourseData, ICourseDataWithSubjects, ICourseInputData} from "./models/ICourseData";
+import {IServerCreateCourseError} from "./models/errors/ICourseErrors";
 import {IPaginatedRequest, IPaginatedResult} from "./models/pagination/IPagination";
 
-export async function getThemes(): Promise<IThemeData[]> {
-  let data: IThemeData[] = [];
+export async function getCourses(): Promise<ICourseData[]> {
+  let data: ICourseData[] = [];
   await axios
-    .get<IThemeData[]>(webAPIUrl + "/themes", {
+    .get<ICourseData[]>(webAPIUrl + "/courses", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -20,12 +20,12 @@ export async function getThemes(): Promise<IThemeData[]> {
   return data;
 }
 
-export async function getThemeWithSubjects(
+export async function getCourseWithSubjects(
   id: number
-): Promise<IThemeDataWithSubjects | null> {
-  let data: IThemeDataWithSubjects | null = null;
+): Promise<ICourseDataWithSubjects | null> {
+  let data: ICourseDataWithSubjects | null = null;
   await axios
-    .get<IThemeDataWithSubjects>(webAPIUrl + "/themes/" + id.toString(), {
+    .get<ICourseDataWithSubjects>(webAPIUrl + "/courses/" + id.toString(), {
       headers: {
         "Content-Type": "application/json",
       },
@@ -36,11 +36,11 @@ export async function getThemeWithSubjects(
   return data;
 }
 
-export async function createNewTheme(
-  data: IThemeInputData,
+export async function createNewCourse(
+  data: ICourseInputData,
   token: string
-): Promise<IServerCreateThemeError | null> {
-  let error: IServerCreateThemeError = {
+): Promise<IServerCreateCourseError | null> {
+  let error: IServerCreateCourseError = {
     name: "imageUrl",
     type: "server",
     message: "",
@@ -61,19 +61,19 @@ export async function createNewTheme(
   return null;
 }
 
-export async function getThemesPaginated(
+export async function getCoursesPaginated(
   request: IPaginatedRequest,
   token: string
-): Promise<IPaginatedResult<IThemeData>> {
-  let result: IPaginatedResult<IThemeData> = {
+): Promise<IPaginatedResult<ICourseData>> {
+  let result: IPaginatedResult<ICourseData> = {
     pageIndex: 0,
     pageSize: 0,
     total: 0,
     items: [],
   };
   await axiosAuthorized
-    .post<IPaginatedResult<IThemeData>>(
-      `${webAPIUrl}/themes/getPaginated`,
+    .post<IPaginatedResult<ICourseData>>(
+      `${webAPIUrl}/courses/getPaginated`,
       request,
       {
         headers: { Authorization: `Bearer ${token}` },
@@ -86,10 +86,10 @@ export async function getThemesPaginated(
   return result;
 }
 
-export async function deleteTheme(id: number, token: string): Promise<boolean> {
+export async function deleteCourse(id: number, token: string): Promise<boolean> {
   let result: boolean = false;
   await axiosAuthorized
-    .delete(`${webAPIUrl}/themes/${id}`, {
+    .delete(`${webAPIUrl}/courses/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then(() => {

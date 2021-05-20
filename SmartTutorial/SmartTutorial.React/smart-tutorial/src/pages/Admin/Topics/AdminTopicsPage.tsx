@@ -128,7 +128,7 @@ export default function AdminTopicsPage() {
     callBackTopics();
   }, [callBackTopics]);
   return (
-    <AdminPage title="Admin | Themes">
+    <AdminPage title="Admin | Topics">
       <div className={classes.root}>
         <Grid container direction="column" alignItems="flex-end">
           <Button

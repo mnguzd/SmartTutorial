@@ -10,6 +10,6 @@ namespace SmartTutorial.API.Dtos.SubjectDtos
         public int Complexity { get; set; }
         public int Id { get; set; }
         public List<TopicDto> Topics { get; set; }
-        public ThemeDto Theme { get; set; }
+        public CourseDto Course { get; set; }
     }
 }
