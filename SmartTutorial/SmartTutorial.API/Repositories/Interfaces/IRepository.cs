@@ -17,7 +17,7 @@ namespace SmartTutorial.API.Repositories.Interfaces
 
         Task<bool> SaveAll();
 
-        Task<TEntity> Add<TEntity>(TEntity entity) where TEntity : BaseEntity;
+        Task<TEntity> Add<TEntity>(TEntity entity,bool saveNow) where TEntity : BaseEntity;
 
         TEntity Update<TEntity>(TEntity entity) where TEntity : BaseEntity;
 

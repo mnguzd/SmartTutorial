@@ -1,15 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using SmartTutorial.API.Dtos.TopicDtos;
-using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace SmartTutorial.API.Services.Implementations
+namespace SmartTutorial.API.Services
 {
     public class TopicService : ITopicService
     {
@@ -31,16 +29,7 @@ namespace SmartTutorial.API.Services.Implementations
                 Order = dto.Order,
                 SubjectId = dto.SubjectId
             };
-            try
-            {
-                await _repository.Add(topic);
-                await _repository.SaveAll();
-            }
-            catch
-            {
-                throw new ApiException(HttpStatusCode.BadRequest, "Error with creating this theme");
-            }
-
+            await _repository.Add(topic, true);
             var topicDto = _mapper.Map<TopicDto>(topic);
             return topicDto;
         }

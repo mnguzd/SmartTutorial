@@ -9,7 +9,7 @@ using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
 
-namespace SmartTutorial.API.Services.Implementations
+namespace SmartTutorial.API.Services
 {
     public class SubjectService : ISubjectService
     {
@@ -25,9 +25,7 @@ namespace SmartTutorial.API.Services.Implementations
         public async Task<SubjectDto> Add(AddSubjectDto dto)
         {
             var subject = new Subject {Complexity = dto.Complexity, Name = dto.Name, CourseId = dto.ThemeId};
-            //add with Save
-            await _repository.Add(subject);
-            await _repository.SaveAll();
+            await _repository.Add(subject,true);
             var subjectDto = _mapper.Map<SubjectDto>(subject);
             return subjectDto;
         }

@@ -18,7 +18,7 @@ using SmartTutorial.API.Infrastucture.Configurations;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain.Auth;
 
-namespace SmartTutorial.API.Services.Implementations
+namespace SmartTutorial.API.Services
 {
     public class AccountService : IAccountService
     {

@@ -7,7 +7,7 @@ using SmartTutorial.Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace SmartTutorial.API.Services.Implementations
+namespace SmartTutorial.API.Services
 {
     public class CourseService : ICourseService
     {
@@ -30,8 +30,7 @@ namespace SmartTutorial.API.Services.Implementations
         public async Task<CourseDto> Add(AddCourseDto dto)
         {
             var course = new Course() { Name = dto.Name, Description = dto.Description, ImageUrl = dto.ImageUrl };
-            await _repository.Add(course);
-            await _repository.SaveAll();
+            await _repository.Add(course,true);
             var courseDto = _mapper.Map<CourseDto>(course);
             return courseDto;
         }

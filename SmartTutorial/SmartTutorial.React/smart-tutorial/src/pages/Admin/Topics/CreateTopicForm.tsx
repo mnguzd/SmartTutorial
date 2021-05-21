@@ -34,7 +34,7 @@ const schema = yup.object().shape({
   content: yup
     .string()
     .max(100000, "Content is more than 100000 characters")
-    .min(20,"Content is less than 20 characters")
+    .min(20, "Content is less than 20 characters")
     .required("Provide any content"),
   order: yup
     .number()
@@ -128,9 +128,22 @@ export const CreateTopicForm: FC<Props> = ({
                   "charmap print preview anchor help",
                   "searchreplace visualblocks code",
                   "insertdatetime media table paste wordcount",
+                  "codesample",
+                ],
+                codesample_languages: [
+                  { text: "HTML/XML", value: "markup" },
+                  { text: "JavaScript", value: "javascript" },
+                  { text: "CSS", value: "css" },
+                  { text: "PHP", value: "php" },
+                  { text: "Ruby", value: "ruby" },
+                  { text: "Python", value: "python" },
+                  { text: "Java", value: "java" },
+                  { text: "C", value: "c" },
+                  { text: "C#", value: "csharp" },
+                  { text: "C++", value: "cpp" },
                 ],
                 toolbar:
-                  "undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link codesample | ltr rtl",
+                  "undo redo | bold italic underline strikethrough codesample | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media template link codesample | ltr rtl",
               }}
             />
           )}

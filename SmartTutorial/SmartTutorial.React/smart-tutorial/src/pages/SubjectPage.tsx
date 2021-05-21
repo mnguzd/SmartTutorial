@@ -9,15 +9,16 @@ import {
   ListItem,
   ListItemText,
   IconButton,
-  CssBaseline,
 } from "@material-ui/core";
 import Header from "../components/Header/Header";
 import { Helmet } from "react-helmet";
 import { ISubjectDataWithTopics } from "../services/api/models/ISubjectData";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
-import { Home, Close } from "@material-ui/icons";
+import { Home, ChevronLeft } from "@material-ui/icons";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import clsx from "clsx";
+import Footer from "../components/Footer/Footer";
+import { Pagination } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -26,7 +27,7 @@ const useStyles = makeStyles((theme) =>
     },
     appBar: {
       zIndex: theme.zIndex.drawer + 1,
-      margin:0,
+      margin: 0,
     },
     drawer: {
       width: 200,
@@ -41,26 +42,27 @@ const useStyles = makeStyles((theme) =>
     drawerHeader: {
       display: "flex",
       marginTop: theme.spacing(8),
+      marginBottom: theme.spacing(-1),
       justifyContent: "flex-end",
     },
+    container: {
+      marginTop: theme.spacing(20),
+    },
+    mainIcon: {
+      marginRight: theme.spacing(2),
+    },
     content: {
-      flexGrow: 1,
-      transition: theme.transitions.create("margin", {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-      }),
       marginLeft: -200,
-      padding:theme.spacing(2),
-      marginBottom: theme.spacing(8),
+      padding: theme.spacing(2),
     },
     contentShift: {
-      transition: theme.transitions.create("margin", {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
       marginLeft: 0,
-      padding:theme.spacing(2),
-      marginBottom: theme.spacing(8),
+      padding: theme.spacing(2),
+    },
+    pagination:{
+      display:"flex",
+      justifyContent:"center",
+      marginTop:theme.spacing(5),
     },
     bread: {
       marginTop: theme.spacing(8),
@@ -75,17 +77,30 @@ const useStyles = makeStyles((theme) =>
 interface IRouteParams {
   subjectId: string;
   topicId: string;
+  courseId: string;
+}
+interface Props {
+  isContentLoading: boolean;
 }
 
-const SubjectPage: FC = ({ children }) => {
+const SubjectPage: FC<Props> = ({ children, isContentLoading }) => {
   const [subject, setSubject] = useState<ISubjectDataWithTopics | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const [selectedTopicId, setSelectedTopicId] = useState<number>(-1);
   const [open, setOpen] = useState<boolean>(true);
+  const [page, setPage] = useState<number>(1);
   const params = useParams<IRouteParams>();
   const history = useHistory();
 
   const classes = useStyles();
+
+  const handleChange = (value: number) => {
+    setPage(value);
+    history.push(
+      `/courses/${subject?.course.id}/subjects/${subject?.id}/topics/${
+        subject?.topics[value - 1].id
+      }`
+    );
+  };
 
   const handleDrawerClose = () => {
     setOpen(false);
@@ -96,95 +111,119 @@ const SubjectPage: FC = ({ children }) => {
       if (params.subjectId) {
         const ID: number = Number(params.subjectId);
         const data = await getSubjectWithTopics(ID);
+        data?.topics.sort((x, y) => x.order - y.order);
+        if (
+          typeof params.topicId === "undefined" &&
+          data &&
+          data?.topics.length > 0
+        ) {
+          setSelectedTopicId(Number(data.topics[0].id));
+          history.push(
+            `/courses/${data.course.id}/subjects/${data.id}/topics/${data.topics[0].id}`
+          );
+        }
         setSubject(data);
+        if (params.topicId) {
+          setSelectedTopicId(Number(params.topicId));
+          if (data) {
+            const topic = data.topics.find(
+              (x) => x.id === Number(params.topicId)
+            );
+            if (topic) {
+              setPage(data.topics.indexOf(topic) + 1);
+            }
+          }
+        }
       }
     }
-    if (params.topicId) {
-      setSelectedTopicId(Number(params.topicId));
-    }
-    setLoading(true);
     getSubject();
-    setLoading(false);
   }, [history, params.subjectId, params.topicId]);
   return (
     <div>
-      {loading ? (
-        <ProgressCircle color="primary" />
-      ) : (
-        <div>
-          <Helmet>
-            <title>{subject ? subject.name : "Not found"}</title>
-          </Helmet>
-          <CssBaseline/>
-          <div className={classes.root}>
-            <div className={classes.appBar}>
-              <Header setOpenDrawer={setOpen} open={open} />
-            </div>
-            <Drawer
-              className={classes.drawer}
-              variant="persistent"
-              open={open}
-              classes={{
-                paper: classes.drawerPaper,
-              }}
-            >
-              <div className={classes.drawerHeader}>
-                <IconButton onClick={handleDrawerClose}>
-                  <Close />
-                </IconButton>
-              </div>
-              <div className={classes.drawerContainer}>
-                <List dense={true}>
-                  {subject?.topics.map((value, index) => (
-                    <ListItem
-                      disabled={loading}
-                      component={Link}
-                      divider={index < subject.topics.length - 1}
-                      to={`/courses/${subject.course.id}/subjects/${subject.id}/topics/${value.id}`}
-                      button
-                      key={value.id}
-                      selected={selectedTopicId === value.id}
-                    >
-                      <ListItemText
-                        primary={value.name}
-                        classes={{ primary: classes.listItemText }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </div>
-            </Drawer>
-            <div
-              className={clsx(classes.content, {
-                [classes.contentShift]: open,
-              })}
-            >
-              <Breadcrumbs aria-label="breadcrumb" className={classes.bread}>
-                <StyledBreadcrumb
-                  component={Link}
-                  to="/"
-                  label="Home"
-                  clickable
-                  icon={<Home />}
-                />
-                <StyledBreadcrumb
-                  component={Link}
-                  to={`/courses/${subject?.course.id}`}
-                  label={`${subject?.course.name}`}
-                  clickable
-                />
-                <StyledBreadcrumb
-                  component={Link}
-                  to={`/courses/${subject?.course.id}/subjects/${subject?.id}`}
-                  label={`${subject?.name}`}
-                  clickable
-                />
-              </Breadcrumbs>
-              {children}
-            </div>
-          </div>
+      <Helmet>
+        <title>{subject ? subject.name : ""}</title>
+      </Helmet>
+      <div className={classes.root}>
+        <div className={classes.appBar}>
+          <Header setOpenDrawer={setOpen} open={open} />
         </div>
-      )}
+        <Drawer
+          className={classes.drawer}
+          variant="persistent"
+          open={open}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          <div className={classes.drawerHeader}>
+            <IconButton onClick={handleDrawerClose}>
+              <ChevronLeft color="primary" />
+            </IconButton>
+          </div>
+          <div className={classes.drawerContainer}>
+            <List dense={true}>
+              {subject?.topics.map((value, index) => (
+                <ListItem
+                  component={Link}
+                  divider={index < subject.topics.length - 1}
+                  to={`/courses/${subject.course.id}/subjects/${subject.id}/topics/${value.id}`}
+                  button
+                  key={value.id}
+                  selected={selectedTopicId === value.id}
+                >
+                  <ListItemText
+                    primary={value.name}
+                    classes={{ primary: classes.listItemText }}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </div>
+        </Drawer>
+        <div
+          className={clsx(classes.content, {
+            [classes.contentShift]: open,
+          })}
+        >
+          <Breadcrumbs aria-label="breadcrumb" className={classes.bread}>
+            <StyledBreadcrumb
+              component={Link}
+              to="/"
+              label="Home"
+              clickable
+              icon={<Home />}
+            />
+            {subject ? (
+              <StyledBreadcrumb
+                component={Link}
+                to={`/courses/${subject.course.id}`}
+                label={`${subject.course.name}`}
+                clickable
+              />
+            ) : null}
+            {subject ? <StyledBreadcrumb label={`${subject.name}`} /> : null}
+          </Breadcrumbs>
+          {children ? (
+            <div>
+              {children}
+              {isContentLoading ? (
+                <ProgressCircle color="primary" />
+              ) : (
+                <div>
+                    <Pagination
+                      count={subject?.topics.length}
+                      className={classes.pagination}
+                      page={page}
+                      onChange={(_e, v) => handleChange(v)}
+                      color="primary"
+                    ></Pagination>
+                  <Footer />
+                </div>
+              )}
+            </div>
+          ) : null}
+        </div>
+      </div>
     </div>
   );
 };

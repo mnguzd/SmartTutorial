@@ -18,6 +18,7 @@
     "customize-cra": "^1.0.0",
     "html-react-parser": "^1.2.6",
     "moment": "^2.29.1",
+    "prismjs": "^1.23.0",
     "react": "^17.0.2",
     "react-app-rewired": "^2.1.8",
     "react-dom": "^17.0.2",
@@ -51,6 +52,7 @@
     ]
   },
   "devDependencies": {
+    "@types/prismjs": "^1.16.5",
     "@types/react-helmet": "^6.1.1",
     "babel-plugin-import": "^1.13.3"
   }

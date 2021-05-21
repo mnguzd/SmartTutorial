@@ -10,7 +10,7 @@ using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.Domain;
 
-namespace SmartTutorial.API.Repositories.Implementations
+namespace SmartTutorial.API.Repositories
 {
     public class EfCoreRepository : IRepository
     {
@@ -45,10 +45,14 @@ namespace SmartTutorial.API.Repositories.Implementations
             return await _dbContext.SaveChangesAsync() >= 0;
         }
 
-        //add Save
-        public async Task<TEntity> Add<TEntity>(TEntity entity) where TEntity : BaseEntity
+        public async Task<TEntity> Add<TEntity>(TEntity entity, bool saveNow = false) where TEntity : BaseEntity
         {
             await _dbContext.Set<TEntity>().AddAsync(entity);
+            if (saveNow)
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+
             return entity;
         }
 

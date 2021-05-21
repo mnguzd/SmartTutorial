@@ -7,9 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SmartTutorial.API.Infrastucture.Extensions;
 using SmartTutorial.API.Mapping;
-using SmartTutorial.API.Repositories.Implementations;
+using SmartTutorial.API.Repositories;
 using SmartTutorial.API.Repositories.Interfaces;
-using SmartTutorial.API.Services.Implementations;
+using SmartTutorial.API.Services;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain.Auth;
 
@@ -46,6 +46,7 @@ namespace SmartTutorial.API
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<ITopicService, TopicService>();
+            services.AddScoped<IQuestionService, QuestionService>();
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddAuthSwagger();
         }
