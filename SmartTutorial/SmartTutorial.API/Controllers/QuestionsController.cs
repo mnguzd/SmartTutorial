@@ -44,11 +44,10 @@ namespace SmartTutorial.API.Controllers
             return Ok(question);
         }
 
-        [AllowAnonymous]
         [HttpGet("byTopicId/{topicId:int}")]
         public async Task<IActionResult> GetByTopicId(int topicId)
         {
-            var questions = await _questionService.GetTopicQuestions(topicId);
+            var questions = await _questionService.GetTopicQuestions(topicId,User?.Identity.Name);
             return Ok(questions);
         }
 
@@ -58,6 +57,13 @@ namespace SmartTutorial.API.Controllers
         {
             var question = await _questionService.GetWithAnswers(id);
             return Ok(question);
+        }
+
+        [HttpPost("answer")]
+        public async Task<IActionResult> AnswerTheQuestion(AnswerTheQuestionDto dto)
+        {
+            var result = await _questionService.AnswerTheQuestion(dto, User?.Identity.Name);
+            return Ok(result);
         }
 
         [HttpPost]

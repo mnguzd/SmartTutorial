@@ -22,6 +22,9 @@ namespace SmartTutorial.EFMapping
                 .IsRequired()
                 .HasMaxLength(30)
                 .HasDefaultValue("User");
+            builder.HasMany(x => x.Questions)
+                .WithMany(y => y.Users)
+                .UsingEntity(x => x.ToTable("UsersQuestions"));
         }
     }
 }

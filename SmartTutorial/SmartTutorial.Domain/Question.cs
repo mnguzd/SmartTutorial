@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SmartTutorial.Domain.Auth;
 
 namespace SmartTutorial.Domain
 {
@@ -13,6 +14,8 @@ namespace SmartTutorial.Domain
 
         public int TopicId { get; set; }
         public virtual Topic Topic { get; set; }
+
+        public virtual ICollection<User> Users { get; set; }
 
         public virtual List<Answer> Answers { get; set; }
     }

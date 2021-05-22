@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace SmartTutorial.Domain.Auth
 {
@@ -10,5 +11,6 @@ namespace SmartTutorial.Domain.Auth
         public string LastName { get; set; }
         public string AvatarPath { get; set; }
         public string RefreshToken { get; set; }
+        public virtual ICollection<Question> Questions { get; set; }
     }
 }

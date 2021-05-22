@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using SmartTutorial.API.Dtos.QuestionDtos;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
+using SmartTutorial.Domain.Auth;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Services
@@ -12,11 +15,13 @@ namespace SmartTutorial.API.Services
     public class QuestionService : IQuestionService
     {
         private readonly IRepository _repository;
+        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
 
-        public QuestionService(IRepository repository, IMapper mapper)
+        public QuestionService(IRepository repository, UserManager<User> userManager, IMapper mapper)
         {
             _repository = repository;
+            _userManager = userManager;
             _mapper = mapper;
         }
         public async Task<QuestionDto> Add(AddQuestionWithAnswersDto dto)
@@ -24,13 +29,32 @@ namespace SmartTutorial.API.Services
             var question = new Question() { Answer = dto.Answer, Text = dto.Text, TopicId = dto.TopicId };
             foreach (var answerDto in dto.Answers)
             {
-                var answer = new Answer() { IsTrue = answerDto.IsTrue, QuestionId = question.Id, Text = answerDto.Text };
+                var answer = new Answer() {QuestionId = question.Id, Text = answerDto.Text };
                 question.Answers.Add(answer);
             }
 
             await _repository.Add(question, true);
             var questionDto = _mapper.Map<QuestionDto>(question);
             return questionDto;
+        }
+
+        public async Task<bool> AnswerTheQuestion(AnswerTheQuestionDto dto, string userName)
+        {
+            var question = await _repository.GetById<Question>(dto.Id);
+            var user = await _userManager.FindByNameAsync(userName);
+            var result = dto.UserAnswer == question.Answer;
+            if (question.Users.Contains(user))
+            {
+                return result;
+            }
+
+            question.Users.Add(user);
+            if (result)
+            {
+                user.Rating++;
+            }
+            await _repository.SaveAll();
+            return result;
         }
 
         public async Task Delete(int id)
@@ -46,11 +70,17 @@ namespace SmartTutorial.API.Services
             return questionsDto;
         }
 
-        public async Task<IList<QuestionWithAnswersDto>> GetTopicQuestions(int id)
+        public async Task<IList<QuestionWithAnswersDto>> GetTopicQuestions(int id, string userName)
         {
             var topic = await _repository.GetById<Topic>(id);
             var questions = topic.Questions;
             var questionsDto = _mapper.Map<List<QuestionWithAnswersDto>>(questions);
+            var user = await _userManager.FindByNameAsync(userName);
+            foreach (var questionDto in questionsDto)
+            {
+                questionDto.AlreadyAnswered =
+                    user.Questions.Contains(questions.FirstOrDefault(x => x.Id == questionDto.Id));
+            }
             return questionsDto;
         }
 
