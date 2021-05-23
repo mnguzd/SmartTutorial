@@ -121,6 +121,8 @@ const AdminPage: FC<Props> = ({ title, children }) => {
               <ListItem
                 selected={selectedPath === "/admin/questions"}
                 button
+                component={Link}
+                to="/admin/questions"
               >
                 <ListItemIcon>
                   <QuestionAnswer />

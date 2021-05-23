@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import CustomLoadingOverlay from "../../../components/CustomLoadingOverlay";
 import {
   DataGrid,
-  GridCellParams,
   GridColDef,
   GridFilterModel,
   GridFilterModelParams,
@@ -14,20 +13,20 @@ import {
 } from "@material-ui/data-grid";
 import { makeStyles } from "@material-ui/core/styles";
 import {
-  deleteCourse,
-  getCoursesPaginated,
-} from "../../../services/api/CoursesApi";
+  deleteQuestion,
+  getQuestionsPaginated,
+} from "../../../services/api/QuestionApi";
 import { useAuth } from "../../../auth/Auth";
-import { Avatar, Grid } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import { DialogForm } from "../../../components/DialogForm/DialogForm";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { CreateCourseForm } from "./CreateCourseForm";
-import { ICourseData } from "../../../services/api/models/ICourseData";
+import { IQuestionFlattenedTableData } from "../../../services/api/models/IQuestionData";
 import {
   IPaginatedRequest,
   IPaginatedResult,
 } from "../../../services/api/models/pagination/IPagination";
+import { CreateQuestionForm } from "./CreateQuestionForm";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,14 +38,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
   },
-  large: {
-    width: theme.spacing(7),
-    height: theme.spacing(7),
-  },
 }));
 
-export default function AdminCoursesPage() {
-  const [courses, setCourses] = useState<ICourseData[]>([]);
+export default function AdminQuestionsPage() {
+  const [questions, setQuestions] = useState<IQuestionFlattenedTableData[]>([]);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -72,8 +67,8 @@ export default function AdminCoursesPage() {
     setSortModel(params.sortModel);
   }, []);
 
-  const callBackCourses = useCallback(
-    async function getCourses(): Promise<void> {
+  const callBackQuestions = useCallback(
+    async function GetQuestions(): Promise<void> {
       setLoading(true);
       const request: IPaginatedRequest = {
         pageIndex: pageNumber,
@@ -81,7 +76,8 @@ export default function AdminCoursesPage() {
       };
       if (sortModel && sortModel[0]) {
         request.sortDirection = sortModel[0].sort === "asc" ? "Asc" : "Desc";
-        request.columnNameForSorting = sortModel[0].field;
+        request.columnNameForSorting =
+          sortModel[0].field === "topic" ? "topic.name" : sortModel[0].field;
       }
       if (
         filterModel &&
@@ -93,18 +89,19 @@ export default function AdminCoursesPage() {
           logicalOperator: 0,
           filters: [
             {
-              path: filterModel.items[0].columnField,
+              path:
+                filterModel.items[0].columnField === "topic"
+                  ? "topic.name"
+                  : filterModel.items[0].columnField,
               value: filterModel.items[0].value,
               operation: filterModel.items[0].operatorValue,
             },
           ],
         };
       }
-      const result: IPaginatedResult<ICourseData> = await getCoursesPaginated(
-        request,
-        accessToken
-      );
-      setCourses(result.items);
+      const result: IPaginatedResult<IQuestionFlattenedTableData> =
+        await getQuestionsPaginated(request, accessToken);
+      setQuestions(result.items);
       if (result.total !== totalCount) {
         setTotalCount(result.total);
       }
@@ -112,22 +109,22 @@ export default function AdminCoursesPage() {
     },
     [accessToken, pageNumber, pageSize, totalCount, sortModel, filterModel]
   );
-  async function deleteAndUpdateCourse(id: GridRowId, token: string) {
-    const success = await deleteCourse(Number(id), token);
+  async function deleteAndUpdateQuestion(id: GridRowId, token: string) {
+    const success = await deleteQuestion(Number(id), token);
     if (success) {
       setTotalCount((x) => x - 1);
     }
   }
   async function onDeleteSubmit() {
-    selectionModel.map((val) => deleteAndUpdateCourse(val, accessToken));
+    selectionModel.map((val) => deleteAndUpdateQuestion(val, accessToken));
     setSelectionModel([]);
-    await callBackCourses();
+    await callBackQuestions();
   }
   useEffect(() => {
-    callBackCourses();
-  }, [callBackCourses]);
+    callBackQuestions();
+  }, [callBackQuestions]);
   return (
-    <AdminPage title="Admin | Courses">
+    <AdminPage title="Admin | Questions">
       <div className={classes.root}>
         <Grid container direction="column" alignItems="flex-end">
           <Button
@@ -142,7 +139,7 @@ export default function AdminCoursesPage() {
         <DataGrid
           rowHeight={40}
           columns={columns}
-          rows={courses}
+          rows={questions}
           autoHeight
           pagination
           checkboxSelection
@@ -189,48 +186,74 @@ export default function AdminCoursesPage() {
         </Grid>
       </div>
       <DialogForm openPopup={openPopup} setOpenPopup={setOpenPopup}>
-        <CreateCourseForm
+        <CreateQuestionForm
           accessToken={accessToken}
           setOpenPopup={setOpenPopup}
           loading={loading}
-          callBack={callBackCourses}
+          callBack={callBackQuestions}
         />
       </DialogForm>
       <Button onClick={() => setOpenPopup(true)} />
     </AdminPage>
   );
 }
+
 const columns: GridColDef[] = [
   {
     headerName: "Id",
     headerAlign: "center",
-    align: "center",
     field: "id",
     type: "number",
     width: 100,
   },
   {
-    headerName: "Name",
+    headerName: "Question",
     headerAlign: "center",
-    field: "name",
+    field: "text",
     width: 150,
   },
   {
-    headerName: "Image",
+    headerName: "Answer",
     headerAlign: "center",
-    align: "center",
-    field: "imageUrl",
-    sortable: false,
-    filterable: false,
-    width: 130,
-    renderCell: (params: GridCellParams) => (
-      <Avatar src={params.value?.toString()} variant="square" />
-    ),
+    field: "answer",
+    width: 150,
   },
   {
-    headerName: "Description",
+    headerName: "Topic",
     headerAlign: "center",
-    field: "description",
-    flex: 1,
+    field: "topic",
+    width: 150,
+  },
+  {
+    headerName: "Option 1",
+    headerAlign: "center",
+    field: "option1",
+    width: 150,
+    sortable: false,
+    filterable: false,
+  },
+  {
+    headerName: "Option 2",
+    headerAlign: "center",
+    field: "option2",
+    width: 150,
+    sortable: false,
+    filterable: false,
+  },
+  {
+    headerName: "Option 3",
+    headerAlign: "center",
+    field: "option3",
+    width: 150,
+    sortable: false,
+    filterable: false,
+  },
+  {
+    headerName: "Option 4",
+    headerAlign: "center",
+    field: "option4",
+    width: 150,
+    sortable: false,
+    filterable: false,
   },
 ];

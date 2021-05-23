@@ -54,7 +54,7 @@ const TopicPage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
             <Typography className={classes.bold} variant="h6" align="center">
               {topic.name}
             </Typography>
-            {parse(topic.content)}
+            {parse(topic.content, { trim: true })}
             <QuestionCard {...topic} />
           </div>
         ) : (

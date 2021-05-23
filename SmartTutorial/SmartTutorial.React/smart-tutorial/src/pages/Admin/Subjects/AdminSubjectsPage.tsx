@@ -22,8 +22,11 @@ import { Button } from "@material-ui/core";
 import { DialogForm } from "../../../components/DialogForm/DialogForm";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { CreateSubjectForm } from "./CreateSubjectForm";
-import {ISubjectTableData} from "../../../services/api/models/ISubjectData";
-import {IPaginatedRequest, IPaginatedResult} from "../../../services/api/models/pagination/IPagination";
+import { ISubjectTableData } from "../../../services/api/models/ISubjectData";
+import {
+  IPaginatedRequest,
+  IPaginatedResult,
+} from "../../../services/api/models/pagination/IPagination";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -79,7 +82,7 @@ export default function AdminSubjectsPage() {
       if (
         filterModel &&
         filterModel.items[0].value &&
-        filterModel.items[0].operatorValue&&
+        filterModel.items[0].operatorValue &&
         filterModel.items[0].columnField
       ) {
         request.requestFilters = {
@@ -191,17 +194,18 @@ export default function AdminSubjectsPage() {
           callBack={callBackSubjects}
         />
       </DialogForm>
-      <Button onClick={() => setOpenPopup(true)}/>
+      <Button onClick={() => setOpenPopup(true)} />
     </AdminPage>
   );
 }
+
 const columns: GridColDef[] = [
   {
     headerName: "Id",
     headerAlign: "center",
     field: "id",
     type: "number",
-    width: 70,
+    width: 100,
   },
   {
     headerName: "Name",

@@ -28,6 +28,13 @@ namespace SmartTutorial.API.Controllers
             return Ok(topicList);
         }
 
+        [HttpGet("lightTopics")]
+        public async Task<IActionResult> GetLightTopics()
+        {
+            var topicList = await _topicService.GetLightTopics();
+            return Ok(topicList);
+        }
+
         [AllowAnonymous]
         [HttpPost("getPaginated")]
         public async Task<IActionResult> Post(PagedRequest request)

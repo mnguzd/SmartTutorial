@@ -12,8 +12,9 @@ namespace SmartTutorial.API.Services.Interfaces
         Task<QuestionDto> Add(AddQuestionWithAnswersDto dto);
         Task<QuestionWithAnswersDto> GetWithAnswers(int id);
         Task<bool> AnswerTheQuestion(AnswerTheQuestionDto dto, string userName);
+        Task<IList<QuestionWithAnswersDto>> GetTopicQuestions(int id);
         Task<IList<QuestionWithAnswersDto>> GetTopicQuestions(int id, string userName);
-        Task<PaginatedResult<QuestionDto>> GetPaginated(PagedRequest request);
+        Task<PaginatedResult<QuestionTableDto>> GetPaginated(PagedRequest request);
         Task Delete(int id);
     }
 }

@@ -3,6 +3,7 @@ import { axiosAuthorized } from "../axios/axios";
 import {
   ITopicData,
   ITopicInputData,
+  ITopicNameData,
   ITopicTableData,
 } from "./models/ITopicData";
 import { IServerCreateTopicError } from "./models/errors/ITopicErrors";
@@ -12,15 +13,25 @@ import {
 } from "./models/pagination/IPagination";
 import axios from "axios";
 
-export async function getTopic(
-  id: number
-): Promise<ITopicData | null> {
+export async function getTopic(id: number): Promise<ITopicData | null> {
   let data: ITopicData | null = null;
   await axios
     .get<ITopicData>(`${webAPIUrl}/topics/${id}`, {
       headers: {
         "Content-Type": "application/json",
       },
+    })
+    .then((response) => {
+      data = response.data;
+    })
+    .catch((err) => console.log(err.response));
+  return data;
+}
+export async function getLightTopics(token: string): Promise<ITopicNameData[]> {
+  let data: ITopicNameData[] = [];
+  await axios
+    .get<ITopicNameData[]>(`${webAPIUrl}/topics/lightTopics`, {
+      headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
       data = response.data;

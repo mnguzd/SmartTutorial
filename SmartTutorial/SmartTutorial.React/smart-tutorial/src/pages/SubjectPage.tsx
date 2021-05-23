@@ -59,10 +59,10 @@ const useStyles = makeStyles((theme) =>
       marginLeft: 0,
       padding: theme.spacing(2),
     },
-    pagination:{
-      display:"flex",
-      justifyContent:"center",
-      marginTop:theme.spacing(5),
+    pagination: {
+      display: "flex",
+      justifyContent: "center",
+      marginTop: theme.spacing(5),
     },
     bread: {
       marginTop: theme.spacing(8),
@@ -210,13 +210,13 @@ const SubjectPage: FC<Props> = ({ children, isContentLoading }) => {
                 <ProgressCircle color="primary" />
               ) : (
                 <div>
-                    <Pagination
-                      count={subject?.topics.length}
-                      className={classes.pagination}
-                      page={page}
-                      onChange={(_e, v) => handleChange(v)}
-                      color="primary"
-                    ></Pagination>
+                  <Pagination
+                    count={subject?.topics.length}
+                    className={classes.pagination}
+                    page={page}
+                    onChange={(_e, v) => handleChange(v)}
+                    color="primary"
+                  ></Pagination>
                   <Footer />
                 </div>
               )}

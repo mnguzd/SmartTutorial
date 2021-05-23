@@ -7,6 +7,10 @@ export interface ITopicData {
   order: number;
   subject: ISubjectData;
 }
+export interface ITopicNameData{
+  name:string;
+  id:number;
+}
 export interface ITopicTableData {
   id: number;
   name: string;

@@ -54,6 +54,13 @@ namespace SmartTutorial.API.Services
             return topicDto;
         }
 
+        public async Task<IList<TopicWithNoContentDto>> GetLightTopics()
+        {
+            var topics = await _repository.GetAll<Topic>();
+            var topicsDto = _mapper.Map<List<TopicWithNoContentDto>>(topics);
+            return topicsDto;
+        }
+
         public async Task<PaginatedResult<TopicDto>> GetPaginated(PagedRequest request)
         {
             var result = await _repository.GetPagedData<Topic, TopicDto>(request);

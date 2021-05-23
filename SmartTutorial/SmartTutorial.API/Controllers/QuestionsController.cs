@@ -47,7 +47,15 @@ namespace SmartTutorial.API.Controllers
         [HttpGet("byTopicId/{topicId:int}")]
         public async Task<IActionResult> GetByTopicId(int topicId)
         {
-            var questions = await _questionService.GetTopicQuestions(topicId,User?.Identity.Name);
+            var questions = await _questionService.GetTopicQuestions(topicId, User?.Identity.Name);
+            return Ok(questions);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("guest/byTopicId/{topicId:int}")]
+        public async Task<IActionResult> GetByTopicIdGuest(int topicId)
+        {
+            var questions = await _questionService.GetTopicQuestions(topicId);
             return Ok(questions);
         }
 

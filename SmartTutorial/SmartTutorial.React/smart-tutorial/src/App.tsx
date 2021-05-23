@@ -12,6 +12,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminCoursesPage from "./pages/Admin/Courses/AdminCoursesPage";
 import AdminSubjectsPage from "./pages/Admin/Subjects/AdminSubjectsPage";
 import AdminTopicsPage from "./pages/Admin/Topics/AdminTopicsPage";
+import AdminQuestionsPage from "./pages/Admin/Questions/AdminQuestionsPage";
 import AccountPage from "./pages/AccountPage";
 import { ThemeProvider } from "@material-ui/core/styles";
 import MainTheme from "./themes/MainTheme";
@@ -30,6 +31,7 @@ function App() {
             <Route path="/Admin/Courses" component={AdminCoursesPage} />
             <Route path="/Admin/Subjects" component={AdminSubjectsPage} />
             <Route path="/Admin/Topics" component={AdminTopicsPage}/>
+            <Route path="/Admin/Questions" component={AdminQuestionsPage}/>
             <Route path="/Admin" component={AdminDashboard} />
             <Route
               path="/Courses/:courseId/Subjects/:subjectId/Topics/:topicId"

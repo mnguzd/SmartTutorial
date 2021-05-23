@@ -4,7 +4,6 @@ import {
   CardContent,
   Button,
   FormControl,
-  FormLabel,
   RadioGroup,
   FormControlLabel,
   Radio,
@@ -20,6 +19,7 @@ import { useAuth } from "../../auth/Auth";
 import {
   answerTheQuestion,
   getQuestionsByTopicId,
+  getGuestQuestionsByTopicId,
 } from "../../services/api/QuestionApi";
 import { ITopicData } from "../../services/api/models/ITopicData";
 import { Typography } from "@material-ui/core";
@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     card: {
       maxWidth: 400,
+      paddingBottom:theme.spacing(-2),
     },
     root: {
       marginLeft: theme.spacing(4),
@@ -40,8 +41,21 @@ const useStyles = makeStyles((theme) =>
     divider: {
       marginTop: theme.spacing(1),
     },
+    typography:{
+      marginTop:theme.spacing(1),
+      marginBottom:theme.spacing(-2),
+    },
     media: {
-      height: 20,
+      height: 10,
+      backgroundImage: "linear-gradient(to right, #EF3B36, #6a82fb);",
+    },
+    mediaError: {
+      height: 10,
+      background: "#EF3B36",
+    },
+    mediaRight: {
+      height: 10,
+      background: "#6a82fb",
     },
   })
 );
@@ -90,7 +104,7 @@ export default function QuestionCard(topic: ITopicData) {
         }
         setError(false);
       } else if (typeof result === "boolean") {
-        setHelperText("Wrong");
+        setHelperText("Wrong!");
         setError(true);
       }
       callBackQuestions();
@@ -98,10 +112,16 @@ export default function QuestionCard(topic: ITopicData) {
   }
   const callBackQuestions = useCallback(
     async function setQuestionsAsync() {
-      if (isAuthenticated && topic) {
-        const questionsData: IQuestionWithAnswers[] =
-          await getQuestionsByTopicId(topic.id, accessToken);
-        setQuestions(questionsData);
+      if (topic) {
+        if (isAuthenticated) {
+          const questionsData: IQuestionWithAnswers[] =
+            await getQuestionsByTopicId(topic.id, accessToken);
+          setQuestions(questionsData);
+        } else {
+          const questionsData: IQuestionWithAnswers[] =
+            await getGuestQuestionsByTopicId(topic.id);
+          setQuestions(questionsData);
+        }
       }
     },
     [accessToken, isAuthenticated, topic]
@@ -117,16 +137,22 @@ export default function QuestionCard(topic: ITopicData) {
       questions[selectedIndex].answers ? (
         <Card className={classes.card} elevation={5}>
           <CardMedia
-            className={classes.media}
-            image="https://99designs-blog.imgix.net/blog/wp-content/uploads/2018/12/Gradient_builder_2.jpg?auto=format&q=60&w=1815&h=1020.9375&fit=crop&crop=faces"
+            className={`${classes.media} ${
+              helperText === "Wrong!"
+                ? classes.mediaError
+                : helperText === "Added (+1) rating!" || helperText === "Right!"
+                ? classes.mediaRight
+                : classes.media
+            }`}
             title="Question mark image"
+            component="div"
           />
           <CardContent>
             <form onSubmit={handleSubmit}>
               <FormControl component="fieldset" error={error} fullWidth>
-                <FormLabel component="legend">
+                <Typography component="legend">
                   {questions[selectedIndex].text}
-                </FormLabel>
+                </Typography>
                 <Divider className={classes.divider} />
                 <RadioGroup
                   aria-label="quiz"
@@ -138,19 +164,13 @@ export default function QuestionCard(topic: ITopicData) {
                     <FormControlLabel
                       value={val.text}
                       key={val.id}
-                      control={<Radio />}
+                      control={
+                        <Radio color="primary"/>
+                      }
                       label={val.text}
                     />
                   ))}
                 </RadioGroup>
-                {helperText ? (
-                  <Typography
-                    variant="body2"
-                    color={error ? "secondary" : "primary"}
-                  >
-                    {helperText}
-                  </Typography>
-                ) : null}
                 <Grid
                   container
                   direction="row"
@@ -158,7 +178,8 @@ export default function QuestionCard(topic: ITopicData) {
                   justify="center"
                 >
                   <ButtonGroup
-                    variant="outlined"
+                  size="small"
+                    variant="contained"
                     color="primary"
                     className={classes.buttonGroup}
                   >
@@ -171,10 +192,12 @@ export default function QuestionCard(topic: ITopicData) {
                     >
                       <ChevronLeftIcon />
                     </Button>
-                    <Button type="submit">
+                    <Button type="submit" disabled={!isAuthenticated}>
                       {questions[selectedIndex].alreadyAnswered
                         ? "Check answer"
-                        : "Submit"}
+                        : isAuthenticated
+                        ? "Submit"
+                        : "LogIn to submit"}
                     </Button>
                     <Button
                       disabled={selectedIndex === questions.length - 1}
@@ -189,6 +212,9 @@ export default function QuestionCard(topic: ITopicData) {
                 </Grid>
               </FormControl>
             </form>
+            <Typography className={classes.typography} variant="body1" color={error ? "error" : "primary"}>
+              {(selectedIndex + 1) + "/"+questions.length+" " + helperText}
+            </Typography>
           </CardContent>
         </Card>
       ) : null}

@@ -1,6 +1,4 @@
-﻿using SmartTutorial.API.Dtos.AnswerDtos;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SmartTutorial.API.Dtos.QuestionDtos
 {
@@ -13,13 +11,30 @@ namespace SmartTutorial.API.Dtos.QuestionDtos
 
         [Required]
         [MaxLength(150)]
-        [MinLength(5)]
+        [MinLength(1)]
         public string Answer { get; set; }
 
         [Required]
         public int TopicId { get; set; }
 
+        [MaxLength(150)]
+        [MinLength(1)]
         [Required]
-        public List<AnswerDto> Answers { get; set; }
+        public string Option1 { get; set; }
+
+        [MaxLength(150)]
+        [MinLength(1)]
+        [Required]
+        public string Option2 { get; set; }
+
+        [MaxLength(150)]
+        [MinLength(1)]
+        [Required]
+        public string Option3 { get; set; }
+
+        [MaxLength(150)]
+        [MinLength(1)]
+        [Required]
+        public string Option4 { get; set; }
     }
 }

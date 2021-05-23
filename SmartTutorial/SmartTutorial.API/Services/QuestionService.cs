@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using SmartTutorial.API.Dtos.QuestionDtos;
 using SmartTutorial.API.Infrastucture.Models;
@@ -6,17 +9,14 @@ using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
 using SmartTutorial.Domain.Auth;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Services
 {
     public class QuestionService : IQuestionService
     {
+        private readonly IMapper _mapper;
         private readonly IRepository _repository;
         private readonly UserManager<User> _userManager;
-        private readonly IMapper _mapper;
 
         public QuestionService(IRepository repository, UserManager<User> userManager, IMapper mapper)
         {
@@ -24,14 +24,19 @@ namespace SmartTutorial.API.Services
             _userManager = userManager;
             _mapper = mapper;
         }
+
         public async Task<QuestionDto> Add(AddQuestionWithAnswersDto dto)
         {
-            var question = new Question() { Answer = dto.Answer, Text = dto.Text, TopicId = dto.TopicId };
-            foreach (var answerDto in dto.Answers)
+            var question = new Question {Answer = dto.Answer, Text = dto.Text, TopicId = dto.TopicId};
+            var answers = new List<Answer>
             {
-                var answer = new Answer() {QuestionId = question.Id, Text = answerDto.Text };
-                question.Answers.Add(answer);
-            }
+                new Answer {QuestionId = question.Id, Text = dto.Option1},
+                new Answer {QuestionId = question.Id, Text = dto.Option2},
+                new Answer {QuestionId = question.Id, Text = dto.Option3},
+                new Answer {QuestionId = question.Id, Text = dto.Option4}
+            };
+
+            question.Answers.AddRange(answers);
 
             await _repository.Add(question, true);
             var questionDto = _mapper.Map<QuestionDto>(question);
@@ -53,6 +58,7 @@ namespace SmartTutorial.API.Services
             {
                 user.Rating++;
             }
+
             await _repository.SaveAll();
             return result;
         }
@@ -81,6 +87,15 @@ namespace SmartTutorial.API.Services
                 questionDto.AlreadyAnswered =
                     user.Questions.Contains(questions.FirstOrDefault(x => x.Id == questionDto.Id));
             }
+
+            return questionsDto;
+        }
+
+        public async Task<IList<QuestionWithAnswersDto>> GetTopicQuestions(int id)
+        {
+            var topic = await _repository.GetById<Topic>(id);
+            var questions = topic.Questions;
+            var questionsDto = _mapper.Map<List<QuestionWithAnswersDto>>(questions);
             return questionsDto;
         }
 
@@ -91,9 +106,9 @@ namespace SmartTutorial.API.Services
             return questionDto;
         }
 
-        public async Task<PaginatedResult<QuestionDto>> GetPaginated(PagedRequest request)
+        public async Task<PaginatedResult<QuestionTableDto>> GetPaginated(PagedRequest request)
         {
-            var result = await _repository.GetPagedData<Question, QuestionDto>(request);
+            var result = await _repository.GetPagedData<Question, QuestionTableDto>(request);
             return result;
         }
 
