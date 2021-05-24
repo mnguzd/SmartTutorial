@@ -9,11 +9,11 @@ const useStyles = makeStyles(() =>
     },
   })
 );
-interface Props{
-  color:"primary"|"secondary"|"inherit";
+interface Props {
+  color: "primary" | "secondary" | "inherit";
 }
 
-export default function ProgressCircle(props:Props) {
+export default function ProgressCircle(props: Props) {
   const classes = useStyles();
   return (
     <div className={classes.root}>

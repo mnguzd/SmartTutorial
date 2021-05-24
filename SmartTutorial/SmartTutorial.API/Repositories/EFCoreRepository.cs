@@ -28,6 +28,11 @@ namespace SmartTutorial.API.Repositories
             return await _dbContext.Set<TEntity>().ToListAsync();
         }
 
+        public IQueryable<TEntity> Get<TEntity>() where TEntity : BaseEntity
+        {
+            return _dbContext.Set<TEntity>().AsQueryable();
+        }
+
         public async Task<TEntity> GetById<TEntity>(int id) where TEntity : BaseEntity
         {
             return await _dbContext.FindAsync<TEntity>(id);
@@ -75,7 +80,7 @@ namespace SmartTutorial.API.Repositories
         }
 
         public async Task<PaginatedResult<TDto>> GetPagedData<TEntity, TDto>(PagedRequest pagedRequest)
-            where TEntity : BaseEntity
+            where TEntity : class
             where TDto : class
         {
             return await _dbContext.Set<TEntity>().CreatePaginatedResultAsync<TEntity, TDto>(pagedRequest, _mapper);

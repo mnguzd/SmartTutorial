@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartTutorial.API.Dtos.Auth;
 using SmartTutorial.API.Dtos.UserDtos;
 using SmartTutorial.API.Exceptions;
+using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Services.Interfaces;
 
 namespace SmartTutorial.API.Controllers
@@ -37,6 +38,14 @@ namespace SmartTutorial.API.Controllers
             return Created(nameof(Register), createdResult);
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPost("addToRole")]
+        public async Task<IActionResult> AddToRole(AddToRoleDto dto)
+        {
+             await _accountService.AddToRole(dto);
+             return NoContent();
+        }
+
         [AllowAnonymous]
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDto dto)
@@ -66,12 +75,28 @@ namespace SmartTutorial.API.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPost("getPaginated")]
+        public async Task<IActionResult> Get(PagedRequest request)
+        {
+            var usersList = await _accountService.GetPaginated(request);
+            return Ok(usersList);
+        }
+
         [AllowAnonymous]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(RefreshTokenDto dto)
         {
             await _accountService.Logout(dto.RefreshToken);
             return Ok();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _accountService.DeleteUser(id);
+            return NoContent();
         }
     }
 }

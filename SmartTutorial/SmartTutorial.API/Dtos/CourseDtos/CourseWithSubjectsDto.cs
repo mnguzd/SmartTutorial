@@ -1,7 +1,7 @@
 ﻿using SmartTutorial.API.Dtos.SubjectDtos;
 using System.Collections.Generic;
 
-namespace SmartTutorial.API.Dtos.ThemeDtos
+namespace SmartTutorial.API.Dtos.CourseDtod
 {
     public class CourseWithSubjectsDto
     {

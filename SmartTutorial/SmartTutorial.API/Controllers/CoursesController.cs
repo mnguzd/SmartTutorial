@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Services.Interfaces;
 using System.Threading.Tasks;
-using SmartTutorial.API.Dtos.ThemeDtos;
+using SmartTutorial.API.Dtos.CourseDtod;
 
 namespace SmartTutorial.API.Controllers
 {

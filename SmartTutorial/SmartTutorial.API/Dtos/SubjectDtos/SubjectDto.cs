@@ -1,4 +1,4 @@
-﻿using SmartTutorial.API.Dtos.ThemeDtos;
+﻿using SmartTutorial.API.Dtos.CourseDtod;
 using System;
 
 namespace SmartTutorial.API.Dtos.SubjectDtos

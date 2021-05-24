@@ -18,7 +18,7 @@ import Page from "./Page";
 import { useAuth } from "../auth/Auth";
 import { getCourses } from "../services/api/CoursesApi";
 import { TransitionProps } from "@material-ui/core/transitions";
-import {ICourseData} from "../services/api/models/ICourseData";
+import { ICourseData } from "../services/api/models/ICourseData";
 
 function SlideTransition(props: TransitionProps) {
   return <Slide {...props} direction="up" />;

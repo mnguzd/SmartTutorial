@@ -15,6 +15,8 @@ using SmartTutorial.API.Dtos.Auth;
 using SmartTutorial.API.Dtos.UserDtos;
 using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Infrastucture.Configurations;
+using SmartTutorial.API.Infrastucture.Models;
+using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain.Auth;
 
@@ -26,14 +28,16 @@ namespace SmartTutorial.API.Services
         private readonly IWebHostEnvironment _environment;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+        private readonly IRepository _repository;
 
         public AccountService(IOptions<AuthOptions> authenticationOptions, SignInManager<User> signInManager,
-            UserManager<User> userManager, IWebHostEnvironment environment)
+            UserManager<User> userManager, IWebHostEnvironment environment,IRepository repository)
         {
             _authenticationOptions = authenticationOptions.Value;
             _signInManager = signInManager;
             _userManager = userManager;
             _environment = environment;
+            _repository = repository;
         }
 
         public async Task<JwtAuthResult> SignInAsync(string userName, string password)
@@ -87,6 +91,20 @@ namespace SmartTutorial.API.Services
             return createdResult;
         }
 
+        public async Task AddToRole(AddToRoleDto dto)
+        {
+            var user = await _userManager.FindByNameAsync(dto.UserName);
+            switch (dto.Role)
+            {
+                case "User":
+                case "Admin":
+                    await _userManager.AddToRoleAsync(user, dto.Role);
+                    break;
+            }
+        }
+
+
+
         public async Task<IdentityResult> EditUserInfo(string userName, UserEditDto dto)
         {
             var userFound = await _userManager.FindByNameAsync(userName);
@@ -106,6 +124,12 @@ namespace SmartTutorial.API.Services
 
             var result = await _userManager.UpdateAsync(userFound);
             return result;
+        }
+
+        public async Task DeleteUser(int id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            await _userManager.DeleteAsync(user);
         }
 
         public async Task<string> UploadImage(IFormFile avatar, string userName)
@@ -213,6 +237,18 @@ namespace SmartTutorial.API.Services
         {
             var userFound = _userManager.Users.FirstOrDefault(x => x.RefreshToken == refreshToken.Replace(@"""", ""));
             return userFound;
+        }
+
+        public async Task<PaginatedResult<UserTableDto>> GetPaginated(PagedRequest request)
+        {
+            var result = await _repository.GetPagedData<User, UserTableDto>(request);
+            foreach (var item in result.Items)
+            {
+                var user = await _userManager.FindByIdAsync(item.Id.ToString());
+                var roles = await _userManager.GetRolesAsync(user);
+                item.Role = roles.FirstOrDefault();
+            }
+            return result;
         }
     }
 }

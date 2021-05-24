@@ -102,12 +102,10 @@ export default function AdminSubjectsPage() {
       const result: IPaginatedResult<ISubjectTableData> =
         await getSubjectsPaginated(request, accessToken);
       setSubjects(result.items);
-      if (result.total !== totalCount) {
-        setTotalCount(result.total);
-      }
+      setTotalCount(result.total);
       setLoading(false);
     },
-    [accessToken, pageNumber, pageSize, totalCount, sortModel, filterModel]
+    [accessToken, pageNumber, pageSize, sortModel, filterModel]
   );
   async function deleteAndUpdateSubject(id: GridRowId, token: string) {
     const success = await deleteSubject(Number(id), token);
@@ -151,6 +149,7 @@ export default function AdminSubjectsPage() {
           paginationMode="server"
           filterMode="server"
           sortingMode="server"
+          columnBuffer={5}
           sortModel={sortModel}
           onSortModelChange={handleSortModelChange}
           onFilterModelChange={onFilterChange}

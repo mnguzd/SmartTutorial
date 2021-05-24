@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using SmartTutorial.API.Dtos.ThemeDtos;
+using SmartTutorial.API.Dtos.CourseDtod;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;

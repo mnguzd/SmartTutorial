@@ -1,4 +1,4 @@
-﻿using SmartTutorial.API.Dtos.ThemeDtos;
+﻿using SmartTutorial.API.Dtos.CourseDtod;
 using SmartTutorial.API.Infrastucture.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;

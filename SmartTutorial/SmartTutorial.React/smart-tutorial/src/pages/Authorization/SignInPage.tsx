@@ -27,12 +27,14 @@ import {IServerSignInError} from "../../auth/models/errors/IAuthorizationErrors"
 const schema = yup.object().shape({
   username: yup
     .string()
+    .trim()
     .max(20, "Your username is longer than 20 characters")
     .min(4, "Your username is shorter than 4 characters")
     .required("Enter your username"),
   remember: yup.boolean(),
   password: yup
     .string()
+    .trim()
     .max(80, "Your password is longer than 80 characters")
     .min(8, "Your password is shorter than 8 characters")
     .required("Enter your password"),

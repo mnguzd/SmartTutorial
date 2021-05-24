@@ -5,11 +5,17 @@ import useLocalStorage from "../hooks/useLocalStorage";
 import { TokenStorage } from "../services/localStorage/tokenStorage";
 import { parseJwt } from "../services/jwt/parseJwt";
 import { refreshAccessToken } from "../services/api/AccountApi";
-import {IUser} from "./models/user/IUser";
-import {IAuthToken, ISendRefreshToken} from "./models/authToken/IAuthToken";
-import {IAuthContext} from "./models/context/IAuthContext";
-import {IServerSignInError, IServerSignUpError} from "./models/errors/IAuthorizationErrors";
-import {IUserForLogin, IUserForRegister} from "../services/api/models/user/IUserData";
+import { IUser } from "./models/user/IUser";
+import { IAuthToken, ISendRefreshToken } from "./models/authToken/IAuthToken";
+import { IAuthContext } from "./models/context/IAuthContext";
+import {
+  IServerSignInError,
+  IServerSignUpError,
+} from "./models/errors/IAuthorizationErrors";
+import {
+  IUserForLogin,
+  IUserForRegister,
+} from "../services/api/models/user/IUserData";
 
 export const AuthContext = createContext<IAuthContext>({
   isAuthenticated: false,
@@ -123,6 +129,7 @@ export const AuthProvider: FC = ({ children }) => {
       })
       .catch((err) => {
         const dataError = err.response.data;
+        console.log(dataError);
         if (dataError.errors) {
           const serverErrors: string[] = Object.getOwnPropertyNames(
             dataError.errors
@@ -136,15 +143,14 @@ export const AuthProvider: FC = ({ children }) => {
               error.name = "password";
               error.message = dataError.errors.Password;
               break;
-            case "message":
-              error.name = "password";
-              error.message = dataError.errors.message;
-              break;
             default:
               error.name = "password";
               error.message = "Internal server error. Try again later";
               break;
           }
+        } else {
+          error.name = "password";
+          error.message = dataError;
         }
       });
     setLoading(false);
@@ -196,15 +202,14 @@ export const AuthProvider: FC = ({ children }) => {
               error.name = "passwordConfirm";
               error.message = dataError.errors.ConfirmPassword;
               break;
-            case "message":
-              error.name = "passwordConfirm";
-              error.message = dataError.errors.message;
-              break;
             default:
               error.name = "passwordConfirm";
               error.message = "Internal server Error. Try again later.";
               break;
           }
+        } else {
+          error.name = "passwordConfirm";
+          error.message = dataError;
         }
       });
     setLoading(false);

@@ -105,12 +105,10 @@ export default function AdminCoursesPage() {
         accessToken
       );
       setCourses(result.items);
-      if (result.total !== totalCount) {
-        setTotalCount(result.total);
-      }
+      setTotalCount(result.total);
       setLoading(false);
     },
-    [accessToken, pageNumber, pageSize, totalCount, sortModel, filterModel]
+    [accessToken, filterModel, pageNumber, pageSize, sortModel]
   );
   async function deleteAndUpdateCourse(id: GridRowId, token: string) {
     const success = await deleteCourse(Number(id), token);
@@ -146,6 +144,7 @@ export default function AdminCoursesPage() {
           autoHeight
           pagination
           checkboxSelection
+          columnBuffer={4}
           showCellRightBorder
           components={{
             LoadingOverlay: CustomLoadingOverlay,
@@ -213,6 +212,7 @@ const columns: GridColDef[] = [
     headerName: "Name",
     headerAlign: "center",
     field: "name",
+    editable: true,
     width: 150,
   },
   {
@@ -222,6 +222,7 @@ const columns: GridColDef[] = [
     field: "imageUrl",
     sortable: false,
     filterable: false,
+    editable: true,
     width: 130,
     renderCell: (params: GridCellParams) => (
       <Avatar src={params.value?.toString()} variant="square" />
@@ -231,6 +232,7 @@ const columns: GridColDef[] = [
     headerName: "Description",
     headerAlign: "center",
     field: "description",
+    editable: true,
     flex: 1,
   },
 ];

@@ -29,38 +29,52 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
     marginLeft: theme.spacing(1),
   },
+  container: {
+    padding: theme.spacing(3),
+  },
+  firstOptions: {
+    marginBottom: theme.spacing(2),
+    marginTop: theme.spacing(2),
+  },
+  secondOptions: {},
 }));
 
 const schema = yup.object().shape({
   text: yup
     .string()
+    .trim()
     .max(150, "Name is longer than 150 characters")
     .min(5, "Name is shorter than 5 characters")
     .required("Enter the question"),
   answer: yup
     .string()
+    .trim()
     .max(150, "Answer is longer than 150 characters")
     .min(1, "Answer is shorter than 1 character")
     .required("Enter the answer"),
   option1: yup
     .string()
+    .trim()
     .max(150, "Option 1 is longer than 150 characters")
-    .min(1, "Option 1 is shorter than 5 characters")
+    .min(1, "Option 1 is shorter than 1 character")
     .required("Enter the option 1"),
   option2: yup
     .string()
+    .trim()
     .max(150, "Option 2 is longer than 150 characters")
-    .min(1, "Option 2 is shorter than 5 characters")
+    .min(1, "Option 2 is shorter than 1 character")
     .required("Enter the option 2"),
   option3: yup
     .string()
+    .trim()
     .max(150, "Option 3 is longer than 150 characters")
-    .min(1, "Option 3 is shorter than 5 characters")
+    .min(1, "Option 3 is shorter than 1 character")
     .required("Enter the option 3"),
   option4: yup
     .string()
+    .trim()
     .max(150, "Option 4 is longer than 150 characters")
-    .min(1, "Option 4 is shorter than 5 characters")
+    .min(1, "Option 4 is shorter than 1 character")
     .required("Enter the option 4"),
   topicId: yup.number().required("Enter the topic"),
 });
@@ -167,181 +181,192 @@ export const CreateQuestionForm: FC<Props> = ({
         <CardHeader title="New question" />
         <Divider />
         <CardContent>
-          <Grid container spacing={3}>
-            <Grid item md={6} xs={12}>
-              <Controller
-                control={control}
-                name="text"
-                render={() => (
-                  <TextField
-                    autoFocus
-                    variant="outlined"
-                    fullWidth
-                    id="text"
-                    label="Question"
-                    {...register("text", { required: true })}
-                    error={!!errors.text}
-                    helperText={errors?.text?.message}
-                    onChange={(e) => setValue("text", e.target.value)}
-                  />
-                )}
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <Controller
-                control={control}
-                name="option1"
-                render={() => (
-                  <Grid
-                    container
-                    direction="row"
-                    alignItems="center"
-                    justify="center"
-                  >
+          <Grid
+            container
+            spacing={3}
+            alignItems="center"
+            justify="space-between"
+            direction="column"
+            className={classes.container}
+          >
+            <Grid container direction="row" alignItems="center" justify="center">
+              <Grid item md={6} xs={12}>
+                <Controller
+                  control={control}
+                  name="text"
+                  render={() => (
                     <TextField
+                      autoFocus
                       variant="outlined"
-                      id="option1"
-                      label="Option 1"
-                      {...register("option1", { required: true })}
-                      error={!!errors.option1}
-                      helperText={errors?.option1?.message}
-                      onChange={(e) => {
-                        setValue("option1", e.target.value);
-                      }}
+                      id="text"
+                      label="Question"
+                      {...register("text", { required: true })}
+                      error={!!errors.text}
+                      helperText={errors?.text?.message}
+                      onChange={(e) => setValue("text", e.target.value)}
                     />
-                    <Radio
-                      disabled={!getValues("option1")}
-                      checked={getValues("option1") === selectedOption}
-                      onChange={(e) => handleChange(e, 1)}
+                  )}
+                />
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <Controller
+                  control={control}
+                  name="topicId"
+                  render={() => (
+                    <Autocomplete
+                      id="topicsAutocomplete"
+                      options={topics}
+                      getOptionLabel={(option) => option.name}
+                      getOptionSelected={(option, value) =>
+                        option.id === value.id
+                      }
+                      loading={topicsLoading}
+                      onChange={(_e, newValue: ITopicNameData | null) =>
+                        setTopicId(newValue)
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          id="topicId"
+                          label="Topic"
+                          {...register("topicId", { required: true })}
+                          error={!!errors.topicId}
+                          helperText={errors?.topicId?.message}
+                        />
+                      )}
                     />
-                  </Grid>
-                )}
-              />
+                  )}
+                />
+              </Grid>
             </Grid>
-            <Grid item md={6} xs={12}>
-              <Controller
-                control={control}
-                name="option2"
-                render={() => (
-                  <Grid
-                    container
-                    direction="row"
-                    alignItems="center"
-                    justify="center"
-                  >
-                    <TextField
-                      variant="outlined"
-                      id="option2"
-                      label="Option 2"
-                      {...register("option2", { required: true })}
-                      error={!!errors.option2}
-                      helperText={errors?.option2?.message}
-                      onChange={(e) => {
-                        setValue("option2", e.target.value);
-                      }}
-                    />
-                    <Radio
-                      disabled={!getValues("option2")}
-                      checked={getValues("option2") === selectedOption}
-                      onChange={(e) => handleChange(e, 2)}
-                    />
-                  </Grid>
-                )}
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <Controller
-                control={control}
-                name="option3"
-                render={() => (
-                  <Grid
-                    container
-                    direction="row"
-                    alignItems="center"
-                    justify="center"
-                  >
-                    <TextField
-                      variant="outlined"
-                      id="option3"
-                      label="Option 3"
-                      {...register("option3", { required: true })}
-                      error={!!errors.option3}
-                      helperText={errors?.option3?.message}
-                      onChange={(e) => {
-                        setValue("option3", e.target.value);
-                      }}
-                    />
-                    <Radio
-                      disabled={!getValues("option3")}
-                      checked={getValues("option3") === selectedOption}
-                      onChange={(e) => handleChange(e, 3)}
-                    />
-                  </Grid>
-                )}
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <Controller
-                control={control}
-                name="option4"
-                render={() => (
-                  <Grid
-                    container
-                    direction="row"
-                    alignItems="center"
-                    justify="center"
-                  >
-                    <TextField
-                      variant="outlined"
-                      id="option4"
-                      label="Option 4"
-                      {...register("option4", { required: true })}
-                      error={!!errors.option4}
-                      helperText={errors?.option4?.message}
-                      onChange={(e) => {
-                        setValue("option4", e.target.value);
-                      }}
-                    />
-                    <Radio
-                      disabled={!getValues("option4")}
-                      checked={getValues("option4") === selectedOption}
-                      onChange={(e) => handleChange(e, 4)}
-                    />
-                  </Grid>
-                )}
-              />
-            </Grid>
-            <Grid item md={6} xs={12}>
-              <Controller
-                control={control}
-                name="topicId"
-                render={() => (
-                  <Autocomplete
-                    id="topicsAutocomplete"
-                    options={topics}
-                    getOptionLabel={(option) => option.name}
-                    getOptionSelected={(option, value) =>
-                      option.id === value.id
-                    }
-                    loading={topicsLoading}
-                    onChange={(_e, newValue: ITopicNameData | null) =>
-                      setTopicId(newValue)
-                    }
-                    renderInput={(params) => (
+            <Grid container direction="row" className={classes.firstOptions}>
+              <Grid item md={6} xs={12}>
+                <Controller
+                  control={control}
+                  name="option1"
+                  render={() => (
+                    <Grid
+                      container
+                      direction="row"
+                      alignItems="center"
+                      justify="center"
+                    >
                       <TextField
-                        {...params}
                         variant="outlined"
-                        fullWidth
-                        id="topicId"
-                        label="Topic"
-                        {...register("topicId", { required: true })}
-                        error={!!errors.topicId}
-                        helperText={errors?.topicId?.message}
+                        id="option1"
+                        label="Option 1"
+                        {...register("option1", { required: true })}
+                        error={!!errors.option1}
+                        helperText={errors?.option1?.message}
+                        onChange={(e) => {
+                          setValue("option1", e.target.value);
+                        }}
                       />
-                    )}
-                  />
-                )}
-              />
+                      <Radio
+                        disabled={!getValues("option1")}
+                        checked={getValues("option1") === selectedOption}
+                        onChange={(e) => handleChange(e, 1)}
+                      />
+                    </Grid>
+                  )}
+                />
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <Controller
+                  control={control}
+                  name="option2"
+                  render={() => (
+                    <Grid
+                      container
+                      direction="row"
+                      alignItems="center"
+                      justify="center"
+                    >
+                      <TextField
+                        variant="outlined"
+                        id="option2"
+                        label="Option 2"
+                        {...register("option2", { required: true })}
+                        error={!!errors.option2}
+                        helperText={errors?.option2?.message}
+                        onChange={(e) => {
+                          setValue("option2", e.target.value);
+                        }}
+                      />
+                      <Radio
+                        disabled={!getValues("option2")}
+                        checked={getValues("option2") === selectedOption}
+                        onChange={(e) => handleChange(e, 2)}
+                      />
+                    </Grid>
+                  )}
+                />
+              </Grid>
+            </Grid>
+            <Grid container direction="row" className={classes.secondOptions}>
+              <Grid item md={6} xs={12}>
+                <Controller
+                  control={control}
+                  name="option3"
+                  render={() => (
+                    <Grid
+                      container
+                      direction="row"
+                      alignItems="center"
+                      justify="center"
+                    >
+                      <TextField
+                        variant="outlined"
+                        id="option3"
+                        label="Option 3"
+                        {...register("option3", { required: true })}
+                        error={!!errors.option3}
+                        helperText={errors?.option3?.message}
+                        onChange={(e) => {
+                          setValue("option3", e.target.value);
+                        }}
+                      />
+                      <Radio
+                        disabled={!getValues("option3")}
+                        checked={getValues("option3") === selectedOption}
+                        onChange={(e) => handleChange(e, 3)}
+                      />
+                    </Grid>
+                  )}
+                />
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <Controller
+                  control={control}
+                  name="option4"
+                  render={() => (
+                    <Grid
+                      container
+                      direction="row"
+                      alignItems="center"
+                      justify="center"
+                    >
+                      <TextField
+                        variant="outlined"
+                        id="option4"
+                        label="Option 4"
+                        {...register("option4", { required: true })}
+                        error={!!errors.option4}
+                        helperText={errors?.option4?.message}
+                        onChange={(e) => {
+                          setValue("option4", e.target.value);
+                        }}
+                      />
+                      <Radio
+                        disabled={!getValues("option4")}
+                        checked={getValues("option4") === selectedOption}
+                        onChange={(e) => handleChange(e, 4)}
+                      />
+                    </Grid>
+                  )}
+                />
+              </Grid>
             </Grid>
             <FormHelperText error={!!errors.answer}>
               {errors && errors.answer && errors?.answer.message}

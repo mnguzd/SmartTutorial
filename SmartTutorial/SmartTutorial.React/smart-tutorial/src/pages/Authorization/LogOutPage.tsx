@@ -11,7 +11,7 @@ export default function LogOut() {
       await logOut();
     }
     asyncLogOut();
-    history.push("/signin");
+    history.push("/home");
   });
   return <Page title="Logging out" />;
 }

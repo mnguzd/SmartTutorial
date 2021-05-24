@@ -3,8 +3,14 @@ import { webAPIUrl } from "../../AppSettings";
 import axios from "axios";
 import { axiosAuthorized } from "../axios/axios";
 import { TokenStorage } from "../localStorage/tokenStorage";
-import {IServerEditUserError, IServerImageUploadError} from "./models/errors/IUserErrors";
-import {IAuthToken, ISendRefreshToken} from "../../auth/models/authToken/IAuthToken";
+import {
+  IServerEditUserError,
+  IServerImageUploadError,
+} from "./models/errors/IUserErrors";
+import {
+  IAuthToken,
+  ISendRefreshToken,
+} from "../../auth/models/authToken/IAuthToken";
 
 export async function editUser(
   data: IAccountEditInputs,
@@ -43,15 +49,14 @@ export async function editUser(
             error.name = "country";
             error.message = dataError.errors.Country;
             break;
-          case "message":
-            error.name = "country";
-            error.message = dataError.errors.message;
-            break;
           default:
             error.name = "country";
             error.message = "Internal server error. Try again later";
             break;
         }
+      } else {
+        error.name = "country";
+        error.message = dataError;
       }
     });
   if (error.message) {
@@ -89,9 +94,9 @@ export async function uploadImage(
           if (dataError.errors.Avatar) {
             error.message = dataError.errors.Avatar[0];
           }
+        } else {
+          error.message = dataError;
         }
-      } else {
-        error.message = "Server error, try uploading another image";
       }
     });
   if (error.message) {

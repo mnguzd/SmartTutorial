@@ -56,7 +56,7 @@ interface Props {
 const AdminPage: FC<Props> = ({ title, children }) => {
   const classes = useStyles();
   const { user, loading } = useAuth();
-  const [selectedPath,setSelectedPath] = useState<string>("");
+  const [selectedPath, setSelectedPath] = useState<string>("");
   const history = useHistory();
   useEffect(() => {
     if (!loading && user) {
@@ -133,6 +133,8 @@ const AdminPage: FC<Props> = ({ title, children }) => {
             <Divider />
             <List>
               <ListItem
+                component={Link}
+                to="/admin/users"
                 selected={selectedPath === "/admin/users"}
                 button
               >
@@ -142,6 +144,8 @@ const AdminPage: FC<Props> = ({ title, children }) => {
                 <ListItemText primary="Users" />
               </ListItem>
               <ListItem
+                component={Link}
+                to="/admin/roles"
                 selected={selectedPath === "/admin/roles"}
                 button
               >

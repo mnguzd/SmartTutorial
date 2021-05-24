@@ -57,9 +57,7 @@ const TopicPage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
             {parse(topic.content, { trim: true })}
             <QuestionCard {...topic} />
           </div>
-        ) : (
-          "Content is not loaded"
-        )}
+        ) : null}
       </div>
     </SubjectPage>
   );

@@ -1,12 +1,11 @@
-﻿using System.Linq;
-using System.Linq.Dynamic.Core;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using SmartTutorial.API.Infrastucture.Models;
-using SmartTutorial.Domain;
+using System.Linq;
+using System.Linq.Dynamic.Core;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Infrastucture.Extensions
 {
@@ -14,7 +13,7 @@ namespace SmartTutorial.API.Infrastucture.Extensions
     {
         public static async Task<PaginatedResult<TDto>> CreatePaginatedResultAsync<TEntity, TDto>(
             this IQueryable<TEntity> query, PagedRequest pagedRequest, IMapper mapper)
-            where TEntity : BaseEntity
+            where TEntity : class
             where TDto : class
         {
             query = query.ApplyFilters(pagedRequest);

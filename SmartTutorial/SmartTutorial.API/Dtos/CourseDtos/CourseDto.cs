@@ -1,4 +1,4 @@
-﻿namespace SmartTutorial.API.Dtos.ThemeDtos
+﻿namespace SmartTutorial.API.Dtos.CourseDtod
 {
     public class CourseDto
     {

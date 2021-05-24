@@ -102,12 +102,10 @@ export default function AdminQuestionsPage() {
       const result: IPaginatedResult<IQuestionFlattenedTableData> =
         await getQuestionsPaginated(request, accessToken);
       setQuestions(result.items);
-      if (result.total !== totalCount) {
-        setTotalCount(result.total);
-      }
+      setTotalCount(result.total);
       setLoading(false);
     },
-    [accessToken, pageNumber, pageSize, totalCount, sortModel, filterModel]
+    [pageNumber, pageSize, sortModel, filterModel, accessToken]
   );
   async function deleteAndUpdateQuestion(id: GridRowId, token: string) {
     const success = await deleteQuestion(Number(id), token);
@@ -140,6 +138,7 @@ export default function AdminQuestionsPage() {
           rowHeight={40}
           columns={columns}
           rows={questions}
+          columnBuffer={8}
           autoHeight
           pagination
           checkboxSelection

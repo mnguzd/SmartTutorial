@@ -2,9 +2,11 @@
 using SmartTutorial.API.Dtos.AnswerDtos;
 using SmartTutorial.API.Dtos.QuestionDtos;
 using SmartTutorial.API.Dtos.SubjectDtos;
-using SmartTutorial.API.Dtos.ThemeDtos;
+using SmartTutorial.API.Dtos.CourseDtod;
 using SmartTutorial.API.Dtos.TopicDtos;
+using SmartTutorial.API.Dtos.UserDtos;
 using SmartTutorial.Domain;
+using SmartTutorial.Domain.Auth;
 
 namespace SmartTutorial.API.Mapping
 {
@@ -35,6 +37,7 @@ namespace SmartTutorial.API.Mapping
             CreateMap<Question, QuestionTableDto>();
             CreateMap<Answer, AddAnswerDto>();
             CreateMap<Answer, AnswerDto>();
+            CreateMap<User, UserTableDto>();
         }
     }
 }

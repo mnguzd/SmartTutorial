@@ -86,6 +86,7 @@ interface Props {
 const SubjectPage: FC<Props> = ({ children, isContentLoading }) => {
   const [subject, setSubject] = useState<ISubjectDataWithTopics | null>(null);
   const [selectedTopicId, setSelectedTopicId] = useState<number>(-1);
+  const [topicsLoading, setTopicsLoading] = useState<boolean>(true);
   const [open, setOpen] = useState<boolean>(true);
   const [page, setPage] = useState<number>(1);
   const params = useParams<IRouteParams>();
@@ -109,6 +110,7 @@ const SubjectPage: FC<Props> = ({ children, isContentLoading }) => {
   useEffect(() => {
     async function getSubject() {
       if (params.subjectId) {
+        setTopicsLoading(true);
         const ID: number = Number(params.subjectId);
         const data = await getSubjectWithTopics(ID);
         data?.topics.sort((x, y) => x.order - y.order);
@@ -123,6 +125,7 @@ const SubjectPage: FC<Props> = ({ children, isContentLoading }) => {
           );
         }
         setSubject(data);
+        setTopicsLoading(false);
         if (params.topicId) {
           setSelectedTopicId(Number(params.topicId));
           if (data) {
@@ -156,9 +159,13 @@ const SubjectPage: FC<Props> = ({ children, isContentLoading }) => {
           }}
         >
           <div className={classes.drawerHeader}>
-            <IconButton onClick={handleDrawerClose}>
-              <ChevronLeft color="primary" />
-            </IconButton>
+            {topicsLoading ? (
+              <ProgressCircle color="primary" />
+            ) : (
+              <IconButton onClick={handleDrawerClose}>
+                <ChevronLeft color="primary" />
+              </IconButton>
+            )}
           </div>
           <div className={classes.drawerContainer}>
             <List dense={true}>

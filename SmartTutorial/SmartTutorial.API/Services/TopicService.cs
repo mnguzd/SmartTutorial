@@ -6,6 +6,8 @@ using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace SmartTutorial.API.Services
 {
@@ -13,11 +15,13 @@ namespace SmartTutorial.API.Services
     {
         private readonly IMapper _mapper;
         private readonly IRepository _repository;
+        private readonly IConfigurationProvider _provider;
 
-        public TopicService(IRepository repository, IMapper mapper)
+        public TopicService(IRepository repository, IMapper mapper,IConfigurationProvider provider)
         {
             _repository = repository;
             _mapper = mapper;
+            _provider = provider;
         }
 
         public async Task<TopicDto> Add(AddTopicDto dto)
@@ -56,9 +60,8 @@ namespace SmartTutorial.API.Services
 
         public async Task<IList<TopicWithNoContentDto>> GetLightTopics()
         {
-            var topics = await _repository.GetAll<Topic>();
-            var topicsDto = _mapper.Map<List<TopicWithNoContentDto>>(topics);
-            return topicsDto;
+            var topics = await _repository.Get<Topic>().ProjectTo<TopicWithNoContentDto>(_provider).ToListAsync();
+            return topics;
         }
 
         public async Task<PaginatedResult<TopicDto>> GetPaginated(PagedRequest request)
