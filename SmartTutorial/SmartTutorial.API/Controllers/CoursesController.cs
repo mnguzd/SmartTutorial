@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SmartTutorial.API.Dtos.CourseDtod;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Services.Interfaces;
 using System.Threading.Tasks;
-using SmartTutorial.API.Dtos.CourseDtod;
 
 namespace SmartTutorial.API.Controllers
 {
@@ -40,6 +40,14 @@ namespace SmartTutorial.API.Controllers
         {
             var course = await _courseService.GetWithSubjects(courseId);
             return Ok(course);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Put(int id, [FromBody] AddCourseDto dto)
+        {
+            await _courseService.Update(id, dto);
+            return NoContent();
         }
 
         [HttpPost]

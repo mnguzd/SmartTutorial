@@ -123,8 +123,8 @@ export default function AdminUsersPage() {
         request,
         accessToken
       );
-      setUsers(result.items);
       setTotalCount(result.total);
+      setUsers(result.items);
       setLoading(false);
     },
     [accessToken, pageNumber, pageSize, sortModel, filterModel]

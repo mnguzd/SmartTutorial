@@ -24,7 +24,7 @@ namespace SmartTutorial.API.Services
 
         public async Task<SubjectDto> Add(AddSubjectDto dto)
         {
-            var subject = new Subject {Complexity = dto.Complexity, Name = dto.Name, CourseId = dto.ThemeId};
+            var subject = new Subject {Complexity = dto.Complexity, Name = dto.Name, CourseId = dto.CourseId};
             await _repository.Add(subject,true);
             var subjectDto = _mapper.Map<SubjectDto>(subject);
             return subjectDto;
@@ -63,16 +63,17 @@ namespace SmartTutorial.API.Services
             return subjectDto;
         }
 
-        public async Task<SubjectDto> Update(int id, UpdateSubjectDto dto)
+        public async Task<SubjectDto> Update(int id, AddSubjectDto dto)
         {
             var subject = await _repository.GetById<Subject>(id);
             if (subject == null)
             {
-                throw new ApiException(HttpStatusCode.Conflict, "User not found");
+                throw new ApiException(HttpStatusCode.Conflict, "Subject not found");
             }
 
             subject.Name = dto.Name;
             subject.Complexity = dto.Complexity;
+            subject.CourseId = dto.CourseId;
             await _repository.SaveAll();
             var subjectDto = _mapper.Map<SubjectDto>(subject);
             return subjectDto;
@@ -83,7 +84,7 @@ namespace SmartTutorial.API.Services
             var subject = await _repository.GetById<Subject>(id);
             if (subject == null)
             {
-                throw new ApiException(HttpStatusCode.Conflict, "User not found");
+                throw new ApiException(HttpStatusCode.Conflict, "Subject not found");
             }
 
             if (!string.IsNullOrWhiteSpace(dto.Name))

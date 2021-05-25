@@ -14,10 +14,9 @@ import {
   TextField,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  createNewCourse,
-} from "../../../services/api/CoursesApi";
-import {IServerCreateCourseError} from "../../../services/api/models/errors/ICourseErrors";
+import { editTheCourse } from "../../../services/api/CoursesApi";
+import { IServerCreateCourseError } from "../../../services/api/models/errors/ICourseErrors";
+import { ICourseData } from "../../../services/api/models/ICourseData";
 
 const useStyles = makeStyles((theme) => ({
   buttons: {
@@ -54,19 +53,21 @@ interface IFormInputs {
 }
 interface Props {
   accessToken: string;
-  setOpenPopup: React.Dispatch<React.SetStateAction<any>>;
+  setOpenPopup: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
   callBack: ICallback;
+  course: ICourseData | undefined;
 }
 interface ICallback {
   (): void;
 }
 
-export const CreateCourseForm: FC<Props> = ({
+export const EditCourseForm: FC<Props> = ({
   accessToken,
   setOpenPopup,
   loading,
   callBack,
+  course,
 }) => {
   const classes = useStyles();
 
@@ -83,21 +84,24 @@ export const CreateCourseForm: FC<Props> = ({
   });
 
   async function onSubmit(data: IFormInputs) {
-    const result: IServerCreateCourseError | null = await createNewCourse(
-      data,
-      accessToken
-    );
-    if (result) {
-      setError(result.name, { type: result.type, message: result.message });
-    } else {
-      callBack();
-      setOpenPopup(false);
+    if (course) {
+      const result: IServerCreateCourseError | null = await editTheCourse(
+        course.id,
+        data,
+        accessToken
+      );
+      if (result) {
+        setError(result.name, { type: result.type, message: result.message });
+      } else {
+        callBack();
+        setOpenPopup(false);
+      }
     }
   }
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
       <Card>
-        <CardHeader title="New subject" />
+        <CardHeader title={"Edit course (" + course?.id + ")"} />
         <Divider />
         <CardContent>
           <Grid container spacing={3}>
@@ -105,11 +109,12 @@ export const CreateCourseForm: FC<Props> = ({
               <Controller
                 control={control}
                 name="name"
+                defaultValue={course?.name}
                 render={() => (
                   <TextField
                     autoFocus
-                    variant="outlined"
                     fullWidth
+                    defaultValue={course?.name}
                     id="name"
                     label="Name"
                     {...register("name", { required: true })}
@@ -124,11 +129,12 @@ export const CreateCourseForm: FC<Props> = ({
               <Controller
                 control={control}
                 name="imageUrl"
+                defaultValue={course?.imageUrl}
                 render={() => (
                   <TextField
-                    variant="outlined"
                     fullWidth
                     id="imageUrl"
+                    defaultValue={course?.imageUrl}
                     label="Image Url"
                     {...register("imageUrl", { required: true })}
                     error={!!errors.imageUrl}
@@ -142,11 +148,13 @@ export const CreateCourseForm: FC<Props> = ({
               <Controller
                 control={control}
                 name="description"
+                defaultValue={course?.description}
                 render={() => (
                   <div>
                     <TextareaAutosize
                       rowsMin={4}
                       id="description"
+                      defaultValue={course?.description}
                       placeholder="Description"
                       {...register("description", { required: true })}
                       onChange={(e) => setValue("description", e.target.value)}
@@ -171,7 +179,7 @@ export const CreateCourseForm: FC<Props> = ({
         >
           <Button
             color="primary"
-            variant="contained"
+            variant="outlined"
             type="submit"
             disabled={loading}
           >
@@ -179,7 +187,7 @@ export const CreateCourseForm: FC<Props> = ({
           </Button>
           <Button
             color="secondary"
-            variant="contained"
+            variant="outlined"
             onClick={() => setOpenPopup(false)}
             disabled={loading}
             className={classes.cancelButton}

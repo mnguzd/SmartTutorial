@@ -1,9 +1,16 @@
-import {webAPIUrl} from "../../AppSettings";
+import { webAPIUrl } from "../../AppSettings";
 import axios from "axios";
-import {axiosAuthorized} from "../axios/axios";
-import {ICourseData, ICourseDataWithSubjects, ICourseInputData} from "./models/ICourseData";
-import {IServerCreateCourseError} from "./models/errors/ICourseErrors";
-import {IPaginatedRequest, IPaginatedResult} from "./models/pagination/IPagination";
+import { axiosAuthorized } from "../axios/axios";
+import {
+  ICourseData,
+  ICourseDataWithSubjects,
+  ICourseInputData,
+} from "./models/ICourseData";
+import { IServerCreateCourseError } from "./models/errors/ICourseErrors";
+import {
+  IPaginatedRequest,
+  IPaginatedResult,
+} from "./models/pagination/IPagination";
 
 export async function getCourses(): Promise<ICourseData[]> {
   let data: ICourseData[] = [];
@@ -15,7 +22,6 @@ export async function getCourses(): Promise<ICourseData[]> {
     })
     .then((response) => {
       data = response.data;
-      return data;
     });
   return data;
 }
@@ -46,11 +52,31 @@ export async function createNewCourse(
     message: "",
   };
   await axiosAuthorized
-    .post(`${webAPIUrl}/themes`, data, {
+    .post(`${webAPIUrl}/courses`, data, {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((response) => {
-      console.log(response.data);
+    .catch((err) => {
+      error.message = err.response.data;
+    });
+  if (error.message) {
+    return error;
+  }
+  return null;
+}
+
+export async function editTheCourse(
+  id: number,
+  data: ICourseInputData,
+  token: string
+): Promise<IServerCreateCourseError | null> {
+  let error: IServerCreateCourseError = {
+    name: "imageUrl",
+    type: "server",
+    message: "",
+  };
+  await axiosAuthorized
+    .put(`${webAPIUrl}/courses/${id}`, data, {
+      headers: { Authorization: `Bearer ${token}` },
     })
     .catch((err) => {
       error.message = err.response.data;
@@ -86,7 +112,10 @@ export async function getCoursesPaginated(
   return result;
 }
 
-export async function deleteCourse(id: number, token: string): Promise<boolean> {
+export async function deleteCourse(
+  id: number,
+  token: string
+): Promise<boolean> {
   let result: boolean = false;
   await axiosAuthorized
     .delete(`${webAPIUrl}/courses/${id}`, {

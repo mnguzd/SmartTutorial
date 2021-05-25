@@ -9,6 +9,7 @@ namespace SmartTutorial.API.Services.Interfaces
     {
         Task<IList<CourseDto>> GetAll();
         Task<CourseWithSubjectsDto> GetWithSubjects(int id);
+        Task<CourseDto> Update(int id, AddCourseDto dto);
         Task<PaginatedResult<CourseDto>> GetPaginated(PagedRequest request);
         Task<CourseDto> Add(AddCourseDto dto); 
         Task Delete(int id);

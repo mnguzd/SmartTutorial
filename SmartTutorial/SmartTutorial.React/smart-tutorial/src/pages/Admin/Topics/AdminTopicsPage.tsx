@@ -105,11 +105,11 @@ export default function AdminTopicsPage() {
       }
       const result: IPaginatedResult<ITopicTableData> =
         await getTopicsPaginated(request, accessToken);
-      setTopics(result.items);
       setTotalCount(result.total);
+      setTopics(result.items);
       setLoading(false);
     },
-    [accessToken, pageNumber, pageSize, sortModel, filterModel]
+    [pageNumber, pageSize, sortModel, filterModel, accessToken]
   );
   async function deleteAndUpdateTopic(id: GridRowId, token: string) {
     const success = await deleteTopic(Number(id), token);
@@ -124,7 +124,6 @@ export default function AdminTopicsPage() {
   }
   useEffect(() => {
     callBackTopics();
-    console.log("happened");
   }, [callBackTopics]);
   return (
     <AdminPage title="Admin | Topics">

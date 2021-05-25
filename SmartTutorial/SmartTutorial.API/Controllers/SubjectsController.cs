@@ -60,7 +60,7 @@ namespace SmartTutorial.API.Controllers
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Put(int id, [FromBody] UpdateSubjectDto dto)
+        public async Task<IActionResult> Put(int id, [FromBody] AddSubjectDto dto)
         {
             await _subjectService.Update(id, dto);
             return NoContent();

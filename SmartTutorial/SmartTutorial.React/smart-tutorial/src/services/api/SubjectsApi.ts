@@ -30,6 +30,22 @@ export async function getSubjectWithTopics(
   return data;
 }
 
+export async function getSubject(
+  id: number,
+  token: string
+): Promise<ISubjectData | null> {
+  let data: ISubjectData | null = null;
+  await axios
+    .get<ISubjectData>(`${webAPIUrl}/subjects/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      data = response.data;
+    })
+    .catch((err) => console.log(err.response));
+  return data;
+}
+
 export async function getSubjects(): Promise<ISubjectData[]> {
   let data: ISubjectData[] = [];
   await axios
@@ -69,7 +85,28 @@ export async function createNewSubject(
   }
   return null;
 }
-
+export async function updateTheSubject(
+  id: number,
+  data: ISubjectInputData,
+  token: string
+): Promise<IServerCreateSubjectError | null> {
+  let error: IServerCreateSubjectError = {
+    name: "courseId",
+    type: "server",
+    message: "",
+  };
+  await axiosAuthorized
+    .put(`${webAPIUrl}/subjects/${id}`, data, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .catch((err) => {
+      error.message = err.response.data;
+    });
+  if (error.message) {
+    return error;
+  }
+  return null;
+}
 export async function deleteSubject(
   id: number,
   token: string

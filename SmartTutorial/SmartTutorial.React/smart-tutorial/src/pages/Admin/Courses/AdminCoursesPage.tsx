@@ -21,8 +21,10 @@ import { useAuth } from "../../../auth/Auth";
 import { Avatar, Grid } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import { DialogForm } from "../../../components/DialogForm/DialogForm";
+import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { CreateCourseForm } from "./CreateCourseForm";
+import { EditCourseForm } from "./EditCourseForm";
 import { ICourseData } from "../../../services/api/models/ICourseData";
 import {
   IPaginatedRequest,
@@ -56,7 +58,10 @@ export default function AdminCoursesPage() {
   ]);
 
   const [loading, setLoading] = useState<boolean>(true);
+
   const [openPopup, setOpenPopup] = useState<boolean>(false);
+
+  const [openEditPopup, setOpenEditPopup] = useState<boolean>(false);
 
   const [selectionModel, setSelectionModel] = useState<GridRowId[]>([]);
 
@@ -104,8 +109,8 @@ export default function AdminCoursesPage() {
         request,
         accessToken
       );
-      setCourses(result.items);
       setTotalCount(result.total);
+      setCourses(result.items);
       setLoading(false);
     },
     [accessToken, filterModel, pageNumber, pageSize, sortModel]
@@ -127,7 +132,15 @@ export default function AdminCoursesPage() {
   return (
     <AdminPage title="Admin | Courses">
       <div className={classes.root}>
-        <Grid container direction="column" alignItems="flex-end">
+        <Grid container direction="row" alignItems="center" justify="flex-end">
+          <Button
+            color="primary"
+            disabled={selectionModel.length !== 1}
+            onClick={() => setOpenEditPopup(true)}
+            startIcon={<EditIcon />}
+          >
+            Edit
+          </Button>
           <Button
             color="secondary"
             disabled={!selectionModel.length}
@@ -195,6 +208,15 @@ export default function AdminCoursesPage() {
           callBack={callBackCourses}
         />
       </DialogForm>
+      <DialogForm openPopup={openEditPopup} setOpenPopup={setOpenEditPopup}>
+        <EditCourseForm
+          course={courses.find((x) => x.id === selectionModel[0])}
+          accessToken={accessToken}
+          setOpenPopup={setOpenEditPopup}
+          loading={loading}
+          callBack={callBackCourses}
+        />
+      </DialogForm>
       <Button onClick={() => setOpenPopup(true)} />
     </AdminPage>
   );
@@ -212,7 +234,6 @@ const columns: GridColDef[] = [
     headerName: "Name",
     headerAlign: "center",
     field: "name",
-    editable: true,
     width: 150,
   },
   {
@@ -222,7 +243,6 @@ const columns: GridColDef[] = [
     field: "imageUrl",
     sortable: false,
     filterable: false,
-    editable: true,
     width: 130,
     renderCell: (params: GridCellParams) => (
       <Avatar src={params.value?.toString()} variant="square" />
@@ -232,7 +252,6 @@ const columns: GridColDef[] = [
     headerName: "Description",
     headerAlign: "center",
     field: "description",
-    editable: true,
     flex: 1,
   },
 ];

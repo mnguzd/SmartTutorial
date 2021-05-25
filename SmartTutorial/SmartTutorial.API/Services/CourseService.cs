@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using SmartTutorial.API.Dtos.CourseDtod;
+using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Services
@@ -30,7 +32,7 @@ namespace SmartTutorial.API.Services
         public async Task<CourseDto> Add(AddCourseDto dto)
         {
             var course = new Course() { Name = dto.Name, Description = dto.Description, ImageUrl = dto.ImageUrl };
-            await _repository.Add(course,true);
+            await _repository.Add(course, true);
             var courseDto = _mapper.Map<CourseDto>(course);
             return courseDto;
         }
@@ -51,6 +53,22 @@ namespace SmartTutorial.API.Services
         {
             var course = await _repository.GetByIdWithInclude<Course>(id, x => x.Subjects);
             var courseDto = _mapper.Map<CourseWithSubjectsDto>(course);
+            return courseDto;
+        }
+
+        public async Task<CourseDto> Update(int id, AddCourseDto dto)
+        {
+            var course = await _repository.GetById<Course>(id);
+            if (course == null)
+            {
+                throw new ApiException(HttpStatusCode.NotFound, "Course not found");
+            }
+
+            course.Name = dto.Name;
+            course.Description = dto.Description;
+            course.ImageUrl = dto.ImageUrl;
+            await _repository.SaveAll();
+            var courseDto = _mapper.Map<CourseDto>(course);
             return courseDto;
         }
     }

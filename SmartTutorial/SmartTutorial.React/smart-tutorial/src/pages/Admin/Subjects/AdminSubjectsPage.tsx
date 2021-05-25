@@ -21,7 +21,9 @@ import { Grid } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import { DialogForm } from "../../../components/DialogForm/DialogForm";
 import DeleteIcon from "@material-ui/icons/Delete";
+import EditIcon from "@material-ui/icons/Edit";
 import { CreateSubjectForm } from "./CreateSubjectForm";
+import { EditSubjectForm } from "./EditSubjectForm";
 import { ISubjectTableData } from "../../../services/api/models/ISubjectData";
 import {
   IPaginatedRequest,
@@ -52,6 +54,7 @@ export default function AdminSubjectsPage() {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [openPopup, setOpenPopup] = useState<boolean>(false);
+  const [openEditPopup, setOpenEditPopup] = useState<boolean>(false);
 
   const [selectionModel, setSelectionModel] = useState<GridRowId[]>([]);
 
@@ -101,8 +104,8 @@ export default function AdminSubjectsPage() {
       }
       const result: IPaginatedResult<ISubjectTableData> =
         await getSubjectsPaginated(request, accessToken);
-      setSubjects(result.items);
       setTotalCount(result.total);
+      setSubjects(result.items);
       setLoading(false);
     },
     [accessToken, pageNumber, pageSize, sortModel, filterModel]
@@ -124,7 +127,15 @@ export default function AdminSubjectsPage() {
   return (
     <AdminPage title="Admin | Subjects">
       <div className={classes.root}>
-        <Grid container direction="column" alignItems="flex-end">
+        <Grid container direction="row" alignItems="center" justify="flex-end">
+          <Button
+            color="primary"
+            disabled={selectionModel.length !== 1}
+            onClick={() => setOpenEditPopup(true)}
+            startIcon={<EditIcon />}
+          >
+            Edit
+          </Button>
           <Button
             color="secondary"
             disabled={!selectionModel.length}
@@ -189,6 +200,15 @@ export default function AdminSubjectsPage() {
         <CreateSubjectForm
           accessToken={accessToken}
           setOpenPopup={setOpenPopup}
+          loading={loading}
+          callBack={callBackSubjects}
+        />
+      </DialogForm>
+      <DialogForm openPopup={openEditPopup} setOpenPopup={setOpenEditPopup}>
+        <EditSubjectForm
+          subjectId={Number(selectionModel[0])}
+          accessToken={accessToken}
+          setOpenPopup={setOpenEditPopup}
           loading={loading}
           callBack={callBackSubjects}
         />

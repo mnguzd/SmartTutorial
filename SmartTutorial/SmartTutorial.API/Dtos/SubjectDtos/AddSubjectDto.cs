@@ -12,6 +12,6 @@ namespace SmartTutorial.API.Dtos.SubjectDtos
         public int Complexity { get; set; }
 
         [Required]
-        public int ThemeId { get; set; }
+        public int CourseId { get; set; }
     }
 }
