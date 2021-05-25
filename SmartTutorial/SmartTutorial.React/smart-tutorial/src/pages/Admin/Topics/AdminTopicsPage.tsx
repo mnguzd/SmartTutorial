@@ -128,7 +128,7 @@ export default function AdminTopicsPage() {
   return (
     <AdminPage title="Admin | Topics">
       <div className={classes.root}>
-        <Grid container direction="column" alignItems="flex-end">
+        <Grid container direction="row" alignItems="center" justify="flex-end">
           <Button
             color="secondary"
             disabled={!selectionModel.length}

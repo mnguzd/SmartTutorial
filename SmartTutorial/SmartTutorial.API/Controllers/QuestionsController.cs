@@ -36,6 +36,14 @@ namespace SmartTutorial.API.Controllers
             return Ok(questionList);
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Put(int id, [FromBody] AddQuestionWithAnswersDto dto)
+        {
+            await _questionService.Update(id, dto);
+            return NoContent();
+        }
+
         [AllowAnonymous]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)

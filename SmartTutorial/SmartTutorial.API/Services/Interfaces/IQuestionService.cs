@@ -7,10 +7,11 @@ namespace SmartTutorial.API.Services.Interfaces
 {
     public interface IQuestionService
     {
-        Task<QuestionDto> GetById(int id);
+        Task<QuestionTableDto> GetById(int id);
         Task<IList<QuestionDto>> GetAll();
         Task<QuestionDto> Add(AddQuestionWithAnswersDto dto);
         Task<QuestionWithAnswersDto> GetWithAnswers(int id);
+        Task<QuestionDto> Update(int id, AddQuestionWithAnswersDto dto);
         Task<bool> AnswerTheQuestion(AnswerTheQuestionDto dto, string userName);
         Task<IList<QuestionWithAnswersDto>> GetTopicQuestions(int id);
         Task<IList<QuestionWithAnswersDto>> GetTopicQuestions(int id, string userName);

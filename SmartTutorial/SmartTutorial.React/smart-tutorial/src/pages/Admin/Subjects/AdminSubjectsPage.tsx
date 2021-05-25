@@ -213,7 +213,6 @@ export default function AdminSubjectsPage() {
           callBack={callBackSubjects}
         />
       </DialogForm>
-      <Button onClick={() => setOpenPopup(true)} />
     </AdminPage>
   );
 }

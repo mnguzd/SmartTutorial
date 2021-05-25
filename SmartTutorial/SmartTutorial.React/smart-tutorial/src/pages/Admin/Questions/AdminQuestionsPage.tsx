@@ -14,19 +14,27 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import {
   deleteQuestion,
+  getQuestion,
   getQuestionsPaginated,
 } from "../../../services/api/QuestionApi";
 import { useAuth } from "../../../auth/Auth";
 import { Grid } from "@material-ui/core";
 import { Button } from "@material-ui/core";
 import { DialogForm } from "../../../components/DialogForm/DialogForm";
+import { EditQuestionForm } from "./EditQuestionForm";
+import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
-import { IQuestionFlattenedTableData } from "../../../services/api/models/IQuestionData";
+import {
+  IQuestionFlattenedTableData,
+  IQuestionTableData,
+} from "../../../services/api/models/IQuestionData";
 import {
   IPaginatedRequest,
   IPaginatedResult,
 } from "../../../services/api/models/pagination/IPagination";
 import { CreateQuestionForm } from "./CreateQuestionForm";
+import { getLightTopics } from "../../../services/api/TopicsApi";
+import { ITopicNameData } from "../../../services/api/models/ITopicData";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -45,7 +53,9 @@ export default function AdminQuestionsPage() {
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
+  const [editingQuestion, setEditingQuestion] = useState<IQuestionTableData>();
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
+  const [topics, setTopics] = useState<ITopicNameData[]>();
   const [sortModel, setSortModel] = useState<GridSortModel>([
     { field: "id", sort: "asc" },
   ]);
@@ -54,6 +64,7 @@ export default function AdminQuestionsPage() {
   const [openPopup, setOpenPopup] = useState<boolean>(false);
 
   const [selectionModel, setSelectionModel] = useState<GridRowId[]>([]);
+  const [openEditPopup, setOpenEditPopup] = useState<boolean>(false);
 
   const { accessToken } = useAuth();
 
@@ -113,6 +124,23 @@ export default function AdminQuestionsPage() {
       setTotalCount((x) => x - 1);
     }
   }
+  async function handleOpenEdit() {
+    const editQuestion = await getQuestion(
+      Number(selectionModel[0]),
+      accessToken
+    );
+    const result = await getLightTopics(accessToken);
+    setTopics(result);
+    if (editQuestion) {
+      setEditingQuestion(editQuestion);
+      setOpenEditPopup(true);
+    }
+  }
+  async function handleOpenCreate() {
+    const result = await getLightTopics(accessToken);
+    setTopics(result);
+    setOpenPopup(true);
+  }
   async function onDeleteSubmit() {
     selectionModel.map((val) => deleteAndUpdateQuestion(val, accessToken));
     setSelectionModel([]);
@@ -124,7 +152,15 @@ export default function AdminQuestionsPage() {
   return (
     <AdminPage title="Admin | Questions">
       <div className={classes.root}>
-        <Grid container direction="column" alignItems="flex-end">
+        <Grid container direction="row" alignItems="center" justify="flex-end">
+          <Button
+            color="primary"
+            disabled={selectionModel.length !== 1}
+            onClick={() => handleOpenEdit()}
+            startIcon={<EditIcon />}
+          >
+            Edit
+          </Button>
           <Button
             color="secondary"
             disabled={!selectionModel.length}
@@ -178,7 +214,7 @@ export default function AdminQuestionsPage() {
           <Button
             color="secondary"
             variant="contained"
-            onClick={() => setOpenPopup(true)}
+            onClick={() => handleOpenCreate()}
           >
             Add new
           </Button>
@@ -192,7 +228,18 @@ export default function AdminQuestionsPage() {
           callBack={callBackQuestions}
         />
       </DialogForm>
-      <Button onClick={() => setOpenPopup(true)} />
+      {editingQuestion && topics && (
+        <DialogForm openPopup={openEditPopup} setOpenPopup={setOpenEditPopup}>
+          <EditQuestionForm
+            question={editingQuestion}
+            lightTopics={topics}
+            accessToken={accessToken}
+            setOpenPopup={setOpenEditPopup}
+            loading={loading}
+            callBack={callBackQuestions}
+          />
+        </DialogForm>
+      )}
     </AdminPage>
   );
 }

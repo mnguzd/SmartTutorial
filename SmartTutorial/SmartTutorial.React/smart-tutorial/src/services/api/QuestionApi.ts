@@ -34,6 +34,21 @@ export async function getQuestionsByTopicId(
     .catch((err) => console.log(err.response));
   return data;
 }
+export async function getQuestion(
+  id: number,
+  token: string
+): Promise<IQuestionTableData | null> {
+  let data: IQuestionTableData | null = null;
+  await axios
+    .get<IQuestionTableData>(`${webAPIUrl}/questions/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((response) => {
+      data = response.data;
+    })
+    .catch((err) => console.log(err.response));
+  return data;
+}
 
 export async function getGuestQuestionsByTopicId(
   topicId: number
@@ -83,8 +98,28 @@ export async function createNewQuestion(
     .post(`${webAPIUrl}/questions`, data, {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((response) => {
-      console.log(response.data);
+    .catch((err) => {
+      error.message = err.response.data;
+    });
+  if (error.message) {
+    return error;
+  }
+  return null;
+}
+
+export async function updateTheQuestion(
+  questionId: number,
+  data: IAddQuestion,
+  token: string
+): Promise<IServerCreateQuestionError | null> {
+  let error: IServerCreateQuestionError = {
+    name: "topicId",
+    type: "server",
+    message: "",
+  };
+  await axiosAuthorized
+    .put(`${webAPIUrl}/questions/${questionId}`, data, {
+      headers: { Authorization: `Bearer ${token}` },
     })
     .catch((err) => {
       error.message = err.response.data;

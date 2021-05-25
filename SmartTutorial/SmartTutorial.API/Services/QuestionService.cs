@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using SmartTutorial.API.Dtos.QuestionDtos;
+using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
@@ -39,6 +41,26 @@ namespace SmartTutorial.API.Services
             question.Answers.AddRange(answers);
 
             await _repository.Add(question, true);
+            var questionDto = _mapper.Map<QuestionDto>(question);
+            return questionDto;
+        }
+
+        public async Task<QuestionDto> Update(int id, AddQuestionWithAnswersDto dto)
+        {
+            var question = await _repository.GetById<Question>(id);
+            if (question == null)
+            {
+                throw new ApiException(HttpStatusCode.NotFound, "Question not found");
+            }
+
+            question.Answer = dto.Answer;
+            question.Text = dto.Text;
+            question.TopicId = dto.TopicId;
+            question.Answers[0].Text = dto.Option1;
+            question.Answers[1].Text = dto.Option2;
+            question.Answers[2].Text = dto.Option3;
+            question.Answers[3].Text = dto.Option4;
+            await _repository.SaveAll();
             var questionDto = _mapper.Map<QuestionDto>(question);
             return questionDto;
         }
@@ -99,10 +121,10 @@ namespace SmartTutorial.API.Services
             return questionsDto;
         }
 
-        public async Task<QuestionDto> GetById(int id)
+        public async Task<QuestionTableDto> GetById(int id)
         {
             var question = await _repository.GetById<Question>(id);
-            var questionDto = _mapper.Map<QuestionDto>(question);
+            var questionDto = _mapper.Map<QuestionTableDto>(question);
             return questionDto;
         }
 

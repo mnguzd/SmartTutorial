@@ -36,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     marginTop: theme.spacing(2),
   },
-  secondOptions: {},
 }));
 
 const schema = yup.object().shape({
@@ -304,7 +303,7 @@ export const CreateQuestionForm: FC<Props> = ({
                 />
               </Grid>
             </Grid>
-            <Grid container direction="row" className={classes.secondOptions}>
+            <Grid container direction="row">
               <Grid item md={6} xs={12}>
                 <Controller
                   control={control}

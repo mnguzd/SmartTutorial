@@ -217,7 +217,6 @@ export default function AdminCoursesPage() {
           callBack={callBackCourses}
         />
       </DialogForm>
-      <Button onClick={() => setOpenPopup(true)} />
     </AdminPage>
   );
 }
