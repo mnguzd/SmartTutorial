@@ -64,15 +64,8 @@ namespace SmartTutorial.API.Controllers
         [HttpPost("uploadImage")]
         public async Task<IActionResult> UploadImage([FromForm] UploadUserAvatarDto dto)
         {
-            try
-            {
-                var result = await _accountService.UploadImage(dto.Avatar, User.Identity.Name);
+            var result = await _accountService.UploadImage(dto.Avatar, User.Identity.Name);
                 return Ok(result);
-            }
-            catch
-            {
-                return StatusCode(500);
-            }
         }
 
         [Authorize(Roles = "Admin")]
