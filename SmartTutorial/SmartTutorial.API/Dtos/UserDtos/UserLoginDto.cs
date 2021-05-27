@@ -1,9 +1,8 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SmartTutorial.API.Dtos.UserDtos
 {
-    public class UserForLoginDto
+    public class UserLoginDto
     {
         [Required]
         [StringLength(20)]

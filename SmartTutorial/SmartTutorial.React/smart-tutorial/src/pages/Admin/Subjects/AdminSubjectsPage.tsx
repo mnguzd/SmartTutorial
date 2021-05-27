@@ -15,7 +15,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   deleteSubject,
   getSubjectsPaginated,
-} from "../../../services/api/SubjectsApi";
+} from "../../../services/api/SubjectApi";
 import { useAuth } from "../../../auth/Auth";
 import { Grid } from "@material-ui/core";
 import { Button } from "@material-ui/core";
@@ -24,7 +24,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
 import { CreateSubjectForm } from "./CreateSubjectForm";
 import { EditSubjectForm } from "./EditSubjectForm";
-import { ISubjectTableData } from "../../../services/api/models/ISubjectData";
+import { ISubjectTable } from "../../../services/api/models/ISubject";
 import {
   IPaginatedRequest,
   IPaginatedResult,
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AdminSubjectsPage() {
-  const [subjects, setSubjects] = useState<ISubjectTableData[]>([]);
+  const [subjects, setSubjects] = useState<ISubjectTable[]>([]);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -102,7 +102,7 @@ export default function AdminSubjectsPage() {
           ],
         };
       }
-      const result: IPaginatedResult<ISubjectTableData> =
+      const result: IPaginatedResult<ISubjectTable> =
         await getSubjectsPaginated(request, accessToken);
       setTotalCount(result.total);
       setSubjects(result.items);
@@ -113,13 +113,12 @@ export default function AdminSubjectsPage() {
   async function deleteAndUpdateSubject(id: GridRowId, token: string) {
     const success = await deleteSubject(Number(id), token);
     if (success) {
-      setTotalCount((x) => x - 1);
+      await callBackSubjects();
     }
   }
   async function onDeleteSubmit() {
     selectionModel.map((val) => deleteAndUpdateSubject(val, accessToken));
     setSelectionModel([]);
-    await callBackSubjects();
   }
   useEffect(() => {
     callBackSubjects();

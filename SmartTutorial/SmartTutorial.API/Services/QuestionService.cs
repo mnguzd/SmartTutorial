@@ -27,25 +27,25 @@ namespace SmartTutorial.API.Services
             _mapper = mapper;
         }
 
-        public async Task<QuestionDto> Add(AddQuestionWithAnswersDto dto)
+        public async Task<QuestionDto> Add(AddQuestionWithOptionsDto dto)
         {
             var question = new Question {Answer = dto.Answer, Text = dto.Text, TopicId = dto.TopicId};
-            var answers = new List<Answer>
+            var answers = new List<Option>
             {
-                new Answer {QuestionId = question.Id, Text = dto.Option1},
-                new Answer {QuestionId = question.Id, Text = dto.Option2},
-                new Answer {QuestionId = question.Id, Text = dto.Option3},
-                new Answer {QuestionId = question.Id, Text = dto.Option4}
+                new Option {QuestionId = question.Id, Text = dto.Option1},
+                new Option {QuestionId = question.Id, Text = dto.Option2},
+                new Option {QuestionId = question.Id, Text = dto.Option3},
+                new Option {QuestionId = question.Id, Text = dto.Option4}
             };
 
-            question.Answers.AddRange(answers);
+            question.Options.AddRange(answers);
 
             await _repository.Add(question, true);
             var questionDto = _mapper.Map<QuestionDto>(question);
             return questionDto;
         }
 
-        public async Task<QuestionDto> Update(int id, AddQuestionWithAnswersDto dto)
+        public async Task<QuestionDto> Update(int id, AddQuestionWithOptionsDto dto)
         {
             var question = await _repository.GetById<Question>(id);
             if (question == null)
@@ -56,10 +56,10 @@ namespace SmartTutorial.API.Services
             question.Answer = dto.Answer;
             question.Text = dto.Text;
             question.TopicId = dto.TopicId;
-            question.Answers[0].Text = dto.Option1;
-            question.Answers[1].Text = dto.Option2;
-            question.Answers[2].Text = dto.Option3;
-            question.Answers[3].Text = dto.Option4;
+            question.Options[0].Text = dto.Option1;
+            question.Options[1].Text = dto.Option2;
+            question.Options[2].Text = dto.Option3;
+            question.Options[3].Text = dto.Option4;
             await _repository.SaveAll();
             var questionDto = _mapper.Map<QuestionDto>(question);
             return questionDto;
@@ -91,18 +91,11 @@ namespace SmartTutorial.API.Services
             await _repository.SaveAll();
         }
 
-        public async Task<IList<QuestionDto>> GetAll()
-        {
-            var questions = await _repository.GetAll<Question>();
-            var questionsDto = _mapper.Map<List<QuestionDto>>(questions);
-            return questionsDto;
-        }
-
-        public async Task<IList<QuestionWithAnswersDto>> GetTopicQuestions(int id, string userName)
+        public async Task<IList<QuestionWithOptionsDto>> GetTopicQuestions(int id, string userName)
         {
             var topic = await _repository.GetById<Topic>(id);
             var questions = topic.Questions;
-            var questionsDto = _mapper.Map<List<QuestionWithAnswersDto>>(questions);
+            var questionsDto = _mapper.Map<List<QuestionWithOptionsDto>>(questions);
             var user = await _userManager.FindByNameAsync(userName);
             foreach (var questionDto in questionsDto)
             {
@@ -113,11 +106,11 @@ namespace SmartTutorial.API.Services
             return questionsDto;
         }
 
-        public async Task<IList<QuestionWithAnswersDto>> GetTopicQuestions(int id)
+        public async Task<IList<QuestionWithOptionsDto>> GetTopicQuestions(int id)
         {
             var topic = await _repository.GetById<Topic>(id);
             var questions = topic.Questions;
-            var questionsDto = _mapper.Map<List<QuestionWithAnswersDto>>(questions);
+            var questionsDto = _mapper.Map<List<QuestionWithOptionsDto>>(questions);
             return questionsDto;
         }
 
@@ -132,13 +125,6 @@ namespace SmartTutorial.API.Services
         {
             var result = await _repository.GetPagedData<Question, QuestionTableDto>(request);
             return result;
-        }
-
-        public async Task<QuestionWithAnswersDto> GetWithAnswers(int id)
-        {
-            var question = await _repository.GetByIdWithInclude<Question>(id, x => x.Answers);
-            var questionDto = _mapper.Map<QuestionWithAnswersDto>(question);
-            return questionDto;
         }
     }
 }

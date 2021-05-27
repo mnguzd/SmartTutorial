@@ -8,13 +8,11 @@ namespace SmartTutorial.API.Services.Interfaces
     public interface IQuestionService
     {
         Task<QuestionTableDto> GetById(int id);
-        Task<IList<QuestionDto>> GetAll();
-        Task<QuestionDto> Add(AddQuestionWithAnswersDto dto);
-        Task<QuestionWithAnswersDto> GetWithAnswers(int id);
-        Task<QuestionDto> Update(int id, AddQuestionWithAnswersDto dto);
+        Task<QuestionDto> Add(AddQuestionWithOptionsDto dto);
+        Task<QuestionDto> Update(int id, AddQuestionWithOptionsDto dto);
         Task<bool> AnswerTheQuestion(AnswerTheQuestionDto dto, string userName);
-        Task<IList<QuestionWithAnswersDto>> GetTopicQuestions(int id);
-        Task<IList<QuestionWithAnswersDto>> GetTopicQuestions(int id, string userName);
+        Task<IList<QuestionWithOptionsDto>> GetTopicQuestions(int id);
+        Task<IList<QuestionWithOptionsDto>> GetTopicQuestions(int id, string userName);
         Task<PaginatedResult<QuestionTableDto>> GetPaginated(PagedRequest request);
         Task Delete(int id);
     }

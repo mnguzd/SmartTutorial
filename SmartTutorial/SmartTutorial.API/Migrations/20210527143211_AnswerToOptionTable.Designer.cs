@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartTutorial.API;
 
 namespace SmartTutorial.API.Migrations
 {
     [DbContext(typeof(SmartTutorialDbContext))]
-    partial class SmartTutorialDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210527143211_AnswerToOptionTable")]
+    partial class AnswerToOptionTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -306,7 +308,7 @@ namespace SmartTutorial.API.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Options");
+                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("SmartTutorial.Domain.Question", b =>
@@ -465,7 +467,7 @@ namespace SmartTutorial.API.Migrations
             modelBuilder.Entity("SmartTutorial.Domain.Option", b =>
                 {
                     b.HasOne("SmartTutorial.Domain.Question", "Question")
-                        .WithMany("Options")
+                        .WithMany("Answers")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -513,7 +515,7 @@ namespace SmartTutorial.API.Migrations
 
             modelBuilder.Entity("SmartTutorial.Domain.Question", b =>
                 {
-                    b.Navigation("Options");
+                    b.Navigation("Answers");
                 });
 
             modelBuilder.Entity("SmartTutorial.Domain.Subject", b =>

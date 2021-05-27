@@ -14,11 +14,11 @@ import {
 } from "@material-ui/core";
 import { Home, Search } from "@material-ui/icons";
 import { fade, makeStyles } from "@material-ui/core/styles";
-import { getCourseWithSubjects } from "../services/api/CoursesApi";
+import { getCourseWithSubjects } from "../services/api/CourseApi";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";
-import {ICourseDataWithSubjects} from "../services/api/models/ICourseData";
+import {ICourseWithSubjects} from "../services/api/models/ICourse";
 
 interface IRouteParams {
   courseId: string;
@@ -94,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CoursePage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
-  const [course, setCourse] = useState<ICourseDataWithSubjects | null>(null);
+  const [course, setCourse] = useState<ICourseWithSubjects | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const classes = useStyles();

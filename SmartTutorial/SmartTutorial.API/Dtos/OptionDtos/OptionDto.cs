@@ -1,6 +1,6 @@
-﻿namespace SmartTutorial.API.Dtos.AnswerDtos
+﻿namespace SmartTutorial.API.Dtos.OptionDtos
 {
-    public class AnswerDto
+    public class OptionDto
     {
         public string Text { get; set; }
         public int Id { get; set; }

@@ -44,13 +44,6 @@ namespace SmartTutorial.API.Services
             await _repository.SaveAll();
         }
 
-        public async Task<IList<TopicDto>> GetAll()
-        {
-            var topics = await _repository.GetAll<Topic>();
-            var topicsDto = _mapper.Map<List<TopicDto>>(topics);
-            return topicsDto;
-        }
-
         public async Task<TopicDto> GetById(int id)
         {
             var topic = await _repository.GetById<Topic>(id);
@@ -68,13 +61,6 @@ namespace SmartTutorial.API.Services
         {
             var result = await _repository.GetPagedData<Topic, TopicDto>(request);
             return result;
-        }
-
-        public async Task<TopicWithQuestionsDto> GetWithQuestions(int id)
-        {
-            var topic = await _repository.GetByIdWithInclude<Topic>(id, x => x.Questions);
-            var topicDto = _mapper.Map<TopicWithQuestionsDto>(topic);
-            return topicDto;
         }
     }
 }

@@ -114,7 +114,7 @@ const Header = (props: Props) => {
               ) : (
                 <Button
                   component={Link}
-                  to="/signin"
+                  to="/signIn"
                   color="inherit"
                   startIcon={<AccountCircle />}
                 >

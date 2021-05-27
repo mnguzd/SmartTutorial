@@ -2,7 +2,7 @@
 
 namespace SmartTutorial.API.Dtos.UserDtos
 {
-    public class UserForRegisterDto
+    public class UserRegisterDto
     {
         [Required]
         [StringLength(20)]

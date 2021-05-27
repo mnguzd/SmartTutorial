@@ -2,7 +2,7 @@
 
 namespace SmartTutorial.API.Dtos.QuestionDtos
 {
-    public class AddQuestionWithAnswersDto
+    public class AddQuestionWithOptionsDto
     {
         [Required]
         [MaxLength(150)]

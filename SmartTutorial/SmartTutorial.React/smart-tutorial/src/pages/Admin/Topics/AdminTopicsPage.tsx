@@ -20,12 +20,12 @@ import {
   IPaginatedRequest,
   IPaginatedResult,
 } from "../../../services/api/models/pagination/IPagination";
-import { ITopicTableData } from "../../../services/api/models/ITopicData";
+import { ITopicTable } from "../../../services/api/models/ITopic";
 import { CreateTopicForm } from "./CreateTopicForm";
 import {
   deleteTopic,
   getTopicsPaginated,
-} from "../../../services/api/TopicsApi";
+} from "../../../services/api/TopicApi";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AdminTopicsPage() {
-  const [topics, setTopics] = useState<ITopicTableData[]>([]);
+  const [topics, setTopics] = useState<ITopicTable[]>([]);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -103,8 +103,10 @@ export default function AdminTopicsPage() {
           ],
         };
       }
-      const result: IPaginatedResult<ITopicTableData> =
-        await getTopicsPaginated(request, accessToken);
+      const result: IPaginatedResult<ITopicTable> = await getTopicsPaginated(
+        request,
+        accessToken
+      );
       setTotalCount(result.total);
       setTopics(result.items);
       setLoading(false);
@@ -114,13 +116,12 @@ export default function AdminTopicsPage() {
   async function deleteAndUpdateTopic(id: GridRowId, token: string) {
     const success = await deleteTopic(Number(id), token);
     if (success) {
-      setTotalCount((x) => x - 1);
+      await callBackTopics();
     }
   }
   async function onDeleteSubmit() {
     selectionModel.map((val) => deleteAndUpdateTopic(val, accessToken));
     setSelectionModel([]);
-    await callBackTopics();
   }
   useEffect(() => {
     callBackTopics();

@@ -2,20 +2,20 @@ import { webAPIUrl } from "../../AppSettings";
 import axios from "axios";
 import { axiosAuthorized } from "../axios/axios";
 import {
-  ICourseData,
-  ICourseDataWithSubjects,
-  ICourseInputData,
-} from "./models/ICourseData";
+  ICourse,
+  ICourseWithSubjects,
+  ICourseInput,
+} from "./models/ICourse";
 import { IServerCreateCourseError } from "./models/errors/ICourseErrors";
 import {
   IPaginatedRequest,
   IPaginatedResult,
 } from "./models/pagination/IPagination";
 
-export async function getCourses(): Promise<ICourseData[]> {
-  let data: ICourseData[] = [];
+export async function getCourses(): Promise<ICourse[]> {
+  let data: ICourse[] = [];
   await axios
-    .get<ICourseData[]>(webAPIUrl + "/courses", {
+    .get<ICourse[]>(webAPIUrl + "/courses", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -28,10 +28,10 @@ export async function getCourses(): Promise<ICourseData[]> {
 
 export async function getCourseWithSubjects(
   id: number
-): Promise<ICourseDataWithSubjects | null> {
-  let data: ICourseDataWithSubjects | null = null;
+): Promise<ICourseWithSubjects | null> {
+  let data: ICourseWithSubjects | null = null;
   await axios
-    .get<ICourseDataWithSubjects>(webAPIUrl + "/courses/" + id.toString(), {
+    .get<ICourseWithSubjects>(webAPIUrl + "/courses/" + id.toString(), {
       headers: {
         "Content-Type": "application/json",
       },
@@ -43,7 +43,7 @@ export async function getCourseWithSubjects(
 }
 
 export async function createNewCourse(
-  data: ICourseInputData,
+  data: ICourseInput,
   token: string
 ): Promise<IServerCreateCourseError | null> {
   let error: IServerCreateCourseError = {
@@ -66,7 +66,7 @@ export async function createNewCourse(
 
 export async function editTheCourse(
   id: number,
-  data: ICourseInputData,
+  data: ICourseInput,
   token: string
 ): Promise<IServerCreateCourseError | null> {
   let error: IServerCreateCourseError = {
@@ -90,15 +90,15 @@ export async function editTheCourse(
 export async function getCoursesPaginated(
   request: IPaginatedRequest,
   token: string
-): Promise<IPaginatedResult<ICourseData>> {
-  let result: IPaginatedResult<ICourseData> = {
+): Promise<IPaginatedResult<ICourse>> {
+  let result: IPaginatedResult<ICourse> = {
     pageIndex: 0,
     pageSize: 0,
     total: 0,
     items: [],
   };
   await axiosAuthorized
-    .post<IPaginatedResult<ICourseData>>(
+    .post<IPaginatedResult<ICourse>>(
       `${webAPIUrl}/courses/getPaginated`,
       request,
       {

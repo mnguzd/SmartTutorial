@@ -17,7 +17,7 @@ namespace SmartTutorial.API.Services.Interfaces
         Task DeleteUser(int id);
         Task<IdentityResult> Logout(string refreshToken);
         Task<IdentityResult> EditUserInfo(string userName, UserEditDto dto);
-        Task<IdentityResult> CreateUser(UserForRegisterDto dto);
+        Task<IdentityResult> CreateUser(UserRegisterDto dto);
         Task<string> UploadImage(IFormFile avatar, string userName);
     }
 }

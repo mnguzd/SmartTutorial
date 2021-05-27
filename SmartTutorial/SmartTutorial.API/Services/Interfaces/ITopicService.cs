@@ -8,10 +8,8 @@ namespace SmartTutorial.API.Services.Interfaces
     public interface ITopicService
     {
         Task<TopicDto> GetById(int id);
-        Task<IList<TopicDto>> GetAll();
         Task<TopicDto> Add(AddTopicDto dto);
         Task<IList<TopicWithNoContentDto>> GetLightTopics();
-        Task<TopicWithQuestionsDto> GetWithQuestions(int id);
         Task<PaginatedResult<TopicDto>> GetPaginated(PagedRequest request);
         Task Delete(int id);
     }

@@ -20,14 +20,7 @@ namespace SmartTutorial.API.Controllers
             _topicService = topicService;
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            var topicList = await _topicService.GetAll();
-            return Ok(topicList);
-        }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet("lightTopics")]
         public async Task<IActionResult> GetLightTopics()
         {
@@ -35,7 +28,7 @@ namespace SmartTutorial.API.Controllers
             return Ok(topicList);
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         [HttpPost("getPaginated")]
         public async Task<IActionResult> Post(PagedRequest request)
         {
@@ -51,14 +44,7 @@ namespace SmartTutorial.API.Controllers
             return Ok(topic);
         }
 
-        [AllowAnonymous]
-        [HttpGet("withQuestions/{id:int}")]
-        public async Task<IActionResult> GetWithQuestions(int id)
-        {
-            var topic = await _topicService.GetWithQuestions(id);
-            return Ok(topic);
-        }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AddTopicDto dto)
         {
@@ -66,6 +52,7 @@ namespace SmartTutorial.API.Controllers
             return Created(nameof(Post), topic);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {

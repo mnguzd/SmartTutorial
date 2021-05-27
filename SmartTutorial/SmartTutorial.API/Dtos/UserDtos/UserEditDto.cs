@@ -17,6 +17,7 @@ namespace SmartTutorial.API.Dtos.UserDtos
         public string Email { get; set; }
 
         [StringLength(15, MinimumLength = 2)]
+        [Required]
         public string Country { get; set; }
     }
 }

@@ -11,7 +11,6 @@ namespace SmartTutorial.API.Services.Interfaces
         Task<IList<SubjectDto>> GetAll();
         Task<SubjectDto> Add(AddSubjectDto dto);
         Task<SubjectDto> Update(int id, AddSubjectDto dto);
-        Task<SubjectDto> UpdateWithDetails(int id, PatchSubjectDto dto);
         Task<SubjectWithTopicsDto> GetWithTopics(int id);
         Task<PaginatedResult<SubjectDto>> GetPaginated(PagedRequest request);
         Task Delete(int id);

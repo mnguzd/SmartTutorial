@@ -4,16 +4,16 @@ using SmartTutorial.Domain;
 
 namespace SmartTutorial.EFMapping
 {
-    public class AnswerConfig : IEntityTypeConfiguration<Answer>
+    public class OptionConfig : IEntityTypeConfiguration<Option>
     {
-        public void Configure(EntityTypeBuilder<Answer> builder)
+        public void Configure(EntityTypeBuilder<Option> builder)
         {
             builder.Property(e => e.Text)
                 .IsRequired()
                 .HasMaxLength(150);
 
             builder.HasOne(d => d.Question)
-                .WithMany(p => p.Answers)
+                .WithMany(p => p.Options)
                 .HasForeignKey(d => d.QuestionId);
         }
     }

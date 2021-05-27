@@ -97,7 +97,7 @@ export const CreateUserForm: FC<Props> = ({
         userName: getValues("username"),
         role: getValues("role"),
       };
-      addToRole(data, accessToken);
+      await addToRole(data, accessToken);
       callBack();
       setOpenPopup(false);
     }

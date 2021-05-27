@@ -1,11 +1,11 @@
 import { webAPIUrl } from "../../AppSettings";
 import { axiosAuthorized } from "../axios/axios";
 import {
-  ITopicData,
-  ITopicInputData,
-  ITopicNameData,
-  ITopicTableData,
-} from "./models/ITopicData";
+  ITopic,
+  ITopicInput,
+  ITopicName,
+  ITopicTable,
+} from "./models/ITopic";
 import { IServerCreateTopicError } from "./models/errors/ITopicErrors";
 import {
   IPaginatedRequest,
@@ -13,10 +13,10 @@ import {
 } from "./models/pagination/IPagination";
 import axios from "axios";
 
-export async function getTopic(id: number): Promise<ITopicData | null> {
-  let data: ITopicData | null = null;
+export async function getTopic(id: number): Promise<ITopic | null> {
+  let data: ITopic | null = null;
   await axios
-    .get<ITopicData>(`${webAPIUrl}/topics/${id}`, {
+    .get<ITopic>(`${webAPIUrl}/topics/${id}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -27,10 +27,10 @@ export async function getTopic(id: number): Promise<ITopicData | null> {
     .catch((err) => console.log(err.response));
   return data;
 }
-export async function getLightTopics(token: string): Promise<ITopicNameData[]> {
-  let data: ITopicNameData[] = [];
+export async function getLightTopics(token: string): Promise<ITopicName[]> {
+  let data: ITopicName[] = [];
   await axios
-    .get<ITopicNameData[]>(`${webAPIUrl}/topics/lightTopics`, {
+    .get<ITopicName[]>(`${webAPIUrl}/topics/lightTopics`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
@@ -43,15 +43,15 @@ export async function getLightTopics(token: string): Promise<ITopicNameData[]> {
 export async function getTopicsPaginated(
   request: IPaginatedRequest,
   token: string
-): Promise<IPaginatedResult<ITopicTableData>> {
-  let result: IPaginatedResult<ITopicTableData> = {
+): Promise<IPaginatedResult<ITopicTable>> {
+  let result: IPaginatedResult<ITopicTable> = {
     pageIndex: 0,
     pageSize: 0,
     total: 0,
     items: [],
   };
   await axiosAuthorized
-    .post<IPaginatedResult<ITopicData>>(
+    .post<IPaginatedResult<ITopic>>(
       `${webAPIUrl}/topics/getPaginated`,
       request,
       {
@@ -62,7 +62,7 @@ export async function getTopicsPaginated(
       result.pageIndex = response.data.pageIndex;
       result.pageSize = response.data.pageSize;
       result.total = response.data.total;
-      response.data.items.forEach((element: ITopicData) =>
+      response.data.items.forEach((element: ITopic) =>
         result.items.push(mapTopicFromServer(element))
       );
     })
@@ -70,7 +70,7 @@ export async function getTopicsPaginated(
   return result;
 }
 
-export const mapTopicFromServer = (topic: ITopicData): ITopicTableData => ({
+export const mapTopicFromServer = (topic: ITopic): ITopicTable => ({
   ...topic,
   subject: topic.subject.name,
 });
@@ -91,7 +91,7 @@ export async function deleteTopic(id: number, token: string): Promise<boolean> {
 }
 
 export async function createNewTopic(
-  data: ITopicInputData,
+  data: ITopicInput,
   token: string
 ): Promise<IServerCreateTopicError | null> {
   let error: IServerCreateTopicError = {

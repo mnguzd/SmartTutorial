@@ -20,7 +20,7 @@ namespace SmartTutorial.API
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Question> Questions { get; set; }
-        public DbSet<Answer> Answers { get; set; }
+        public DbSet<Option> Options { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

@@ -20,15 +20,7 @@ namespace SmartTutorial.API.Controllers
             _questionService = service;
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            var questionList = await _questionService.GetAll();
-            return Ok(questionList);
-        }
-
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         [HttpPost("getPaginated")]
         public async Task<IActionResult> Post(PagedRequest request)
         {
@@ -38,13 +30,13 @@ namespace SmartTutorial.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Put(int id, [FromBody] AddQuestionWithAnswersDto dto)
+        public async Task<IActionResult> Put(int id, [FromBody] AddQuestionWithOptionsDto dto)
         {
             await _questionService.Update(id, dto);
             return NoContent();
         }
 
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -67,14 +59,6 @@ namespace SmartTutorial.API.Controllers
             return Ok(questions);
         }
 
-        [AllowAnonymous]
-        [HttpGet("withAnswers/{id:int}")]
-        public async Task<IActionResult> GetWithAnswers(int id)
-        {
-            var question = await _questionService.GetWithAnswers(id);
-            return Ok(question);
-        }
-
         [HttpPost("answer")]
         public async Task<IActionResult> AnswerTheQuestion(AnswerTheQuestionDto dto)
         {
@@ -82,13 +66,15 @@ namespace SmartTutorial.API.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] AddQuestionWithAnswersDto dto)
+        public async Task<IActionResult> Post([FromBody] AddQuestionWithOptionsDto dto)
         {
             var question = await _questionService.Add(dto);
             return Created(nameof(Post), question);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {

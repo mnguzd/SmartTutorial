@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
-import { getSubjectWithTopics } from "../services/api/SubjectsApi";
+import { getSubjectWithTopics } from "../services/api/SubjectApi";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import ProgressCircle from "../components/ProgressCircle";
 import {
@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import Header from "../components/Header/Header";
 import { Helmet } from "react-helmet";
-import { ISubjectDataWithTopics } from "../services/api/models/ISubjectData";
+import { ISubjectWithTopics } from "../services/api/models/ISubject";
 import { StyledBreadcrumb } from "../components/StyledBreadcrumb";
 import { Home, ChevronLeft } from "@material-ui/icons";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
@@ -84,7 +84,7 @@ interface Props {
 }
 
 const SubjectPage: FC<Props> = ({ children, isContentLoading }) => {
-  const [subject, setSubject] = useState<ISubjectDataWithTopics | null>(null);
+  const [subject, setSubject] = useState<ISubjectWithTopics | null>(null);
   const [selectedTopicId, setSelectedTopicId] = useState<number>(-1);
   const [topicsLoading, setTopicsLoading] = useState<boolean>(true);
   const [open, setOpen] = useState<boolean>(true);
@@ -218,12 +218,12 @@ const SubjectPage: FC<Props> = ({ children, isContentLoading }) => {
               ) : (
                 <div>
                   <Pagination
-                    count={subject?.topics.length}
-                    className={classes.pagination}
-                    page={page}
-                    onChange={(_e, v) => handleChange(v)}
-                    color="primary"
-                  ></Pagination>
+    count={subject?.topics.length}
+    className={classes.pagination}
+    page={page}
+    onChange={(_e, v) => handleChange(v)}
+    color="primary"
+    />
                   <Footer />
                 </div>
               )}

@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form/";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -14,14 +14,11 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Autocomplete } from "@material-ui/lab";
-import { ITopicNameData } from "../../../services/api/models/ITopicData";
-import {
-  updateTheQuestion,
-} from "../../../services/api/QuestionApi";
+import { ITopicName } from "../../../services/api/models/ITopic";
+import { updateTheQuestion } from "../../../services/api/QuestionApi";
 import { IServerCreateQuestionError } from "../../../services/api/models/errors/IQuestionErrors";
-import { getLightTopics } from "../../../services/api/TopicsApi";
 import { FormHelperText } from "@material-ui/core";
-import { IQuestionTableData } from "../../../services/api/models/IQuestionData";
+import { IQuestionTable } from "../../../services/api/models/IQuestion";
 
 const useStyles = makeStyles((theme) => ({
   buttons: {
@@ -94,9 +91,9 @@ interface Props {
   accessToken: string;
   setOpenPopup: React.Dispatch<React.SetStateAction<any>>;
   loading: boolean;
-  question: IQuestionTableData;
+  question: IQuestionTable;
   callBack: ICallback;
-  lightTopics:ITopicNameData[];
+  lightTopics: ITopicName[];
 }
 interface ICallback {
   (): void;
@@ -112,8 +109,6 @@ export const EditQuestionForm: FC<Props> = ({
 }) => {
   const classes = useStyles();
 
-  const [topics, setTopics] = useState<ITopicNameData[]>([]);
-  const [topicsLoading, setTopicsLoading] = useState<boolean>(true);
   const [selectedOption, setSelectedOption] = useState<string>("");
 
   const {
@@ -145,7 +140,7 @@ export const EditQuestionForm: FC<Props> = ({
     }
   }
 
-  function setTopicId(newValue: ITopicNameData | null): void {
+  function setTopicId(newValue: ITopicName | null): void {
     if (newValue) {
       setValue("topicId", newValue.id);
     }
@@ -170,225 +165,228 @@ export const EditQuestionForm: FC<Props> = ({
     }
   };
   useEffect(() => {
+    if(!selectedOption){
+      setSelectedOption(question.answer);
+    }
     setValue("answer", selectedOption);
-  }, [selectedOption, setValue]);
+  }, [getValues, question.answer, selectedOption, setValue]);
 
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
       <Card>
         <CardHeader title="New question" />
         <Divider />
-          <CardContent>
+        <CardContent>
+          <Grid
+            container
+            spacing={3}
+            alignItems="center"
+            justify="space-between"
+            direction="column"
+            className={classes.container}
+          >
             <Grid
               container
-              spacing={3}
+              direction="row"
               alignItems="center"
-              justify="space-between"
-              direction="column"
-              className={classes.container}
+              justify="center"
             >
-              <Grid
-                container
-                direction="row"
-                alignItems="center"
-                justify="center"
-              >
-                <Grid item md={6} xs={12}>
-                  <Controller
-                    control={control}
-                    name="text"
-                    defaultValue={question?.text}
-                    render={() => (
-                      <TextField
-                        autoFocus
-                        variant="outlined"
-                        defaultValue={question?.text}
-                        id="text"
-                        label="Question"
-                        {...register("text", { required: true })}
-                        error={!!errors.text}
-                        helperText={errors?.text?.message}
-                        onChange={(e) => setValue("text", e.target.value)}
-                      />
-                    )}
-                  />
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <Controller
-                    control={control}
-                    name="topicId"
-                    defaultValue={question?.topic.id}
-                    render={() => (
-                      <Autocomplete
-                        id="topicsAutocomplete"
-                        options={topics}
-                        defaultValue={question?.topic}
-                        getOptionLabel={(option) => option.name}
-                        getOptionSelected={(option, value) =>
-                          option.id === value.id
-                        }
-                        loading={topicsLoading}
-                        onChange={(_e, newValue: ITopicNameData | null) =>
-                          setTopicId(newValue)
-                        }
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            variant="outlined"
-                            id="topicId"
-                            defaultValue={question?.topic.id}
-                            label="Topic"
-                            {...register("topicId", { required: true })}
-                            error={!!errors.topicId}
-                            helperText={errors?.topicId?.message}
-                          />
-                        )}
-                      />
-                    )}
-                  />
-                </Grid>
+              <Grid item md={6} xs={12}>
+                <Controller
+                  control={control}
+                  name="text"
+                  defaultValue={question?.text}
+                  render={() => (
+                    <TextField
+                      autoFocus
+                      variant="outlined"
+                      defaultValue={question?.text}
+                      id="text"
+                      label="Question"
+                      {...register("text", { required: true })}
+                      error={!!errors.text}
+                      helperText={errors?.text?.message}
+                      onChange={(e) => setValue("text", e.target.value)}
+                    />
+                  )}
+                />
               </Grid>
-              <Grid container direction="row" className={classes.firstOptions}>
-                <Grid item md={6} xs={12}>
-                  <Controller
-                    control={control}
-                    name="option1"
-                    defaultValue={question?.answers[0].text}
-                    render={() => (
-                      <Grid
-                        container
-                        direction="row"
-                        alignItems="center"
-                        justify="center"
-                      >
+              <Grid item md={6} xs={12}>
+                <Controller
+                  control={control}
+                  name="topicId"
+                  defaultValue={question?.topic.id}
+                  render={() => (
+                    <Autocomplete
+                      id="topicsAutocomplete"
+                      options={lightTopics}
+                      defaultValue={question?.topic}
+                      getOptionLabel={(option) => option.name}
+                      getOptionSelected={(option, value) =>
+                        option.id === value.id
+                      }
+                      loading={loading}
+                      onChange={(_e, newValue: ITopicName | null) =>
+                        setTopicId(newValue)
+                      }
+                      renderInput={(params) => (
                         <TextField
+                          {...params}
                           variant="outlined"
-                          id="option1"
-                          label="Option 1"
-                          defaultValue={question?.answers[0].text}
-                          {...register("option1", { required: true })}
-                          error={!!errors.option1}
-                          helperText={errors?.option1?.message}
-                          onChange={(e) => {
-                            setValue("option1", e.target.value);
-                          }}
+                          id="topicId"
+                          defaultValue={question?.topic.id}
+                          label="Topic"
+                          {...register("topicId", { required: true })}
+                          error={!!errors.topicId}
+                          helperText={errors?.topicId?.message}
                         />
-                        <Radio
-                          disabled={!getValues("option1")}
-                          checked={getValues("option1") === selectedOption}
-                          onChange={(e) => handleChange(e, 1)}
-                        />
-                      </Grid>
-                    )}
-                  />
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <Controller
-                    control={control}
-                    name="option2"
-                    defaultValue={question?.answers[1].text}
-                    render={() => (
-                      <Grid
-                        container
-                        direction="row"
-                        alignItems="center"
-                        justify="center"
-                      >
-                        <TextField
-                          variant="outlined"
-                          id="option2"
-                          defaultValue={question?.answers[1].text}
-                          label="Option 2"
-                          {...register("option2", { required: true })}
-                          error={!!errors.option2}
-                          helperText={errors?.option2?.message}
-                          onChange={(e) => {
-                            setValue("option2", e.target.value);
-                          }}
-                        />
-                        <Radio
-                          disabled={!getValues("option2")}
-                          checked={getValues("option2") === selectedOption}
-                          onChange={(e) => handleChange(e, 2)}
-                        />
-                      </Grid>
-                    )}
-                  />
-                </Grid>
+                      )}
+                    />
+                  )}
+                />
               </Grid>
-              <Grid container direction="row">
-                <Grid item md={6} xs={12}>
-                  <Controller
-                    control={control}
-                    name="option3"
-                    defaultValue={question?.answers[2].text}
-                    render={() => (
-                      <Grid
-                        container
-                        direction="row"
-                        alignItems="center"
-                        justify="center"
-                      >
-                        <TextField
-                          variant="outlined"
-                          defaultValue={question?.answers[2].text}
-                          id="option3"
-                          label="Option 3"
-                          {...register("option3", { required: true })}
-                          error={!!errors.option3}
-                          helperText={errors?.option3?.message}
-                          onChange={(e) => {
-                            setValue("option3", e.target.value);
-                          }}
-                        />
-                        <Radio
-                          disabled={!getValues("option3")}
-                          checked={getValues("option3") === selectedOption}
-                          onChange={(e) => handleChange(e, 3)}
-                        />
-                      </Grid>
-                    )}
-                  />
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <Controller
-                    control={control}
-                    name="option4"
-                    defaultValue={question?.answers[3].text}
-                    render={() => (
-                      <Grid
-                        container
-                        direction="row"
-                        alignItems="center"
-                        justify="center"
-                      >
-                        <TextField
-                          variant="outlined"
-                          id="option4"
-                          defaultValue={question?.answers[3].text}
-                          label="Option 4"
-                          {...register("option4", { required: true })}
-                          error={!!errors.option4}
-                          helperText={errors?.option4?.message}
-                          onChange={(e) => {
-                            setValue("option4", e.target.value);
-                          }}
-                        />
-                        <Radio
-                          disabled={!getValues("option4")}
-                          checked={getValues("option4") === selectedOption}
-                          onChange={(e) => handleChange(e, 4)}
-                        />
-                      </Grid>
-                    )}
-                  />
-                </Grid>
-              </Grid>
-              <FormHelperText error={!!errors.answer}>
-                {errors && errors.answer && errors?.answer.message}
-              </FormHelperText>
             </Grid>
-          </CardContent>
+            <Grid container direction="row" className={classes.firstOptions}>
+              <Grid item md={6} xs={12}>
+                <Controller
+                  control={control}
+                  name="option1"
+                  defaultValue={question?.options[0].text}
+                  render={() => (
+                    <Grid
+                      container
+                      direction="row"
+                      alignItems="center"
+                      justify="center"
+                    >
+                      <TextField
+                        variant="outlined"
+                        id="option1"
+                        label="Option 1"
+                        defaultValue={question?.options[0].text}
+                        {...register("option1", { required: true })}
+                        error={!!errors.option1}
+                        helperText={errors?.option1?.message}
+                        onChange={(e) => {
+                          setValue("option1", e.target.value);
+                        }}
+                      />
+                      <Radio
+                        disabled={!getValues("option1")}
+                        checked={getValues("option1") === selectedOption}
+                        onChange={(e) => handleChange(e, 1)}
+                      />
+                    </Grid>
+                  )}
+                />
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <Controller
+                  control={control}
+                  name="option2"
+                  defaultValue={question?.options[1].text}
+                  render={() => (
+                    <Grid
+                      container
+                      direction="row"
+                      alignItems="center"
+                      justify="center"
+                    >
+                      <TextField
+                        variant="outlined"
+                        id="option2"
+                        defaultValue={question?.options[1].text}
+                        label="Option 2"
+                        {...register("option2", { required: true })}
+                        error={!!errors.option2}
+                        helperText={errors?.option2?.message}
+                        onChange={(e) => {
+                          setValue("option2", e.target.value);
+                        }}
+                      />
+                      <Radio
+                        disabled={!getValues("option2")}
+                        checked={getValues("option2") === selectedOption}
+                        onChange={(e) => handleChange(e, 2)}
+                      />
+                    </Grid>
+                  )}
+                />
+              </Grid>
+            </Grid>
+            <Grid container direction="row">
+              <Grid item md={6} xs={12}>
+                <Controller
+                  control={control}
+                  name="option3"
+                  defaultValue={question?.options[2].text}
+                  render={() => (
+                    <Grid
+                      container
+                      direction="row"
+                      alignItems="center"
+                      justify="center"
+                    >
+                      <TextField
+                        variant="outlined"
+                        defaultValue={question?.options[2].text}
+                        id="option3"
+                        label="Option 3"
+                        {...register("option3", { required: true })}
+                        error={!!errors.option3}
+                        helperText={errors?.option3?.message}
+                        onChange={(e) => {
+                          setValue("option3", e.target.value);
+                        }}
+                      />
+                      <Radio
+                        disabled={!getValues("option3")}
+                        checked={getValues("option3") === selectedOption}
+                        onChange={(e) => handleChange(e, 3)}
+                      />
+                    </Grid>
+                  )}
+                />
+              </Grid>
+              <Grid item md={6} xs={12}>
+                <Controller
+                  control={control}
+                  name="option4"
+                  defaultValue={question?.options[3].text}
+                  render={() => (
+                    <Grid
+                      container
+                      direction="row"
+                      alignItems="center"
+                      justify="center"
+                    >
+                      <TextField
+                        variant="outlined"
+                        id="option4"
+                        defaultValue={question?.options[3].text}
+                        label="Option 4"
+                        {...register("option4", { required: true })}
+                        error={!!errors.option4}
+                        helperText={errors?.option4?.message}
+                        onChange={(e) => {
+                          setValue("option4", e.target.value);
+                        }}
+                      />
+                      <Radio
+                        disabled={!getValues("option4")}
+                        checked={getValues("option4") === selectedOption}
+                        onChange={(e) => handleChange(e, 4)}
+                      />
+                    </Grid>
+                  )}
+                />
+              </Grid>
+            </Grid>
+            <FormHelperText error={!!errors.answer}>
+              {errors && errors.answer && errors?.answer.message}
+            </FormHelperText>
+          </Grid>
+        </CardContent>
         <Divider />
         <Grid
           container

@@ -8,7 +8,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
-import {ICourseData} from "../../services/api/models/ICourseData";
+import {ICourse} from "../../services/api/models/ICourse";
 
 const useStyles = makeStyles({
   card: {
@@ -18,7 +18,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function CourseCard(course: ICourseData) {
+export default function CourseCard(course: ICourse) {
   const classes = useStyles();
   return (
     <Card className={classes.card}>

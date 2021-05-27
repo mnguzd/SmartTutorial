@@ -16,7 +16,7 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 import {
   createNewCourse,
-} from "../../../services/api/CoursesApi";
+} from "../../../services/api/CourseApi";
 import {IServerCreateCourseError} from "../../../services/api/models/errors/ICourseErrors";
 
 const useStyles = makeStyles((theme) => ({

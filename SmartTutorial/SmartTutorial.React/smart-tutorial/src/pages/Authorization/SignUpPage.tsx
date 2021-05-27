@@ -102,7 +102,7 @@ export default function SignUp() {
     if (result) {
       setError(result.name, { type: result.type, message: result.message });
     } else {
-      history.push("/signin");
+      history.push("/signIn");
     }
   }
 
@@ -254,7 +254,7 @@ export default function SignUp() {
             </Button>
             <Grid container justify="flex-end">
               <Grid item>
-                <StyledLink to="/signin">
+                <StyledLink to="/signIn">
                   Already have an account? Sign in
                 </StyledLink>
               </Grid>

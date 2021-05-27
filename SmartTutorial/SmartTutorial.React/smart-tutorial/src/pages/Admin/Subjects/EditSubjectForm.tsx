@@ -15,12 +15,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   getSubject,
   updateTheSubject,
-} from "../../../services/api/SubjectsApi";
+} from "../../../services/api/SubjectApi";
 import { Autocomplete } from "@material-ui/lab";
-import { getCourses } from "../../../services/api/CoursesApi";
-import { ICourseData } from "../../../services/api/models/ICourseData";
+import { getCourses } from "../../../services/api/CourseApi";
+import { ICourse } from "../../../services/api/models/ICourse";
 import { IServerCreateSubjectError } from "../../../services/api/models/errors/ISubjectErrors";
-import { ISubjectData } from "../../../services/api/models/ISubjectData";
+import { ISubject } from "../../../services/api/models/ISubject";
 import ProgressCircle from "../../../components/ProgressCircle";
 
 const useStyles = makeStyles((theme) => ({
@@ -73,9 +73,9 @@ export const EditSubjectForm: FC<Props> = ({
 }) => {
   const classes = useStyles();
 
-  const [courses, setCourses] = useState<ICourseData[]>([]);
+  const [courses, setCourses] = useState<ICourse[]>([]);
   const [coursesLoading, setCoursesLoading] = useState<boolean>(true);
-  const [subject, setSubject] = useState<ISubjectData>();
+  const [subject, setSubject] = useState<ISubject>();
   const [subjectLoading, setSubjectLoading] = useState<boolean>(true);
 
   const {
@@ -106,7 +106,7 @@ export const EditSubjectForm: FC<Props> = ({
     }
   }
 
-  function setCourseId(newValue: ICourseData | null): void {
+  function setCourseId(newValue: ICourse | null): void {
     if (newValue) {
       setValue("courseId", newValue.id);
     }
@@ -114,7 +114,7 @@ export const EditSubjectForm: FC<Props> = ({
 
   const setCoursesAsync = useCallback(async function SetCourses() {
     setCoursesLoading(true);
-    const result: ICourseData[] = await getCourses();
+    const result: ICourse[] = await getCourses();
     setCourses(result);
     setCoursesLoading(false);
   }, []);
@@ -122,7 +122,7 @@ export const EditSubjectForm: FC<Props> = ({
     async function SetSubject() {
       setSubjectLoading(true);
       if (subjectId) {
-        const result: ISubjectData | null = await getSubject(
+        const result: ISubject | null = await getSubject(
           subjectId,
           accessToken
         );
@@ -203,7 +203,7 @@ export const EditSubjectForm: FC<Props> = ({
                         option.id === value.id
                       }
                       loading={coursesLoading}
-                      onChange={(_e, newValue: ICourseData | null) =>
+                      onChange={(_e, newValue: ICourse | null) =>
                         setCourseId(newValue)
                       }
                       renderInput={(params) => (

@@ -16,9 +16,9 @@ import Footer from "../components/Footer/Footer";
 import ProgressCircle from "../components/ProgressCircle";
 import Page from "./Page";
 import { useAuth } from "../auth/Auth";
-import { getCourses } from "../services/api/CoursesApi";
+import { getCourses } from "../services/api/CourseApi";
 import { TransitionProps } from "@material-ui/core/transitions";
-import { ICourseData } from "../services/api/models/ICourseData";
+import { ICourse } from "../services/api/models/ICourse";
 
 function SlideTransition(props: TransitionProps) {
   return <Slide {...props} direction="up" />;
@@ -53,7 +53,7 @@ export default function HomePage() {
 
   const { loginSuccess, user, calmSuccess } = useAuth();
 
-  const [data, setData] = useState<ICourseData[]>([]);
+  const [data, setData] = useState<ICourse[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const handleClick = (

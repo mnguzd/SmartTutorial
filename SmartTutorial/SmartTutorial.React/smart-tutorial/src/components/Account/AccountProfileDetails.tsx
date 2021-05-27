@@ -139,7 +139,7 @@ const AccountProfileDetails = (user: IUser) => {
                     variant="outlined"
                     fullWidth
                     id="email"
-                    label="Email adress"
+                    label="Email"
                     defaultValue={user.email}
                     {...register("email", { required: true })}
                     error={!!errors.email}

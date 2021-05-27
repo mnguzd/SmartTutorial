@@ -7,7 +7,7 @@ namespace SmartTutorial.Domain
     {
         public Question()
         {
-            Answers = new List<Answer>();
+            Options = new List<Option>();
         }
         public string Text { get; set; }
         public string Answer { get; set; }
@@ -17,6 +17,6 @@ namespace SmartTutorial.Domain
 
         public virtual ICollection<User> Users { get; set; }
 
-        public virtual List<Answer> Answers { get; set; }
+        public virtual List<Option> Options { get; set; }
     }
 }

@@ -1,16 +1,16 @@
-import {ICourseData} from "./ICourseData";
-import {ITopicData} from "./ITopicData";
+import {ICourse} from "./ICourse";
+import {ITopic} from "./ITopic";
 
 
-export interface ISubjectData {
+export interface ISubject {
     name: string;
     complexity: number;
     id: number;
     date: Date;
-    course:ICourseData;
+    course:ICourse;
 }
 
-export interface ISubjectTableData{
+export interface ISubjectTable {
     name:string;
     complexity:number;
     id:number;
@@ -18,15 +18,15 @@ export interface ISubjectTableData{
     course:string;
 }
 
-export interface ISubjectDataWithTopics {
+export interface ISubjectWithTopics {
     name: string;
     complexity: number;
     id: number;
-    topics: ITopicData[];
-    course: ICourseData;
+    topics: ITopic[];
+    course: ICourse;
 }
 
-export interface ISubjectInputData {
+export interface ISubjectInput {
     name: string;
     complexity: number;
     courseId: number;

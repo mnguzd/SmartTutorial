@@ -22,10 +22,9 @@ export async function editUser(
     message: "",
   };
   await axiosAuthorized
-    .patch(webAPIUrl + "/account/patch", data, {
+    .put(webAPIUrl + "/account/updateProfile", data, {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then(() => {})
     .catch((err) => {
       const dataError = err.response.data;
       if (dataError.errors) {

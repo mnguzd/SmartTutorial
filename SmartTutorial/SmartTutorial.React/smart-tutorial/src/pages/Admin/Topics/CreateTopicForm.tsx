@@ -2,13 +2,13 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form/";
 import { Editor } from "@tinymce/tinymce-react";
-import { createNewTopic } from "../../../services/api/TopicsApi";
+import { createNewTopic } from "../../../services/api/TopicApi";
 import { FC, useCallback, useEffect, useState } from "react";
 import { IServerCreateTopicError } from "../../../services/api/models/errors/ITopicErrors";
 import { Button, TextField, FormHelperText, Grid } from "@material-ui/core";
-import { getSubjects } from "../../../services/api/SubjectsApi";
+import { getSubjects } from "../../../services/api/SubjectApi";
 import { Autocomplete } from "@material-ui/lab";
-import { ISubjectData } from "../../../services/api/models/ISubjectData";
+import { ISubject } from "../../../services/api/models/ISubject";
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
@@ -80,7 +80,7 @@ export const CreateTopicForm: FC<Props> = ({
 
   const classes = useStyles();
 
-  const [subjects, setSubjects] = useState<ISubjectData[]>([]);
+  const [subjects, setSubjects] = useState<ISubject[]>([]);
   const [subjectsLoading, setSubjectsLoading] = useState<boolean>(true);
 
   async function onSubmit(data: IFormInputs) {
@@ -95,14 +95,14 @@ export const CreateTopicForm: FC<Props> = ({
       callBack();
     }
   }
-  function updateSubjectId(newValue: ISubjectData | null): void {
+  function updateSubjectId(newValue: ISubject | null): void {
     if (newValue) {
       setValue("subjectId", newValue.id);
     }
   }
   const setSubjectsAsync = useCallback(async function SetSubjects() {
     setSubjectsLoading(true);
-    const result: ISubjectData[] = await getSubjects();
+    const result: ISubject[] = await getSubjects();
     setSubjects(result);
     setSubjectsLoading(false);
   }, []);
@@ -206,7 +206,7 @@ export const CreateTopicForm: FC<Props> = ({
                   getOptionLabel={(option) => option.name}
                   getOptionSelected={(option, value) => option.id === value.id}
                   loading={subjectsLoading}
-                  onChange={(_e, newValue: null | ISubjectData) =>
+                  onChange={(_e, newValue: null | ISubject) =>
                     updateSubjectId(newValue)
                   }
                   renderInput={(params) => (

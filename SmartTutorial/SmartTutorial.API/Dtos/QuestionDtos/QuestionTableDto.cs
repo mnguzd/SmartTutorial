@@ -1,4 +1,4 @@
-﻿using SmartTutorial.API.Dtos.AnswerDtos;
+﻿using SmartTutorial.API.Dtos.OptionDtos;
 using System.Collections.Generic;
 using SmartTutorial.API.Dtos.TopicDtos;
 
@@ -11,6 +11,6 @@ namespace SmartTutorial.API.Dtos.QuestionDtos
         public int Id { get; set; }
         public TopicWithNoContentDto Topic { get; set; }
 
-        public List<AnswerDto> Answers { get; set; }
+        public List<OptionDto> Options { get; set; }
     }
 }

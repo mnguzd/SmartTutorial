@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using SmartTutorial.API.Dtos.AnswerDtos;
+using SmartTutorial.API.Dtos.OptionDtos;
 using SmartTutorial.API.Dtos.QuestionDtos;
 using SmartTutorial.API.Dtos.SubjectDtos;
 using SmartTutorial.API.Dtos.CourseDtod;
@@ -32,11 +32,11 @@ namespace SmartTutorial.API.Mapping
             CreateMap<Topic, TopicWithNoContentDto>();
             CreateMap<QuestionDto, Question>();
             CreateMap<Question, QuestionDto>();
-            CreateMap<QuestionWithAnswersDto, Question>();
-            CreateMap<Question, QuestionWithAnswersDto>();
+            CreateMap<QuestionWithOptionsDto, Question>();
+            CreateMap<Question, QuestionWithOptionsDto>();
             CreateMap<Question, QuestionTableDto>();
-            CreateMap<Answer, AddAnswerDto>();
-            CreateMap<Answer, AnswerDto>();
+            CreateMap<Option, AddOptionDto>();
+            CreateMap<Option, OptionDto>();
             CreateMap<User, UserTableDto>();
         }
     }

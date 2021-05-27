@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -14,14 +14,14 @@ import {
 } from "@material-ui/core";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import ChevronRightIcon from "@material-ui/icons/ChevronRight";
-import { IQuestionWithAnswers } from "../../services/api/models/IQuestionData";
+import { IQuestionWithOptions } from "../../services/api/models/IQuestion";
 import { useAuth } from "../../auth/Auth";
 import {
   answerTheQuestion,
   getQuestionsByTopicId,
   getGuestQuestionsByTopicId,
 } from "../../services/api/QuestionApi";
-import { ITopicData } from "../../services/api/models/ITopicData";
+import { ITopic } from "../../services/api/models/ITopic";
 import { Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 
@@ -60,13 +60,13 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-export default function QuestionCard(topic: ITopicData) {
+export default function QuestionCard(topic: ITopic) {
   const [value, setValue] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
   const [helperText, setHelperText] = useState<string>("");
   const { accessToken, isAuthenticated, updateUserInfo } = useAuth();
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
-  const [questions, setQuestions] = useState<IQuestionWithAnswers[]>([]);
+  const [questions, setQuestions] = useState<IQuestionWithOptions[]>([]);
 
   const classes = useStyles();
 
@@ -89,7 +89,7 @@ export default function QuestionCard(topic: ITopicData) {
       return;
     }
     if (questions && questions[selectedIndex]) {
-      let result: boolean | undefined = undefined;
+      let result: boolean | undefined;
       result = await answerTheQuestion(
         questions[selectedIndex].id,
         value,
@@ -98,7 +98,7 @@ export default function QuestionCard(topic: ITopicData) {
       if (result) {
         if (!questions[selectedIndex].alreadyAnswered) {
           setHelperText("Added (+1) rating!");
-          updateUserInfo();
+          await updateUserInfo();
         } else {
           setHelperText("Right!");
         }
@@ -107,18 +107,18 @@ export default function QuestionCard(topic: ITopicData) {
         setHelperText("Wrong!");
         setError(true);
       }
-      callBackQuestions();
+      await callBackQuestions();
     }
   }
   const callBackQuestions = useCallback(
     async function setQuestionsAsync() {
       if (topic) {
         if (isAuthenticated) {
-          const questionsData: IQuestionWithAnswers[] =
+          const questionsData: IQuestionWithOptions[] =
             await getQuestionsByTopicId(topic.id, accessToken);
           setQuestions(questionsData);
         } else {
-          const questionsData: IQuestionWithAnswers[] =
+          const questionsData: IQuestionWithOptions[] =
             await getGuestQuestionsByTopicId(topic.id);
           setQuestions(questionsData);
         }
@@ -134,7 +134,7 @@ export default function QuestionCard(topic: ITopicData) {
     <div className={classes.root}>
       {questions &&
       questions[selectedIndex] &&
-      questions[selectedIndex].answers ? (
+      questions[selectedIndex].options ? (
         <Card className={classes.card} elevation={5}>
           <CardMedia
             className={`${classes.media} ${
@@ -160,7 +160,7 @@ export default function QuestionCard(topic: ITopicData) {
                   value={value}
                   onChange={handleRadioChange}
                 >
-                  {questions[selectedIndex].answers.map((val) => (
+                  {questions[selectedIndex].options.map((val) => (
                     <FormControlLabel
                       value={val.text}
                       key={val.id}

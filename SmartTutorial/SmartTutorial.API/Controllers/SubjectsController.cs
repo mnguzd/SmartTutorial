@@ -52,6 +52,7 @@ namespace SmartTutorial.API.Controllers
             return Ok(subject);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AddSubjectDto dto)
         {
@@ -59,6 +60,7 @@ namespace SmartTutorial.API.Controllers
             return Created(nameof(Post), subject);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Put(int id, [FromBody] AddSubjectDto dto)
         {
@@ -66,13 +68,7 @@ namespace SmartTutorial.API.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{id:int}")]
-        public async Task<IActionResult> Patch(int id, [FromBody] PatchSubjectDto dto)
-        {
-            await _subjectService.UpdateWithDetails(id, dto);
-            return NoContent();
-        }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {

@@ -2,11 +2,11 @@ import { webAPIUrl } from "../../AppSettings";
 import axios from "axios";
 import { axiosAuthorized } from "../axios/axios";
 import {
-  ISubjectData,
-  ISubjectDataWithTopics,
-  ISubjectInputData,
-  ISubjectTableData,
-} from "./models/ISubjectData";
+  ISubject,
+  ISubjectWithTopics,
+  ISubjectInput,
+  ISubjectTable,
+} from "./models/ISubject";
 import { IServerCreateSubjectError } from "./models/errors/ISubjectErrors";
 import {
   IPaginatedRequest,
@@ -15,10 +15,10 @@ import {
 
 export async function getSubjectWithTopics(
   id: number
-): Promise<ISubjectDataWithTopics | null> {
-  let data: ISubjectDataWithTopics | null = null;
+): Promise<ISubjectWithTopics | null> {
+  let data: ISubjectWithTopics | null = null;
   await axios
-    .get<ISubjectDataWithTopics>(`${webAPIUrl}/subjects/withTopics/${id}`, {
+    .get<ISubjectWithTopics>(`${webAPIUrl}/subjects/withTopics/${id}`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -30,15 +30,10 @@ export async function getSubjectWithTopics(
   return data;
 }
 
-export async function getSubject(
-  id: number,
-  token: string
-): Promise<ISubjectData | null> {
-  let data: ISubjectData | null = null;
+export async function getSubject(id: number): Promise<ISubject | null> {
+  let data: ISubject | null = null;
   await axios
-    .get<ISubjectData>(`${webAPIUrl}/subjects/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    .get<ISubject>(`${webAPIUrl}/subjects/${id}`)
     .then((response) => {
       data = response.data;
     })
@@ -46,10 +41,10 @@ export async function getSubject(
   return data;
 }
 
-export async function getSubjects(): Promise<ISubjectData[]> {
-  let data: ISubjectData[] = [];
+export async function getSubjects(): Promise<ISubject[]> {
+  let data: ISubject[] = [];
   await axios
-    .get<ISubjectData[]>(`${webAPIUrl}/subjects`, {
+    .get<ISubject[]>(`${webAPIUrl}/subjects`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -62,7 +57,7 @@ export async function getSubjects(): Promise<ISubjectData[]> {
 }
 
 export async function createNewSubject(
-  data: ISubjectInputData,
+  data: ISubjectInput,
   token: string
 ): Promise<IServerCreateSubjectError | null> {
   let error: IServerCreateSubjectError = {
@@ -74,9 +69,6 @@ export async function createNewSubject(
     .post(`${webAPIUrl}/subjects`, data, {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((response) => {
-      console.log(response.data);
-    })
     .catch((err) => {
       error.message = err.response.data;
     });
@@ -87,7 +79,7 @@ export async function createNewSubject(
 }
 export async function updateTheSubject(
   id: number,
-  data: ISubjectInputData,
+  data: ISubjectInput,
   token: string
 ): Promise<IServerCreateSubjectError | null> {
   let error: IServerCreateSubjectError = {
@@ -128,15 +120,15 @@ export async function deleteSubject(
 export async function getSubjectsPaginated(
   request: IPaginatedRequest,
   token: string
-): Promise<IPaginatedResult<ISubjectTableData>> {
-  let result: IPaginatedResult<ISubjectTableData> = {
+): Promise<IPaginatedResult<ISubjectTable>> {
+  let result: IPaginatedResult<ISubjectTable> = {
     pageIndex: 0,
     pageSize: 0,
     total: 0,
     items: [],
   };
   await axiosAuthorized
-    .post<IPaginatedResult<ISubjectData>>(
+    .post<IPaginatedResult<ISubject>>(
       `${webAPIUrl}/subjects/getPaginated`,
       request,
       {
@@ -147,16 +139,14 @@ export async function getSubjectsPaginated(
       result.pageIndex = response.data.pageIndex;
       result.pageSize = response.data.pageSize;
       result.total = response.data.total;
-      response.data.items.forEach((element: ISubjectData) =>
+      response.data.items.forEach((element: ISubject) =>
         result.items.push(mapSubjectFromServer(element))
       );
     })
     .catch((err) => console.log(err.response));
   return result;
 }
-export const mapSubjectFromServer = (
-  subject: ISubjectData
-): ISubjectTableData => ({
+export const mapSubjectFromServer = (subject: ISubject): ISubjectTable => ({
   ...subject,
   date: new Date(subject.date),
   course: subject.course.name,

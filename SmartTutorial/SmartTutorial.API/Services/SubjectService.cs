@@ -78,28 +78,5 @@ namespace SmartTutorial.API.Services
             var subjectDto = _mapper.Map<SubjectDto>(subject);
             return subjectDto;
         }
-
-        public async Task<SubjectDto> UpdateWithDetails(int id, PatchSubjectDto dto)
-        {
-            var subject = await _repository.GetById<Subject>(id);
-            if (subject == null)
-            {
-                throw new ApiException(HttpStatusCode.Conflict, "Subject not found");
-            }
-
-            if (!string.IsNullOrWhiteSpace(dto.Name))
-            {
-                subject.Name = dto.Name;
-            }
-
-            if (dto.Complexity != null)
-            {
-                subject.Complexity = (int) dto.Complexity;
-            }
-
-            await _repository.SaveAll();
-            var subjectDto = _mapper.Map<SubjectDto>(subject);
-            return subjectDto;
-        }
     }
 }

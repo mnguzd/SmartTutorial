@@ -128,7 +128,7 @@ export default function AccountProfile(user: IUser) {
                   id="image"
                   {...register("image", { required: true })}
                   onChange={(e) => {
-                     onChange(e);
+                      onChange(e);
                   }}
                   hidden
                 />

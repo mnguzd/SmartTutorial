@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form/";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -14,10 +14,9 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Autocomplete } from "@material-ui/lab";
-import { ITopicNameData } from "../../../services/api/models/ITopicData";
+import { ITopicName } from "../../../services/api/models/ITopic";
 import { createNewQuestion } from "../../../services/api/QuestionApi";
 import { IServerCreateQuestionError } from "../../../services/api/models/errors/IQuestionErrors";
-import { getLightTopics } from "../../../services/api/TopicsApi";
 import { FormHelperText } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
@@ -92,6 +91,7 @@ interface Props {
   setOpenPopup: React.Dispatch<React.SetStateAction<any>>;
   loading: boolean;
   callBack: ICallback;
+  lightTopics: ITopicName[];
 }
 interface ICallback {
   (): void;
@@ -102,11 +102,10 @@ export const CreateQuestionForm: FC<Props> = ({
   setOpenPopup,
   loading,
   callBack,
+  lightTopics,
 }) => {
   const classes = useStyles();
 
-  const [topics, setTopics] = useState<ITopicNameData[]>([]);
-  const [topicsLoading, setTopicsLoading] = useState<boolean>(true);
   const [selectedOption, setSelectedOption] = useState<string>("");
 
   const {
@@ -135,7 +134,7 @@ export const CreateQuestionForm: FC<Props> = ({
     }
   }
 
-  function setTopicId(newValue: ITopicNameData | null): void {
+  function setTopicId(newValue: ITopicName | null): void {
     if (newValue) {
       setValue("topicId", newValue.id);
     }
@@ -160,19 +159,9 @@ export const CreateQuestionForm: FC<Props> = ({
     }
   };
 
-  const setTopicsAsync = useCallback(
-    async function SetTopics() {
-      setTopicsLoading(true);
-      const result: ITopicNameData[] = await getLightTopics(accessToken);
-      setTopics(result);
-      setTopicsLoading(false);
-    },
-    [accessToken]
-  );
   useEffect(() => {
-    setTopicsAsync();
     setValue("answer", selectedOption);
-  }, [selectedOption, setTopicsAsync, setValue]);
+  }, [selectedOption, setValue]);
 
   return (
     <form noValidate onSubmit={handleSubmit(onSubmit)}>
@@ -188,7 +177,12 @@ export const CreateQuestionForm: FC<Props> = ({
             direction="column"
             className={classes.container}
           >
-            <Grid container direction="row" alignItems="center" justify="center">
+            <Grid
+              container
+              direction="row"
+              alignItems="center"
+              justify="center"
+            >
               <Grid item md={6} xs={12}>
                 <Controller
                   control={control}
@@ -214,13 +208,13 @@ export const CreateQuestionForm: FC<Props> = ({
                   render={() => (
                     <Autocomplete
                       id="topicsAutocomplete"
-                      options={topics}
+                      options={lightTopics}
                       getOptionLabel={(option) => option.name}
                       getOptionSelected={(option, value) =>
                         option.id === value.id
                       }
-                      loading={topicsLoading}
-                      onChange={(_e, newValue: ITopicNameData | null) =>
+                      loading={loading}
+                      onChange={(_e, newValue: ITopicName | null) =>
                         setTopicId(newValue)
                       }
                       renderInput={(params) => (

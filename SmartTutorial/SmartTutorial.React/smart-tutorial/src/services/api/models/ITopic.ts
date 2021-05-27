@@ -1,17 +1,17 @@
-import { ISubjectData } from "./ISubjectData";
+import { ISubject } from "./ISubject";
 
-export interface ITopicData {
+export interface ITopic {
   id: number;
   name: string;
   content: string;
   order: number;
-  subject: ISubjectData;
+  subject: ISubject;
 }
-export interface ITopicNameData{
+export interface ITopicName {
   name:string;
   id:number;
 }
-export interface ITopicTableData {
+export interface ITopicTable {
   id: number;
   name: string;
   content: string;
@@ -19,7 +19,7 @@ export interface ITopicTableData {
   subject: string;
 }
 
-export interface ITopicInputData {
+export interface ITopicInput {
   name: string;
   order: number;
   content: string;

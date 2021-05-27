@@ -16,7 +16,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   deleteCourse,
   getCoursesPaginated,
-} from "../../../services/api/CoursesApi";
+} from "../../../services/api/CourseApi";
 import { useAuth } from "../../../auth/Auth";
 import { Avatar, Grid } from "@material-ui/core";
 import { Button } from "@material-ui/core";
@@ -25,7 +25,7 @@ import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { CreateCourseForm } from "./CreateCourseForm";
 import { EditCourseForm } from "./EditCourseForm";
-import { ICourseData } from "../../../services/api/models/ICourseData";
+import { ICourse } from "../../../services/api/models/ICourse";
 import {
   IPaginatedRequest,
   IPaginatedResult,
@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AdminCoursesPage() {
-  const [courses, setCourses] = useState<ICourseData[]>([]);
+  const [courses, setCourses] = useState<ICourse[]>([]);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -105,7 +105,7 @@ export default function AdminCoursesPage() {
           ],
         };
       }
-      const result: IPaginatedResult<ICourseData> = await getCoursesPaginated(
+      const result: IPaginatedResult<ICourse> = await getCoursesPaginated(
         request,
         accessToken
       );
@@ -118,13 +118,12 @@ export default function AdminCoursesPage() {
   async function deleteAndUpdateCourse(id: GridRowId, token: string) {
     const success = await deleteCourse(Number(id), token);
     if (success) {
-      setTotalCount((x) => x - 1);
+      await callBackCourses();
     }
   }
   async function onDeleteSubmit() {
     selectionModel.map((val) => deleteAndUpdateCourse(val, accessToken));
     setSelectionModel([]);
-    await callBackCourses();
   }
   useEffect(() => {
     callBackCourses();

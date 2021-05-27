@@ -1,8 +1,8 @@
 import { FC, useEffect, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { Typography } from "@material-ui/core";
-import { ITopicData } from "../services/api/models/ITopicData";
-import { getTopic } from "../services/api/TopicsApi";
+import { ITopic } from "../services/api/models/ITopic";
+import { getTopic } from "../services/api/TopicApi";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import parse from "html-react-parser";
 import SubjectPage from "./SubjectPage";
@@ -26,7 +26,7 @@ interface IRouteParams {
 }
 
 const TopicPage: FC<RouteComponentProps<IRouteParams>> = ({ match }) => {
-  const [topic, setTopic] = useState<ITopicData>();
+  const [topic, setTopic] = useState<ITopic>();
   const [topicLoading, setLoading] = useState<boolean>(true);
 
   const classes = useStyles();

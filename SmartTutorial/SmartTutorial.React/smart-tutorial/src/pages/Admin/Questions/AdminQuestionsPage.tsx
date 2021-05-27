@@ -25,16 +25,16 @@ import { EditQuestionForm } from "./EditQuestionForm";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
 import {
-  IQuestionFlattenedTableData,
-  IQuestionTableData,
-} from "../../../services/api/models/IQuestionData";
+  IQuestionFlattenedTable,
+  IQuestionTable,
+} from "../../../services/api/models/IQuestion";
 import {
   IPaginatedRequest,
   IPaginatedResult,
 } from "../../../services/api/models/pagination/IPagination";
 import { CreateQuestionForm } from "./CreateQuestionForm";
-import { getLightTopics } from "../../../services/api/TopicsApi";
-import { ITopicNameData } from "../../../services/api/models/ITopicData";
+import { getLightTopics } from "../../../services/api/TopicApi";
+import { ITopicName } from "../../../services/api/models/ITopic";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,13 +49,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function AdminQuestionsPage() {
-  const [questions, setQuestions] = useState<IQuestionFlattenedTableData[]>([]);
+  const [questions, setQuestions] = useState<IQuestionFlattenedTable[]>([]);
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [pageSize, setPageSize] = useState<number>(10);
-  const [editingQuestion, setEditingQuestion] = useState<IQuestionTableData>();
+  const [editingQuestion, setEditingQuestion] = useState<IQuestionTable>();
   const [filterModel, setFilterModel] = useState<GridFilterModel>();
-  const [topics, setTopics] = useState<ITopicNameData[]>();
+  const [topics, setTopics] = useState<ITopicName[]>();
   const [sortModel, setSortModel] = useState<GridSortModel>([
     { field: "id", sort: "asc" },
   ]);
@@ -110,7 +110,7 @@ export default function AdminQuestionsPage() {
           ],
         };
       }
-      const result: IPaginatedResult<IQuestionFlattenedTableData> =
+      const result: IPaginatedResult<IQuestionFlattenedTable> =
         await getQuestionsPaginated(request, accessToken);
       setQuestions(result.items);
       setTotalCount(result.total);
@@ -121,7 +121,7 @@ export default function AdminQuestionsPage() {
   async function deleteAndUpdateQuestion(id: GridRowId, token: string) {
     const success = await deleteQuestion(Number(id), token);
     if (success) {
-      setTotalCount((x) => x - 1);
+      await callBackQuestions();
     }
   }
   async function handleOpenEdit() {
@@ -144,7 +144,6 @@ export default function AdminQuestionsPage() {
   async function onDeleteSubmit() {
     selectionModel.map((val) => deleteAndUpdateQuestion(val, accessToken));
     setSelectionModel([]);
-    await callBackQuestions();
   }
   useEffect(() => {
     callBackQuestions();
@@ -220,14 +219,17 @@ export default function AdminQuestionsPage() {
           </Button>
         </Grid>
       </div>
-      <DialogForm openPopup={openPopup} setOpenPopup={setOpenPopup}>
-        <CreateQuestionForm
-          accessToken={accessToken}
-          setOpenPopup={setOpenPopup}
-          loading={loading}
-          callBack={callBackQuestions}
-        />
-      </DialogForm>
+      {topics && (
+        <DialogForm openPopup={openPopup} setOpenPopup={setOpenPopup}>
+          <CreateQuestionForm
+            lightTopics={topics}
+            accessToken={accessToken}
+            setOpenPopup={setOpenPopup}
+            loading={loading}
+            callBack={callBackQuestions}
+          />
+        </DialogForm>
+      )}
       {editingQuestion && topics && (
         <DialogForm openPopup={openEditPopup} setOpenPopup={setOpenEditPopup}>
           <EditQuestionForm

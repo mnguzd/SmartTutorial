@@ -24,7 +24,7 @@ namespace SmartTutorial.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserForLoginDto dto)
+        public async Task<IActionResult> Login(UserLoginDto dto)
         {
             var signInResult = await _accountService.SignInAsync(dto.Username, dto.Password);
             return Ok(signInResult);
@@ -32,7 +32,7 @@ namespace SmartTutorial.API.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserForRegisterDto dto)
+        public async Task<IActionResult> Register(UserRegisterDto dto)
         {
             var createdResult = await _accountService.CreateUser(dto);
             return Created(nameof(Register), createdResult);
@@ -54,7 +54,7 @@ namespace SmartTutorial.API.Controllers
             return Ok(jwtResult);
         }
 
-        [HttpPatch("patch")]
+        [HttpPut("updateProfile")]
         public async Task<IActionResult> EditDetails(UserEditDto dto)
         {
             var editedResult = await _accountService.EditUserInfo(User.Identity.Name, dto);

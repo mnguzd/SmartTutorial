@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartTutorial.API.Dtos.CourseDtod;
 using SmartTutorial.API.Infrastucture.Models;
@@ -50,6 +51,7 @@ namespace SmartTutorial.API.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] AddCourseDto dto)
         {
@@ -57,6 +59,7 @@ namespace SmartTutorial.API.Controllers
             return Created(nameof(Post), course);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {

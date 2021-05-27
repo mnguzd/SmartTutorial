@@ -1,10 +1,10 @@
 import {
-  IQuestionWithAnswers,
+  IQuestionWithOptions,
   IAnswerTheQuestion,
-  IQuestionTableData,
-  IQuestionFlattenedTableData,
+  IQuestionTable,
+  IQuestionFlattenedTable,
   IAddQuestion,
-} from "./models/IQuestionData";
+} from "./models/IQuestion";
 import { webAPIUrl } from "../../AppSettings";
 import { axiosAuthorized } from "../axios/axios";
 import axios from "axios";
@@ -17,10 +17,10 @@ import { IServerCreateQuestionError } from "./models/errors/IQuestionErrors";
 export async function getQuestionsByTopicId(
   topicId: number,
   token: string
-): Promise<IQuestionWithAnswers[]> {
-  let data: IQuestionWithAnswers[] = [];
+): Promise<IQuestionWithOptions[]> {
+  let data: IQuestionWithOptions[] = [];
   await axiosAuthorized
-    .get<IQuestionWithAnswers[]>(
+    .get<IQuestionWithOptions[]>(
       `${webAPIUrl}/questions/byTopicId/${topicId}`,
       {
         headers: {
@@ -37,10 +37,10 @@ export async function getQuestionsByTopicId(
 export async function getQuestion(
   id: number,
   token: string
-): Promise<IQuestionTableData | null> {
-  let data: IQuestionTableData | null = null;
+): Promise<IQuestionTable | null> {
+  let data: IQuestionTable | null = null;
   await axios
-    .get<IQuestionTableData>(`${webAPIUrl}/questions/${id}`, {
+    .get<IQuestionTable>(`${webAPIUrl}/questions/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((response) => {
@@ -52,10 +52,10 @@ export async function getQuestion(
 
 export async function getGuestQuestionsByTopicId(
   topicId: number
-): Promise<IQuestionWithAnswers[]> {
-  let data: IQuestionWithAnswers[] = [];
+): Promise<IQuestionWithOptions[]> {
+  let data: IQuestionWithOptions[] = [];
   await axios
-    .get<IQuestionWithAnswers[]>(
+    .get<IQuestionWithOptions[]>(
       `${webAPIUrl}/questions/guest/byTopicId/${topicId}`
     )
     .then((response) => {
@@ -151,15 +151,15 @@ export async function deleteQuestion(
 export async function getQuestionsPaginated(
   request: IPaginatedRequest,
   token: string
-): Promise<IPaginatedResult<IQuestionFlattenedTableData>> {
-  let result: IPaginatedResult<IQuestionFlattenedTableData> = {
+): Promise<IPaginatedResult<IQuestionFlattenedTable>> {
+  let result: IPaginatedResult<IQuestionFlattenedTable> = {
     pageIndex: 0,
     pageSize: 0,
     total: 0,
     items: [],
   };
   await axiosAuthorized
-    .post<IPaginatedResult<IQuestionTableData>>(
+    .post<IPaginatedResult<IQuestionTable>>(
       `${webAPIUrl}/questions/getPaginated`,
       request,
       {
@@ -170,7 +170,7 @@ export async function getQuestionsPaginated(
       result.pageIndex = response.data.pageIndex;
       result.pageSize = response.data.pageSize;
       result.total = response.data.total;
-      response.data.items.forEach((element: IQuestionTableData) =>
+      response.data.items.forEach((element: IQuestionTable) =>
         result.items.push(mapQuestionsFromServer(element))
       );
     })
@@ -178,12 +178,12 @@ export async function getQuestionsPaginated(
   return result;
 }
 export const mapQuestionsFromServer = (
-  question: IQuestionTableData
-): IQuestionFlattenedTableData => ({
+  question: IQuestionTable
+): IQuestionFlattenedTable => ({
   ...question,
   topic: question.topic.name,
-  option1: question.answers[0].text,
-  option2: question.answers[1].text,
-  option3: question.answers[2].text,
-  option4: question.answers[3].text,
+  option1: question.options[0].text,
+  option2: question.options[1].text,
+  option3: question.options[2].text,
+  option4: question.options[3].text,
 });

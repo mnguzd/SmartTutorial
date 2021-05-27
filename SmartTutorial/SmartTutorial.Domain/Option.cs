@@ -1,6 +1,6 @@
 ﻿namespace SmartTutorial.Domain
 {
-    public class Answer : BaseEntity
+    public class Option : BaseEntity
     {
         public string Text { get; set; }
 

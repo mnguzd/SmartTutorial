@@ -64,6 +64,7 @@ namespace SmartTutorial.API
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.ConfigureCustomExceptionMiddleware();
 
             app.UseHttpsRedirection();
 

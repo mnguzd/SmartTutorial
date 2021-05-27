@@ -73,7 +73,7 @@ namespace SmartTutorial.API.Services
             return result;
         }
 
-        public async Task<IdentityResult> CreateUser(UserForRegisterDto dto)
+        public async Task<IdentityResult> CreateUser(UserRegisterDto dto)
         {
             var user = new User
             {
@@ -103,8 +103,6 @@ namespace SmartTutorial.API.Services
             }
         }
 
-
-
         public async Task<IdentityResult> EditUserInfo(string userName, UserEditDto dto)
         {
             var userFound = await _userManager.FindByNameAsync(userName);
@@ -117,10 +115,7 @@ namespace SmartTutorial.API.Services
             userFound.FirstName = dto.Firstname;
             userFound.LastName = dto.Lastname;
             userFound.Email = dto.Email;
-            if (!string.IsNullOrWhiteSpace(dto.Country))
-            {
-                userFound.Country = dto.Country;
-            }
+            userFound.Country = dto.Country;
 
             var result = await _userManager.UpdateAsync(userFound);
             return result;
@@ -128,7 +123,7 @@ namespace SmartTutorial.API.Services
 
         public async Task DeleteUser(int id)
         {
-            var user = await _userManager.FindByIdAsync(id.ToString());
+            var user = await _userManager.FindByIdAsync(id.ToString()); 
             await _userManager.DeleteAsync(user);
         }
 
@@ -245,6 +240,7 @@ namespace SmartTutorial.API.Services
             foreach (var item in result.Items)
             {
                 var user = await _userManager.FindByIdAsync(item.Id.ToString());
+                if (user == null) continue;
                 var roles = await _userManager.GetRolesAsync(user);
                 item.Role = roles.FirstOrDefault();
             }
