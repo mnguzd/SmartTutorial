@@ -1,15 +1,11 @@
-import { IAnswer } from "./IAnswerData";
+import { IOption } from "./IOptionData";
 import { ITopicNameData } from "./ITopicData";
 
-export interface IQuestion {
-  text: string;
-  id: number;
-}
-export interface IQuestionWithAnswers {
+export interface IQuestionWithOptions {
   text: string;
   id: number;
   alreadyAnswered: boolean;
-  answers: IAnswer[];
+  options: IOption[];
 }
 export interface IQuestionTableData {
   text: string;
@@ -17,7 +13,7 @@ export interface IQuestionTableData {
   id: number;
   alreadyAnswered: boolean;
   topic: ITopicNameData;
-  answers: IAnswer[];
+  options: IOption[];
 }
 export interface IQuestionFlattenedTableData {
   text: string;

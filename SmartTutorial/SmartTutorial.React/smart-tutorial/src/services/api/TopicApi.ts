@@ -27,29 +27,6 @@ export async function getTopic(id: number): Promise<ITopicData | null> {
     .catch((err) => console.log(err.response));
   return data;
 }
-
-export async function updateTheTopic(
-  id: number,
-  data: ITopicInputData,
-  token: string
-): Promise<IServerCreateTopicError | null> {
-  let error: IServerCreateTopicError = {
-    name: "subjectId",
-    type: "server",
-    message: "",
-  };
-  await axiosAuthorized
-    .put(`${webAPIUrl}/topics/${id}`, data, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    .catch((err) => {
-      error.message = err.response.data;
-    });
-  if (error.message) {
-    return error;
-  }
-  return null;
-}
 export async function getLightTopics(token: string): Promise<ITopicNameData[]> {
   let data: ITopicNameData[] = [];
   await axios

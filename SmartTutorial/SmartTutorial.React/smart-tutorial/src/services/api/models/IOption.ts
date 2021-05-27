@@ -1,4 +1,4 @@
-export interface IAnswer {
+export interface IOption {
   text: string;
   id:number;
 }
