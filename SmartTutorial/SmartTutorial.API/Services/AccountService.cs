@@ -26,12 +26,12 @@ namespace SmartTutorial.API.Services
     {
         private readonly AuthOptions _authenticationOptions;
         private readonly IWebHostEnvironment _environment;
+        private readonly IRepository _repository;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
-        private readonly IRepository _repository;
 
         public AccountService(IOptions<AuthOptions> authenticationOptions, SignInManager<User> signInManager,
-            UserManager<User> userManager, IWebHostEnvironment environment,IRepository repository)
+            UserManager<User> userManager, IWebHostEnvironment environment, IRepository repository)
         {
             _authenticationOptions = authenticationOptions.Value;
             _signInManager = signInManager;
@@ -123,7 +123,7 @@ namespace SmartTutorial.API.Services
 
         public async Task DeleteUser(int id)
         {
-            var user = await _userManager.FindByIdAsync(id.ToString()); 
+            var user = await _userManager.FindByIdAsync(id.ToString());
             await _userManager.DeleteAsync(user);
         }
 
@@ -161,6 +161,20 @@ namespace SmartTutorial.API.Services
             user.AvatarPath = localServerName + pngFileName;
             await _userManager.UpdateAsync(user);
             return user.AvatarPath;
+        }
+
+        public async Task<PaginatedResult<UserTableDto>> GetPaginated(PagedRequest request)
+        {
+            var result = await _repository.GetPagedData<User, UserTableDto>(request);
+            foreach (var item in result.Items)
+            {
+                var user = await _userManager.FindByIdAsync(item.Id.ToString());
+                if (user == null) continue;
+                var roles = await _userManager.GetRolesAsync(user);
+                item.Role = roles.FirstOrDefault();
+            }
+
+            return result;
         }
 
         private async Task<JwtAuthResult> GenerateTokens(string username, Claim[] claims, DateTime now)
@@ -232,19 +246,6 @@ namespace SmartTutorial.API.Services
         {
             var userFound = _userManager.Users.FirstOrDefault(x => x.RefreshToken == refreshToken.Replace(@"""", ""));
             return userFound;
-        }
-
-        public async Task<PaginatedResult<UserTableDto>> GetPaginated(PagedRequest request)
-        {
-            var result = await _repository.GetPagedData<User, UserTableDto>(request);
-            foreach (var item in result.Items)
-            {
-                var user = await _userManager.FindByIdAsync(item.Id.ToString());
-                if (user == null) continue;
-                var roles = await _userManager.GetRolesAsync(user);
-                item.Role = roles.FirstOrDefault();
-            }
-            return result;
         }
     }
 }

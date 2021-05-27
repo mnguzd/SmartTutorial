@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using SmartTutorial.API.Dtos.CourseDtod;
 using SmartTutorial.API.Dtos.OptionDtos;
 using SmartTutorial.API.Dtos.QuestionDtos;
 using SmartTutorial.API.Dtos.SubjectDtos;
-using SmartTutorial.API.Dtos.CourseDtod;
 using SmartTutorial.API.Dtos.TopicDtos;
 using SmartTutorial.API.Dtos.UserDtos;
 using SmartTutorial.Domain;

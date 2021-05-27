@@ -124,13 +124,12 @@ export const EditSubjectForm: FC<Props> = ({
       if (subjectId) {
         const result: ISubject | null = await getSubject(
           subjectId,
-          accessToken
         );
         result && setSubject(result);
       }
       setSubjectLoading(false);
     },
-    [accessToken, subjectId]
+    [subjectId]
   );
   useEffect(() => {
     setCoursesAsync();

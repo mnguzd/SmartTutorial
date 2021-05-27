@@ -1,13 +1,13 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
+using AutoMapper;
 using SmartTutorial.API.Dtos.CourseDtod;
 using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Services
 {
@@ -31,7 +31,7 @@ namespace SmartTutorial.API.Services
 
         public async Task<CourseDto> Add(AddCourseDto dto)
         {
-            var course = new Course() { Name = dto.Name, Description = dto.Description, ImageUrl = dto.ImageUrl };
+            var course = new Course {Name = dto.Name, Description = dto.Description, ImageUrl = dto.ImageUrl};
             await _repository.Add(course, true);
             var courseDto = _mapper.Map<CourseDto>(course);
             return courseDto;

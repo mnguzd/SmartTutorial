@@ -31,9 +31,9 @@ function App() {
             <Route path="/SignUp" component={SignUp} />
             <Route path="/Admin/Courses" component={AdminCoursesPage} />
             <Route path="/Admin/Subjects" component={AdminSubjectsPage} />
-            <Route path="/Admin/Topics" component={AdminTopicsPage}/>
-            <Route path="/Admin/Questions" component={AdminQuestionsPage}/>
-            <Route path="/Admin/Users" component={AdminUsersPage}/>
+            <Route path="/Admin/Topics" component={AdminTopicsPage} />
+            <Route path="/Admin/Questions" component={AdminQuestionsPage} />
+            <Route path="/Admin/Users" component={AdminUsersPage} />
             <Route path="/Admin" component={AdminDashboard} />
             <Route
               path="/Courses/:courseId/Subjects/:subjectId/Topics/:topicId"

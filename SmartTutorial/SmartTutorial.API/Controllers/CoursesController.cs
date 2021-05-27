@@ -1,10 +1,9 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartTutorial.API.Dtos.CourseDtod;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Services.Interfaces;
-using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Controllers
 {

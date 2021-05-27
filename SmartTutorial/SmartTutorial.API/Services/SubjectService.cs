@@ -25,7 +25,7 @@ namespace SmartTutorial.API.Services
         public async Task<SubjectDto> Add(AddSubjectDto dto)
         {
             var subject = new Subject {Complexity = dto.Complexity, Name = dto.Name, CourseId = dto.CourseId};
-            await _repository.Add(subject,true);
+            await _repository.Add(subject, true);
             var subjectDto = _mapper.Map<SubjectDto>(subject);
             return subjectDto;
         }

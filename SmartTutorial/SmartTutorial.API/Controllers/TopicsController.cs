@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartTutorial.API.Dtos.TopicDtos;
 using SmartTutorial.API.Exceptions;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Services.Interfaces;
-using System.Threading.Tasks;
 
 namespace SmartTutorial.API.Controllers
 {

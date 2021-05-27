@@ -9,7 +9,7 @@ namespace SmartTutorial.API.Exceptions
         {
             if (context.Exception is ApiException apiException)
             {
-                context.Result = new ObjectResult(apiException.Message) { StatusCode = (int)apiException.Code };
+                context.Result = new ObjectResult(apiException.Message) {StatusCode = (int) apiException.Code};
             }
         }
     }

@@ -42,8 +42,8 @@ namespace SmartTutorial.API.Controllers
         [HttpPost("addToRole")]
         public async Task<IActionResult> AddToRole(AddToRoleDto dto)
         {
-             await _accountService.AddToRole(dto);
-             return NoContent();
+            await _accountService.AddToRole(dto);
+            return NoContent();
         }
 
         [AllowAnonymous]
@@ -65,7 +65,7 @@ namespace SmartTutorial.API.Controllers
         public async Task<IActionResult> UploadImage([FromForm] UploadUserAvatarDto dto)
         {
             var result = await _accountService.UploadImage(dto.Avatar, User.Identity.Name);
-                return Ok(result);
+            return Ok(result);
         }
 
         [Authorize(Roles = "Admin")]

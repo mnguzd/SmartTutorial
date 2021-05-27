@@ -1,7 +1,7 @@
-﻿using SmartTutorial.API.Dtos.SubjectDtos;
-using SmartTutorial.API.Infrastucture.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using SmartTutorial.API.Dtos.SubjectDtos;
+using SmartTutorial.API.Infrastucture.Models;
 
 namespace SmartTutorial.API.Services.Interfaces
 {

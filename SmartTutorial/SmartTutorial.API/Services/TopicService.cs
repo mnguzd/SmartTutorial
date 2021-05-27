@@ -1,23 +1,23 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using SmartTutorial.API.Dtos.TopicDtos;
 using SmartTutorial.API.Infrastucture.Models;
 using SmartTutorial.API.Repositories.Interfaces;
 using SmartTutorial.API.Services.Interfaces;
 using SmartTutorial.Domain;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using AutoMapper.QueryableExtensions;
-using Microsoft.EntityFrameworkCore;
 
 namespace SmartTutorial.API.Services
 {
     public class TopicService : ITopicService
     {
         private readonly IMapper _mapper;
-        private readonly IRepository _repository;
         private readonly IConfigurationProvider _provider;
+        private readonly IRepository _repository;
 
-        public TopicService(IRepository repository, IMapper mapper,IConfigurationProvider provider)
+        public TopicService(IRepository repository, IMapper mapper, IConfigurationProvider provider)
         {
             _repository = repository;
             _mapper = mapper;
